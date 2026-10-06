@@ -25,7 +25,7 @@ AI-File:      https://ranatec.com/ai.txt
 Sitemap:      https://ranatec.com/sitemap_index.xml
 REST-API:     https://ranatec.com/agent/v1/index.json
 OpenAPI:      https://ranatec.com/openapi.json
-MCP-Server:   https://ranatec.com/mcp
+MCP-Server:   https://mcp.ranatec.com/mcp
 API-Catalog:  https://ranatec.com/api-catalog.json
 API-Catalog-Well-Known: https://ranatec.com/.well-known/api-catalog
 

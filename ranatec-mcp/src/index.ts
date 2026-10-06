@@ -296,7 +296,9 @@ function buildServer(): McpServer {
 
 const app = express();
 app.disable("x-powered-by");
-app.set("trust proxy", process.env.TRUST_PROXY ?? "loopback");
+// TRUST_PROXY: a hop count ("1" on Render/Heroku-style platforms), "true", or an Express preset/IP list (default "loopback").
+const trustProxy = process.env.TRUST_PROXY ?? "loopback";
+app.set("trust proxy", /^\d+$/.test(trustProxy) ? parseInt(trustProxy, 10) : trustProxy === "true" ? true : trustProxy);
 
 const toolList = () => ({ server: NAME, version: VERSION, endpoint: "/mcp", transport: "streamable-http (stateless)", api_base: API_BASE, count: TOOLS.length, tools: TOOLS });
 app.get(["/health", "/mcp/health"], async (_req, res) => {
@@ -309,13 +311,18 @@ app.get(["/health", "/mcp/health"], async (_req, res) => {
   }
   res.status(upstream === "ok" ? 200 : 503).json({ status: upstream === "ok" ? "ok" : "degraded", name: NAME, version: VERSION, api_base: API_BASE, upstream });
 });
+// Liveness for platform health checks (Render): 200 as long as the process runs, independent of the WordPress API.
+app.get(["/live", "/mcp/live"], (_req, res) => { res.json({ status: "live", name: NAME, version: VERSION }); });
 app.get(["/tools", "/mcp/tools"], (_req, res) => { res.json(toolList()); });
 
 const limiter = rateLimit({ windowMs: 60 * 1000, limit: RATE_LIMIT, standardHeaders: true, legacyHeaders: false });
-app.use("/mcp", limiter);
-app.use("/mcp", express.json({ limit: "100kb" }));
+// The MCP endpoint answers on /mcp (reverse proxy keeps the path) AND on / (cPanel "Setup Node.js App" /
+// Phusion Passenger mounted at ranatec.com/mcp strips the /mcp prefix).
+const MCP_PATHS = ["/mcp", "/"];
+app.use(MCP_PATHS, limiter);
+app.use(MCP_PATHS, express.json({ limit: "100kb" }));
 
-app.post("/mcp", async (req: Request, res: Response) => {
+app.post(MCP_PATHS, async (req: Request, res: Response) => {
   const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
   const server = buildServer();
   res.on("close", () => {
@@ -335,8 +342,8 @@ app.post("/mcp", async (req: Request, res: Response) => {
 const methodNotAllowed = (_req: Request, res: Response) => {
   res.status(405).set("Allow", "POST").json({ jsonrpc: "2.0", error: { code: -32000, message: "Method not allowed. This MCP server is stateless: use POST /mcp. Tool list: GET /mcp/tools" }, id: null });
 };
-app.get("/mcp", methodNotAllowed);
-app.delete("/mcp", methodNotAllowed);
+app.get(MCP_PATHS, methodNotAllowed);
+app.delete(MCP_PATHS, methodNotAllowed);
 
 app.listen(PORT, () => {
   console.log(`${NAME} ${VERSION} listening on :${PORT} (API ${API_BASE})`);

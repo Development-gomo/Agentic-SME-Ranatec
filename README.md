@@ -29,7 +29,8 @@ An AI-agent-ready layer for **[ranatec.com](https://ranatec.com/)** (WordPress +
 | MCP server (12 tools) | `ranatec-mcp/` | `https://ranatec.com/mcp` |
 | robots.txt additions | `web-root/robots-addition.txt` | merge into `https://ranatec.com/robots.txt` |
 | Site findings for the Ranatec team | `docs/FINDINGS.md` | |
-| Deployment checklist | `docs/DEPLOYMENT.md` | |
+| Deployment checklist (Oderland, step by step) | `docs/DEPLOYMENT-ODERLAND.md` | |
+| Deployment reference (generic: nginx, Docker) | `docs/DEPLOYMENT.md` | |
 
 `web-root/` contains copies of the static files in case you'd rather upload them to the web root than let the plugin serve them.
 

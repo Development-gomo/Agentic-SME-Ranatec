@@ -23,10 +23,11 @@ PUB = os.path.join(ROOT, 'ranatec-api', 'public')
 WEB = os.path.join(ROOT, 'web-root')
 SITE = 'https://ranatec.com'
 API = SITE + '/agent/v1'
+MCP_URL = re.search(r"define\('RANATEC_MCP_URL', '([^']+)'\)", open(os.path.join(ROOT, 'ranatec-api', 'ranatec-api.php')).read()).group(1)
 URLS = {
     'agent': SITE + '/agent/', 'llms': SITE + '/llms.txt', 'llms_full': SITE + '/llms-full.txt', 'ai': SITE + '/ai.txt',
     'catalog': SITE + '/api-catalog.json', 'wk_catalog': SITE + '/.well-known/api-catalog', 'openapi': SITE + '/openapi.json',
-    'index': API + '/index.json', 'mcp': SITE + '/mcp', 'mcp_tools': SITE + '/mcp/tools', 'mcp_health': SITE + '/mcp/health',
+    'index': API + '/index.json', 'mcp': MCP_URL, 'mcp_tools': MCP_URL + '/tools', 'mcp_health': MCP_URL + '/health',
     'sitemap': SITE + '/sitemap_index.xml', 'robots': SITE + '/robots.txt',
 }
 LOCALES = [('en-US', 'United States (default)', SITE + '/'), ('en-GB', 'United Kingdom', SITE + '/en-gb/'), ('en-CA', 'Canada', SITE + '/en-ca/')]
@@ -446,6 +447,8 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
 
     # 13 people
     a('<section id="people"><h2>People</h2><p class="dim">' + e(company['named_contacts_note']) + '</p>')
+    if company.get('leadership_note'):
+        a('<p class="dim">' + e(company['leadership_note']) + '</p>')
     for pr in people:
         a(f'<section id="{person_id(pr["name"])}"><h3>{e(pr["name"])}</h3><p>{e(pr["role"])}<br>Email: <a href="mailto:{e(pr["email"])}">{e(pr["email"])}</a>' + (f'<br>Phone: {e(pr["phone"])}' if pr.get('phone') else '') + f'<br><span class="dim">Source: {link(pr["source"], "press release " + pr["source_date"])}</span></p></section>')
     a('</section>')

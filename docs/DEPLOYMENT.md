@@ -1,5 +1,8 @@
 # Deployment checklist: Ranatec Agentic Web package
 
+> **Ranatec is hosted on Oderland (cPanel + LiteSpeed).** Follow **[DEPLOYMENT-ODERLAND.md](DEPLOYMENT-ODERLAND.md)** for the step-by-step guide. This file is the generic reference (nginx, Docker, other hosts).
+
+
 ## Before you start: confirm with Ranatec
 
 - [ ] **Contact recipient.** Agent submissions go to `info@ranatec.com` by default. You can change this in Tools → Ranatec Agent API.

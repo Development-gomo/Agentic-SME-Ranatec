@@ -6,7 +6,7 @@
   "created": "2026-10-06",
   "modified": "2026-10-06",
   "specificationVersion": "0.16",
-  "X-package-version": "1.0.2",
+  "X-package-version": "1.0.3",
   "tags": [
     "RF test equipment",
     "test and measurement",
@@ -194,7 +194,7 @@
     {
       "name": "Ranatec MCP server",
       "description": "Model Context Protocol server exposing Ranatec company, product, news and FAQ data as tools, plus a consent-gated quote/enquiry tool.",
-      "baseURL": "https://ranatec.com/mcp",
+      "baseURL": "https://mcp.ranatec.com/mcp",
       "humanURL": "https://ranatec.com/agent/",
       "X-format": "application/json",
       "X-contentType": "mcp-server",
@@ -262,11 +262,11 @@
         },
         {
           "type": "X-health",
-          "url": "https://ranatec.com/mcp/health"
+          "url": "https://mcp.ranatec.com/mcp/health"
         },
         {
           "type": "X-tools",
-          "url": "https://ranatec.com/mcp/tools"
+          "url": "https://mcp.ranatec.com/mcp/tools"
         }
       ],
       "tags": [
@@ -383,7 +383,7 @@
     "ai_txt": "https://ranatec.com/ai.txt",
     "rest_api": "https://ranatec.com/agent/v1/index.json",
     "openapi": "https://ranatec.com/openapi.json",
-    "mcp_server": "https://ranatec.com/mcp",
+    "mcp_server": "https://mcp.ranatec.com/mcp",
     "api_catalog": "https://ranatec.com/api-catalog.json",
     "well_known_api_catalog": "https://ranatec.com/.well-known/api-catalog",
     "sitemap": "https://ranatec.com/sitemap_index.xml"

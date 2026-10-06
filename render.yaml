@@ -1,0 +1,23 @@
+# Render Blueprint for the Ranatec MCP server.
+# Render → New → Blueprint → connect this repository/branch → Apply.
+# After the first deploy: Settings → Custom Domains → add mcp.ranatec.com (see docs/DEPLOYMENT-ODERLAND.md, Part C).
+services:
+  - type: web
+    name: ranatec-mcp
+    runtime: node
+    rootDir: ranatec-mcp
+    region: frankfurt          # closest to the Oderland servers in Sweden
+    plan: starter              # paid instance: stays awake. The free plan sleeps after inactivity (slow first agent call).
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /live     # liveness only; /health also checks the WordPress API and returns 503 until the plugin is live
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: RANATEC_API_BASE
+        value: https://ranatec.com/agent/v1
+      - key: TRUST_PROXY
+        value: "1"             # Render runs one proxy hop in front of the app; needed for per-client rate limiting
+      - key: RATE_LIMIT_PER_MIN
+        value: "100"

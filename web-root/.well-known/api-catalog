@@ -22,16 +22,16 @@
       ]
     },
     {
-      "anchor": "https://ranatec.com/mcp",
+      "anchor": "https://mcp.ranatec.com/mcp",
       "service-doc": [
         {
-          "href": "https://ranatec.com/mcp/tools",
+          "href": "https://mcp.ranatec.com/mcp/tools",
           "type": "application/json"
         }
       ],
       "status": [
         {
-          "href": "https://ranatec.com/mcp/health",
+          "href": "https://mcp.ranatec.com/mcp/health",
           "type": "application/json"
         }
       ]

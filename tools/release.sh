@@ -41,7 +41,9 @@ echo "tests: $TESTS"
 rm -f release/*.zip
 mkdir -p release
 zip -qr "release/ranatec-api-$V.zip" ranatec-api -x '*.DS_Store'
-PLUGIN_SHA=$(cd release && sha256sum "ranatec-api-$V.zip")
+# MCP bundle for cPanel "Setup Node.js App" (e.g. Oderland): prebuilt dist/ + CommonJS startup file, no build step on the server
+( cd ranatec-mcp && zip -qr "../release/ranatec-mcp-$V-cpanel.zip" package.json package-lock.json app.cjs dist .env.example )
+PLUGIN_SHA=$(cd release && sha256sum "ranatec-api-$V.zip" "ranatec-mcp-$V-cpanel.zip")
 write_manifest() {  # $1 = include package checksum line (yes/no)
 cat > release/MANIFEST.md <<MD
 # Ranatec Agentic Web package — release $V
@@ -52,6 +54,7 @@ All component versions come from the repo \`VERSION\` file ($V) and are checked 
 | File | What it is | How to use |
 |---|---|---|
 | \`release/ranatec-api-$V.zip\` | WordPress plugin: agent page, llms.txt, llms-full.txt, ai.txt, API catalogs, OpenAPI, REST API, contact/RFQ endpoint, daily sync | WordPress → Plugins → Add New → Upload → Activate → Settings → Permalinks → Save |
+| \`release/ranatec-mcp-$V-cpanel.zip\` | MCP server, prebuilt (dist/ + app.cjs + package.json) for cPanel "Setup Node.js App" | Upload to the Node.js app root, Run NPM Install, startup file \`app.cjs\` (see docs/DEPLOYMENT-ODERLAND.md) |
 | \`ranatec-agentic-web-package-$V.zip\` | Complete package: plugin source + **the plugin zip above** (in \`release/\`), MCP server source, web-root copies, robots.txt additions, build tools, tests, docs | Hand-over / archive; see README.md and docs/DEPLOYMENT.md inside |
 
 ## Component versions
@@ -79,7 +82,7 @@ $( [[ $1 == yes ]] || echo '(The checksum of the complete-package zip cannot be 
 MD
 }
 write_manifest no
-zip -qr "release/ranatec-agentic-web-package-$V.zip" VERSION README.md docs ranatec-api ranatec-mcp web-root tools tests "release/ranatec-api-$V.zip" release/MANIFEST.md \
+zip -qr "release/ranatec-agentic-web-package-$V.zip" VERSION README.md docs ranatec-api ranatec-mcp web-root tools tests "release/ranatec-api-$V.zip" "release/ranatec-mcp-$V-cpanel.zip" release/MANIFEST.md \
   -x 'ranatec-mcp/node_modules/*' 'ranatec-mcp/dist/*' 'tools/.work/*' 'tools/__pycache__/*' '*.DS_Store'
 write_manifest yes
 
@@ -87,4 +90,6 @@ write_manifest yes
 unzip -l "release/ranatec-agentic-web-package-$V.zip" | grep -q "release/ranatec-api-$V.zip" || { echo "plugin zip missing from package"; exit 1; }
 unzip -l "release/ranatec-agentic-web-package-$V.zip" | grep -qE "node_modules|/dist/" && { echo "build output leaked into package"; exit 1; }
 unzip -p "release/ranatec-api-$V.zip" ranatec-api/ranatec-api.php | grep -q "Version:           $V" || { echo "plugin zip has wrong version"; exit 1; }
+unzip -p "release/ranatec-mcp-$V-cpanel.zip" package.json | grep -q "\"version\": \"$V\"" || { echo "MCP bundle has wrong version"; exit 1; }
+unzip -l "release/ranatec-mcp-$V-cpanel.zip" | grep -q "dist/index.js" || { echo "MCP bundle missing dist/index.js"; exit 1; }
 echo "== release/"; ls -la release
