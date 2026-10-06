@@ -1,0 +1,390 @@
+{
+  "name": "Ranatec AB — API and machine-readable resource catalog",
+  "description": "All machine-readable resources published for ranatec.com: agent page, llms.txt, ai.txt, REST API (/agent/v1), OpenAPI, MCP server, sitemap and robots.txt.",
+  "image": "https://ranatec.com/wp-content/uploads/2021/02/logo_ranatec_black_gradient_promise.svg",
+  "url": "https://ranatec.com/api-catalog.json",
+  "created": "2026-10-06",
+  "modified": "2026-10-06",
+  "specificationVersion": "0.16",
+  "tags": [
+    "RF test equipment",
+    "test and measurement",
+    "wireless testing",
+    "5G",
+    "Wi-Fi",
+    "EMC shielding",
+    "B2B",
+    "request for quote",
+    "agent-ready",
+    "Sweden"
+  ],
+  "apis": [
+    {
+      "name": "Ranatec agent page",
+      "description": "Complete semantic HTML representation of ranatec.com with schema.org JSON-LD (Organization, Product ×49, FAQPage, Person, ItemList).",
+      "baseURL": "https://ranatec.com/agent/",
+      "humanURL": "https://ranatec.com/agent/",
+      "X-format": "text/html",
+      "X-contentType": "semantic-html",
+      "X-purpose": "Primary LLM endpoint",
+      "properties": [
+        {
+          "type": "X-human",
+          "url": "https://ranatec.com/agent/"
+        }
+      ],
+      "tags": [
+        "llm",
+        "json-ld"
+      ]
+    },
+    {
+      "name": "llms.txt",
+      "description": "Markdown index following llmstxt.org, covering all three regional locales.",
+      "baseURL": "https://ranatec.com/llms.txt",
+      "humanURL": "https://ranatec.com/llms.txt",
+      "X-format": "text/plain",
+      "X-contentType": "llms-txt",
+      "X-purpose": "LLM discovery",
+      "properties": [
+        {
+          "type": "X-full-text",
+          "url": "https://ranatec.com/llms-full.txt"
+        }
+      ],
+      "tags": [
+        "llm"
+      ]
+    },
+    {
+      "name": "ai.txt",
+      "description": "AI usage permissions, canonical sources and citation guidance.",
+      "baseURL": "https://ranatec.com/ai.txt",
+      "humanURL": "https://ranatec.com/ai.txt",
+      "X-format": "text/plain",
+      "X-contentType": "ai-txt",
+      "X-purpose": "AI permissions",
+      "properties": [],
+      "tags": [
+        "policy"
+      ]
+    },
+    {
+      "name": "API catalog",
+      "description": "This file (APIs.json 0.16). RFC 9727 linkset equivalent at /.well-known/api-catalog.",
+      "baseURL": "https://ranatec.com/api-catalog.json",
+      "humanURL": "https://ranatec.com/agent/",
+      "X-format": "application/json",
+      "X-contentType": "apis-json",
+      "X-purpose": "API discovery",
+      "properties": [
+        {
+          "type": "X-well-known",
+          "url": "https://ranatec.com/.well-known/api-catalog"
+        }
+      ],
+      "tags": [
+        "discovery"
+      ]
+    },
+    {
+      "name": "Ranatec Agent API",
+      "description": "Read-only JSON API describing Ranatec AB (Gothenburg, Sweden) — RF test & measurement equipment for filtering, shielding, switching and automation — plus one consent-gated POST endpoint for quote requests and enquiries. Content mirrors ranatec.com in three regional English locales (en-US default, en-GB, en-CA); every entity lists all three URLs. Ranatec publishes no prices: all products are sold B2B via request for quote.",
+      "baseURL": "https://ranatec.com/agent/v1",
+      "humanURL": "https://ranatec.com/agent/",
+      "X-format": "application/json",
+      "X-contentType": "rest-api",
+      "X-purpose": "Structured company, product, news and FAQ data; quote requests",
+      "properties": [
+        {
+          "type": "X-openapi",
+          "url": "https://ranatec.com/openapi.json"
+        },
+        {
+          "type": "X-index",
+          "url": "https://ranatec.com/agent/v1/index.json"
+        },
+        {
+          "type": "X-endpoint",
+          "route": "/agent/v1/index.json",
+          "method": "GET",
+          "description": "API index, counts and discovery links"
+        },
+        {
+          "type": "X-endpoint",
+          "route": "/agent/v1/schema.json",
+          "method": "GET",
+          "description": "Field reference and conventions"
+        },
+        {
+          "type": "X-endpoint",
+          "route": "/agent/v1/company.json",
+          "method": "GET",
+          "description": "Company profile, contact, certifications, locales, partners, careers"
+        },
+        {
+          "type": "X-endpoint",
+          "route": "/agent/v1/products.json",
+          "method": "GET",
+          "description": "List products (full specifications unless fields=summary)"
+        },
+        {
+          "type": "X-endpoint",
+          "route": "/agent/v1/products/{id}.json",
+          "method": "GET",
+          "description": "One product by id (slug) or model number"
+        },
+        {
+          "type": "X-endpoint",
+          "route": "/agent/v1/categories.json",
+          "method": "GET",
+          "description": "Product categories"
+        },
+        {
+          "type": "X-endpoint",
+          "route": "/agent/v1/categories/{id}.json",
+          "method": "GET",
+          "description": "One category with its products (summary fields)"
+        },
+        {
+          "type": "X-endpoint",
+          "route": "/agent/v1/solutions.json",
+          "method": "GET",
+          "description": "Product domains and solution areas"
+        },
+        {
+          "type": "X-endpoint",
+          "route": "/agent/v1/news.json",
+          "method": "GET",
+          "description": "News, product launches, technical articles, events (newest first)"
+        },
+        {
+          "type": "X-endpoint",
+          "route": "/agent/v1/news/{id}.json",
+          "method": "GET",
+          "description": "One news item by slug"
+        },
+        {
+          "type": "X-endpoint",
+          "route": "/agent/v1/pages.json",
+          "method": "GET",
+          "description": "Site pages with en-US / en-GB / en-CA URLs"
+        },
+        {
+          "type": "X-endpoint",
+          "route": "/agent/v1/faq.json",
+          "method": "GET",
+          "description": "Frequently asked questions"
+        },
+        {
+          "type": "X-endpoint",
+          "route": "/agent/v1/contact.json",
+          "method": "POST",
+          "description": "Submit a quote request or enquiry on behalf of a user — requires agent_context.user_authorized_submission: true"
+        }
+      ],
+      "tags": [
+        "rest",
+        "json",
+        "read-only",
+        "agent-actionable"
+      ]
+    },
+    {
+      "name": "Ranatec MCP server",
+      "description": "Model Context Protocol server exposing Ranatec company, product, news and FAQ data as tools, plus a consent-gated quote/enquiry tool.",
+      "baseURL": "https://ranatec.com/mcp",
+      "humanURL": "https://ranatec.com/agent/",
+      "X-format": "application/json",
+      "X-contentType": "mcp-server",
+      "X-transport": "Streamable HTTP (MCP spec), stateless",
+      "properties": [
+        {
+          "type": "X-mcp-tool",
+          "name": "get_company",
+          "description": "Company profile, contact details, certifications, locales, partners and careers."
+        },
+        {
+          "type": "X-mcp-tool",
+          "name": "list_products",
+          "description": "List products, filterable by category, domain, listing, model or text query."
+        },
+        {
+          "type": "X-mcp-tool",
+          "name": "get_product",
+          "description": "Full specifications for one product by id or model number (e.g. \"RI 268\")."
+        },
+        {
+          "type": "X-mcp-tool",
+          "name": "compare_products",
+          "description": "Side-by-side specification comparison of 2–6 products."
+        },
+        {
+          "type": "X-mcp-tool",
+          "name": "list_categories",
+          "description": "Product categories with summaries and product ids."
+        },
+        {
+          "type": "X-mcp-tool",
+          "name": "list_solutions",
+          "description": "Product domains and solution areas (wireless test automation, shielded enclosures, custom equipment)."
+        },
+        {
+          "type": "X-mcp-tool",
+          "name": "list_news",
+          "description": "News, product launches, technical articles and events; filter by type, year, product or text."
+        },
+        {
+          "type": "X-mcp-tool",
+          "name": "get_news_item",
+          "description": "Full text of one news item or article."
+        },
+        {
+          "type": "X-mcp-tool",
+          "name": "search",
+          "description": "Full-text search across products, news and FAQ."
+        },
+        {
+          "type": "X-mcp-tool",
+          "name": "get_faq",
+          "description": "Frequently asked questions with answers and sources."
+        },
+        {
+          "type": "X-mcp-tool",
+          "name": "list_pages",
+          "description": "Site pages with en-US, en-GB and en-CA URLs."
+        },
+        {
+          "type": "X-mcp-tool",
+          "name": "submit_inquiry",
+          "description": "Send a quote request or enquiry to Ranatec on behalf of the user — requires explicit user consent (user_authorized_submission: true)."
+        },
+        {
+          "type": "X-health",
+          "url": "https://ranatec.com/mcp/health"
+        },
+        {
+          "type": "X-tools",
+          "url": "https://ranatec.com/mcp/tools"
+        }
+      ],
+      "tags": [
+        "mcp",
+        "agent-actionable"
+      ]
+    },
+    {
+      "name": "XML sitemap",
+      "description": "Yoast SEO sitemap index (pages, posts, products, product categories).",
+      "baseURL": "https://ranatec.com/sitemap_index.xml",
+      "humanURL": "https://ranatec.com/",
+      "X-format": "application/xml",
+      "X-contentType": "sitemap-xml",
+      "X-purpose": "Crawling",
+      "properties": [],
+      "tags": [
+        "seo"
+      ]
+    },
+    {
+      "name": "robots.txt",
+      "description": "Crawler rules; AI crawlers (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, …) are allowed.",
+      "baseURL": "https://ranatec.com/robots.txt",
+      "humanURL": "https://ranatec.com/robots.txt",
+      "X-format": "text/plain",
+      "X-contentType": "robots-txt",
+      "X-purpose": "Crawler policy",
+      "properties": [],
+      "tags": [
+        "seo"
+      ]
+    },
+    {
+      "name": "Request a quote",
+      "description": "Human RFQ page — products are added to an RFQ list and submitted.",
+      "baseURL": "https://ranatec.com/request-quote/",
+      "humanURL": "https://ranatec.com/request-quote/",
+      "X-format": "text/html",
+      "X-contentType": "contact-page",
+      "X-purpose": "Sales contact",
+      "properties": [
+        {
+          "type": "X-locale",
+          "locale": "en-GB",
+          "url": "https://ranatec.com/en-gb/request-quote/"
+        },
+        {
+          "type": "X-locale",
+          "locale": "en-CA",
+          "url": "https://ranatec.com/en-ca/request-quote/"
+        }
+      ],
+      "tags": [
+        "sales"
+      ]
+    },
+    {
+      "name": "Contact us",
+      "description": "Human contact page.",
+      "baseURL": "https://ranatec.com/contact-us/",
+      "humanURL": "https://ranatec.com/contact-us/",
+      "X-format": "text/html",
+      "X-contentType": "contact-page",
+      "X-purpose": "General contact",
+      "properties": [
+        {
+          "type": "X-locale",
+          "locale": "en-GB",
+          "url": "https://ranatec.com/en-gb/contact-us/"
+        },
+        {
+          "type": "X-locale",
+          "locale": "en-CA",
+          "url": "https://ranatec.com/en-ca/contact-us/"
+        }
+      ],
+      "tags": [
+        "contact"
+      ]
+    }
+  ],
+  "maintainers": [
+    {
+      "FN": "Ranatec AB",
+      "email": "info@ranatec.com",
+      "X-web": "https://ranatec.com/"
+    }
+  ],
+  "X-organization": {
+    "name": "Ranatec AB",
+    "founded": 1991,
+    "parent": "Qamcom Group",
+    "address": "Falkenbergsgatan 3, 412 85 Gothenburg, Sweden",
+    "email": "info@ranatec.com",
+    "phone": "+46 31 706 16 60",
+    "certifications": [
+      "ISO 9001:2015"
+    ],
+    "locales": {
+      "en-US": "https://ranatec.com/",
+      "en-GB": "https://ranatec.com/en-gb/",
+      "en-CA": "https://ranatec.com/en-ca/"
+    },
+    "sameAs": [
+      "https://www.linkedin.com/company/ranatec-ab/",
+      "https://twitter.com/ranatec1"
+    ]
+  },
+  "X-discovery": {
+    "agent_page": "https://ranatec.com/agent/",
+    "llms_txt": "https://ranatec.com/llms.txt",
+    "llms_full_txt": "https://ranatec.com/llms-full.txt",
+    "ai_txt": "https://ranatec.com/ai.txt",
+    "rest_api": "https://ranatec.com/agent/v1/index.json",
+    "openapi": "https://ranatec.com/openapi.json",
+    "mcp_server": "https://ranatec.com/mcp",
+    "api_catalog": "https://ranatec.com/api-catalog.json",
+    "well_known_api_catalog": "https://ranatec.com/.well-known/api-catalog",
+    "sitemap": "https://ranatec.com/sitemap_index.xml"
+  }
+}

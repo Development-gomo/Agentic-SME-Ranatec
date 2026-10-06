@@ -1,0 +1,467 @@
+{
+  "meta": {
+    "source": "https://ranatec.com/agent/v1/categories.json",
+    "endpoint": "categories",
+    "version": "1.0",
+    "last_updated": "2026-10-06",
+    "publisher": "Ranatec AB",
+    "canonical_site": "https://ranatec.com/",
+    "locales": [
+      "en-US",
+      "en-GB",
+      "en-CA"
+    ],
+    "locale_note": "ranatec.com publishes the same English content in three regional variants: en-US (default, https://ranatec.com/), en-GB (/en-gb/) and en-CA (/en-ca/). Content is identical; each entity lists all three URLs.",
+    "count": 12
+  },
+  "categories": [
+    {
+      "id": "tunable-band-reject-filter",
+      "name": "Tunable Band Reject Filters",
+      "domain": "filtering",
+      "summary": "Band reject filter with high resolution electronical tuning between 600-6000 MHz, for 2G/3G/4G/5G applications.",
+      "meta_description": "Explore Ranatec's digitally tunable band reject filters (RI 260 series), covering 0.6–8 GHz for 5G and WiFi spurious emission testing.",
+      "overview": [
+        "The Ranatec Tunable Band Reject Filters are critical tools for adaptation to stringent new ETSI/3GPP conformance test specifications for mobile device radio properties, that covers all sub-6-GHz mobile bands and channel bandwidths for 2G/3G/4G/5G.",
+        "The new RI 268 targets device testing for mobile 2G/3G/4G/5G, WiFi 4/5/6/6E/7, Bluetooth, and covers all sub-8-GHz channel plans for design verification, product certification and product testing. The Ranatec Tunable Band Reject Filters are designed for formal conformance testing performed by accredited test houses, as well as internal verification by mobile device vendors. A flexible and easy to use test automation platform to support almost any ambition level, tailored to your demands.",
+        "The Tunable Band Reject Filters are fully equipped for conformance testing across all existing mobile bands and WiFi channels up to and including 8000 MHz. Filter characteristics remain constant across the entire frequency range. Frequency extension units are available as an option to complement the tunable band reject filters, extending the pass band up to 26.5 GHz or 40 GHz.",
+        "Critical tool for adaptation to stringent ETSI/3GPP conformance test specifications for mobile device radio properties in device testing. Designed for formal conformance testing performed by accredited test houses, as well as internal verification by device vendors.",
+        "Critical tool for adaptation to stringent ETSI/3GPP conformance test specifications for mobile device radio properties in device testing. Designed for formal conformance testing performed by accredited test houses, as well as internal verification by device vendors.",
+        "Critical tool for adaptation to stringent ETSI/3GPP conformance test specifications for mobile device radio properties in device testing. Designed for formal conformance testing performed by accredited test houses, as well as internal verification by device vendors.",
+        "Critical tool for adaptation to stringent ETSI/3GPP conformance test specifications for mobile device radio properties in device testing. Designed for formal conformance testing performed by accredited test houses, as well as internal verification by device vendors.",
+        "Critical tool for adaptation to stringent ETSI/3GPP conformance test specifications for mobile device radio properties in device testing. Designed for formal conformance testing performed by accredited test houses, as well as internal verification by device vendors.",
+        "0.6-6 GHz, 5 MHz (0.6-2.7 GHz) & 100 MHz (0.7-6 GHz) reject bandwidth, rack mount",
+        "Critical tool for adaptation to stringent ETSI/3GPP conformance test specifications for mobile device radio properties in device testing. Designed for formal conformance testing performed by accredited test houses, as well as internal verification by device vendors.",
+        "Critical tool for adaptation to stringent ETSI/3GPP conformance test specifications for mobile device radio properties in device testing. Designed for formal conformance testing performed by accredited test houses, as well as internal verification by device vendors.",
+        "A notch filter is a filter used to remove a specific frequency. A tunable notch filter has the feature that the center frequency of the notch can be set at different values, either mechanically or electronically."
+      ],
+      "product_ids": [
+        "tunable-band-reject-filter-ri-260",
+        "tunable-band-reject-filter-ri-261",
+        "tunable-band-reject-filter-ri-262",
+        "tunable-band-reject-filter-ri-263",
+        "tunable-band-reject-filter-ri-264",
+        "tunable-band-reject-filter-ri-266",
+        "tunable-band-reject-filter-ri-268"
+      ],
+      "product_count": 7,
+      "url": "https://ranatec.com/product-category/tunable-band-reject-filter/",
+      "urls": {
+        "en-US": "https://ranatec.com/product-category/tunable-band-reject-filter/",
+        "en-GB": "https://ranatec.com/en-gb/product-category/tunable-band-reject-filter/",
+        "en-CA": "https://ranatec.com/en-ca/product-category/tunable-band-reject-filter/"
+      },
+      "legacy_urls_redirecting_here": [
+        "https://ranatec.com/tunable-notch-filter/"
+      ],
+      "api_url": "https://ranatec.com/agent/v1/products.json?category=tunable-band-reject-filter",
+      "additional_listing_ids": []
+    },
+    {
+      "id": "tunable-band-pass-filter",
+      "name": "Tunable Band Pass Filters",
+      "domain": "filtering",
+      "summary": "Band pass filter with high resolution electronical tuning between 600-10 000 MHz.",
+      "meta_description": "Ranatec's digitally tunable band pass filters (RI 281, RI 282) cover 0.6–10 GHz for flexible RF signal filtering in test systems.",
+      "overview": [
+        "Ranatec offers high-performance, digitally tunable band pass filters, providing precision and adaptability across frequencies from 600 to 10,000 MHz.",
+        "With advanced electronic tuning, customizable bandwidth options, and steep filter slopes, these filters are ideal for a variety of applications. Designed for user convenience, they feature remote control via LAN and are rack-mountable.",
+        "0.6-10 GHz, 100 MHz filter bandwidth (other options available), rack mount",
+        "High-performance, digitally tunable band pass filter, providing precision and adaptability across a wide frequency range with advanced electronic tuning, and steep filter slopes.",
+        "0.6-6 GHz, combined 20 & 100 MHz filter bandwidth (other options available), rack mount",
+        "The RI 282 is a high-performance electronically tunable bandpass filter. It is fully equipped to conform to all existing sub-6 mobile bands. This is achieved by ingenious microwave design, digital signal processing and use of state-of-the-art components."
+      ],
+      "product_ids": [
+        "tunable-band-pass-filter-ri-281",
+        "tunable-band-pass-filter-ri-282"
+      ],
+      "product_count": 2,
+      "url": "https://ranatec.com/product-category/tunable-band-pass-filter/",
+      "urls": {
+        "en-US": "https://ranatec.com/product-category/tunable-band-pass-filter/",
+        "en-GB": "https://ranatec.com/en-gb/product-category/tunable-band-pass-filter/",
+        "en-CA": "https://ranatec.com/en-ca/product-category/tunable-band-pass-filter/"
+      },
+      "legacy_urls_redirecting_here": [],
+      "api_url": "https://ranatec.com/agent/v1/products.json?category=tunable-band-pass-filter",
+      "additional_listing_ids": []
+    },
+    {
+      "id": "butler-matrices",
+      "name": "Butler Matrices",
+      "domain": "automation",
+      "summary": "4×4 and 8×8 Butler matrices with the widest operational bandwidth on the market, developed for frequencies from 2.4 to 8 GHz.",
+      "meta_description": null,
+      "overview": [
+        "The Butler Matrix is a beamforming network which is typically used to feed a phased array of antenna elements. It controls the directions of a beam, or beams, of a radio transmission. The beam direction is controlled by switching power to the desired beam port.",
+        "The Butler Matrix is designed for wireless test applications using microstrip technology. The design and optimization was used based on computer simulations using ADS and HFSS. The hybrid couplers, cross-couplers, and the phase shifters are optimized one by one to get the best performances.",
+        "Supports multichannel MIMO testing for up to 4+4 antenna ports, covering all present Bluetooth and WiFi bands from 2.4 to 7.125 GHz. It can also be used for antenna array beamforming and interface testing for multiple systems in the frequency range, and for multichannel multipath emulation.",
+        "Supports multichannel MIMO testing for up to 8+8 antenna ports, covering all present Bluetooth and WiFi bands from 2.4 to 7.125 GHz. It can also be used for antenna array beamforming and interface testing for multiple systems in the frequency range, and for multichannel multipath emulation.",
+        "A Butler Matrix is a beamforming network. It is typically used to feed a phased array of antenna elements and controls the direction of a beam, or beams, of a radio transmission.",
+        "What is the difference between a Tunable notch filter and a Butler Matrix?",
+        "A Tunable notch filter is used to remove a specific radio frequency, whereas the purpose of a Butler Matrix is to control the direction of a beam, or beams, of radio transmissions.",
+        "Beamforming is a technique that focuses a wireless signal towards a specific receiving device, creating a more direct connection that is faster and more reliable than having a signal spread in all directions from a broadcast antenna.",
+        "What are the characteristics and functionality of a Butler Matrix?",
+        "The Butler Matrix is a type of beamforming network used to control the direction of a beam, or beams of a radio transmission. The characteristics of the Butler Matrix include:",
+        "– The phases of X outputs are linear with respect to their position so the beams are tilted off the main axis",
+        "– The phase increment between the outputs depends on which input is used."
+      ],
+      "product_ids": [
+        "butler-matrix-ri-3041",
+        "butler-matrix-ri-3101"
+      ],
+      "product_count": 2,
+      "url": "https://ranatec.com/product-category/butler-matrices/",
+      "urls": {
+        "en-US": "https://ranatec.com/product-category/butler-matrices/",
+        "en-GB": "https://ranatec.com/en-gb/product-category/butler-matrices/",
+        "en-CA": "https://ranatec.com/en-ca/product-category/butler-matrices/"
+      },
+      "legacy_urls_redirecting_here": [],
+      "api_url": "https://ranatec.com/agent/v1/products.json?category=butler-matrices",
+      "additional_listing_ids": []
+    },
+    {
+      "id": "digital-step-attenuator",
+      "name": "Digital Attenuator Boxes",
+      "domain": "automation",
+      "summary": "Digital attenuator systems with attenuation range of more than 90 dB in steps of up to 0.25 dB.",
+      "meta_description": "Browse Ranatec's rack-mount digital attenuator boxes (4–16 channel, 0.1–8 GHz) for precise RF power control in automated test systems.",
+      "overview": [
+        "Ranatec’s digital attenuators are used to accurately and reliably set RF-signal levels, either as an integral part of an in-service RF-solution or as part of a wireless test automation system. Applications span multiple industries and technologies.",
+        "Controlling the level of the RF signal with a digital step attenuator is a must to:",
+        "Secure compliance with standards and regulations (and to avoid unhealthy radiation)",
+        "Avoid hardware malfunctions and damages due to excessive RF levels",
+        "Optimize the performance of networks, receivers, transmitters, and other RF functions",
+        "Ranatec has developed a range of wireless test automation products, enabling accurate and efficient test and verification of RF and microwave subsystems, products and solutions. The Ranatec test automation product range contains both general purpose instruments as well as solutions tailored to customer specific demands and are used for design validation and verification, homologation and certification as well as production testing and in-service monitoring.",
+        "Digitally controlled, this RF attenuator box only occupies one heigh unit in a 19″ rack. Apart from the compact design, it offers good attenuation accuracy, high dynamic range and speed.",
+        "Digitally controlled, this RF attenuator box only occupies one heigh unit in a 19″ rack. Apart from the compact design, it offers good attenuation accuracy, high dynamic range and speed.",
+        "Digitally controlled RF attenuator box, with a large number of channels, for any automated RF testing where high accuracy signal power control is needed.",
+        "Digitally controlled RF attenuator box, with 12 channels, for any automated RF testing where high accuracy signal power control is needed.",
+        "Digitally controlled RF attenuator box, with 8 channels, for any automated RF testing where high accuracy signal power control is needed.",
+        "A digital attenuator is a device that attenuates or reduces the amplitude of an RF signal passing through it – where the amount of attenuation is digitally controlled. The main purpose of a digital attenuator is to set RF signal levels for testing and verification of RF and microwave subsystems, products, and solutions."
+      ],
+      "product_ids": [
+        "digital-attenuator-box-rf2025",
+        "digital-attenuator-box-rf2026",
+        "digital-attenuator-box-rf2034",
+        "digital-attenuator-box-rf2035",
+        "digital-attenuator-box-rf2036"
+      ],
+      "product_count": 5,
+      "url": "https://ranatec.com/product-category/digital-step-attenuator/",
+      "urls": {
+        "en-US": "https://ranatec.com/product-category/digital-step-attenuator/",
+        "en-GB": "https://ranatec.com/en-gb/product-category/digital-step-attenuator/",
+        "en-CA": "https://ranatec.com/en-ca/product-category/digital-step-attenuator/"
+      },
+      "legacy_urls_redirecting_here": [
+        "https://ranatec.com/digital-step-attenuator/"
+      ],
+      "api_url": "https://ranatec.com/agent/v1/products.json?category=digital-step-attenuator",
+      "additional_listing_ids": []
+    },
+    {
+      "id": "digital-step-attenuator-module",
+      "name": "Digital Step Attenuator Modules",
+      "domain": "automation",
+      "summary": "Digital attenuator module with attenuation range of more than 90 dB in steps of up to 0.25 dB.",
+      "meta_description": "Shop Ranatec's digital step attenuator modules for precise RF power control, covering 0.05–6 GHz with up to 95.25 dB attenuation range.",
+      "overview": [
+        "Ranatec offers digital attenuator modules and systems that cover all mobile frequency bands and gives a calibrated attenuation range of more than 90 dB in steps of 0.25 dB, and offers both serial and parallel control logic.",
+        "Our digital step attenuators modules are easy to integrate into any test setup to use for simulating transmission loss, signal fading, cross talk, or to calibrate power levels. Their wide range and fine granularity make them ideal for tight control over signal strength in demanding test environments.",
+        "Compact, high-accuracy digital step attenuator designed for precise control of RF signal levels. Ideal for wireless test automation or live RF systems, and used to simulate transmission loss, signal fading, cross talk, and to calibrate power levels. It is small, user-friendly, and built to deliver reliable performance across a broad range of applications.",
+        "A digital attenuator is an RF device that adjusts signal strength using digital control. It lets users set and vary attenuation levels electronically, making it ideal for automated test systems and RF signal chains. Digital attenuators are widely used in wireless, telecom, and radar applications.",
+        "A digital step attenuator (DSA) is a type of digital attenuator that adjusts signal strength in fixed increments—called steps. These steps can be adjusted for your needs, allowing for fine control. Digital step attenuator solutions are commonly used in automated test setups, wireless testing, and communication systems where repeatable, accurate signal level control is critical.",
+        "A digital attenuator reduces signal power without distorting the waveform. It protects sensitive components, simulates signal loss, and helps calibrate systems by setting precise signal levels. In RF testing, digital step attenuators solutions are often used to manage dynamic range to avoid overloading."
+      ],
+      "product_ids": [
+        "digital-attenuator-ri-4410"
+      ],
+      "product_count": 1,
+      "url": "https://ranatec.com/product-category/digital-step-attenuator-module/",
+      "urls": {
+        "en-US": "https://ranatec.com/product-category/digital-step-attenuator-module/",
+        "en-GB": "https://ranatec.com/en-gb/product-category/digital-step-attenuator-module/",
+        "en-CA": "https://ranatec.com/en-ca/product-category/digital-step-attenuator-module/"
+      },
+      "legacy_urls_redirecting_here": [
+        "https://ranatec.com/wireless-test-automation/digital-attenuator-module/"
+      ],
+      "api_url": "https://ranatec.com/agent/v1/products.json?category=digital-step-attenuator-module",
+      "additional_listing_ids": []
+    },
+    {
+      "id": "switch-box",
+      "name": "Switch Boxes and RF Test Automation Systems",
+      "domain": "switching",
+      "summary": "Flexible test system automation platform that helps you to integrate your complete test system into a single box.",
+      "meta_description": "Explore Ranatec RF switch boxes and test automation systems, from DC to 26.5 GHz, for automated wireless and RF production testing.",
+      "overview": [
+        "Flexible test system automation platform in a box. Ranatec offers both off the shelf and customized systems.",
+        "Wireless test automation has become a necessity in order to stay ahead in the race for more and more capable products and systems. Ranatec provides a range of products dedicated to help customer to rationalize their test set-ups and enable efficient and accurate wireless test automation:",
+        "Ranatec has developed a range of RF switching and routing products. Using high quality RF switches and couplers, any RF-signal path can be set up, to interconnect any device under test to any external or internal test port",
+        "In addition to flexibly setting up signal paths, Ranatec provides signal conditioning products such as",
+        "and RF filters, to assure the right power level and bandwidth at any port in a RF test set-up",
+        "Ranatec also has a range of more advanced and dedicated instruments to e g enable accurate spurious emissions tests (wide range of",
+        "to make performance verification under realistic conditions in a laboratory environment",
+        "Although many of our products have been developed to meet the requirements from the mobile industry, our wireless test automation products are used across several industries where testing RF equipment is a must. Applications for our products span the whole life-cycle: from early development and evaluation through product release and certification to production testing and in-service performance assessment. As supplier, Ranatec can supply anything from discrete RF-switching modules and",
+        "to complete test automation solutions, tailored to specific customer demands.",
+        "Repeatability, long lifetime, and fast switching, making it ideal for high-volume testing, such as production testing.",
+        "High power and linearity, with high-quality electro-mechanical switches.",
+        "12xSP6T, DC-18 GHz, Low PIM (Passive Intermodulation), rack mount"
+      ],
+      "product_ids": [
+        "customized-rf-switch-systems",
+        "solid-state-switch-box-rf2018b",
+        "switch-box-rf2020b",
+        "switch-box-rf2022b",
+        "switch-box-rf2037",
+        "switch-box-rf2038"
+      ],
+      "product_count": 6,
+      "url": "https://ranatec.com/product-category/switch-box/",
+      "urls": {
+        "en-US": "https://ranatec.com/product-category/switch-box/",
+        "en-GB": "https://ranatec.com/en-gb/product-category/switch-box/",
+        "en-CA": "https://ranatec.com/en-ca/product-category/switch-box/"
+      },
+      "legacy_urls_redirecting_here": [],
+      "api_url": "https://ranatec.com/agent/v1/products.json?category=switch-box",
+      "additional_listing_ids": [
+        "switch-box-2"
+      ]
+    },
+    {
+      "id": "rf-coaxial-switch",
+      "name": "Switch Modules",
+      "domain": "switching",
+      "summary": "RF and Microwave Solid State Switches with long lifetime, fast switching time, and low power consumption.",
+      "meta_description": "Explore Ranatec RF coaxial switch modules (SP4T, SP8T, DP8T) covering 0.1–6 GHz for lab automation and RF test system integration.",
+      "overview": [
+        "The Solid State RF and Microwave Switches offer the following advantages over mechanical switches:",
+        "Mechanical RF and Microwave Switches usually have lower insertion loss, higher isolation, and higher RF power handling capability. However, because of the advantages mentioned above, Solid State RF and Microwave Switches are to be preferred if very low insertion loss and/or very high isolation is not needed.",
+        "A RF coaxial switch/Microwave solid-state switch provides excellent performance with fast switching speed across a broad frequency range. A Ranatec RF coaxial switch/solid state switch provides safe and accurate tests of sensitive RF components. Applications include instrumentation, defense, communications, radar, antenna, and many other test systems that require high-speed RF switching. The long operating life of Ranatec’s RF coaxial switches/Microwave solid state switches makes them excellent in large-scale applications. If your company carries out high-volume",
+        "system to automate the testing process and streamline the product cycle",
+        "Small, light, and well suited for high-volume testing, such as production testing, where long lifetime, fast switching time, and low power consumption is needed.",
+        "DP8T (Dual Pole, 8 Throws), terminated, 0.1-6 GHz, high isolation between ports",
+        "Initially designed for med-tech purpose, this solid state switch offers high isolation between ports.",
+        "The Ranatec SP8T Solid State Switch operates from DC to 6 GHz with low insertion loss, I2C control, and fast switching for RF applications.",
+        "An RF coaxial switch is an electromechanical relay, or solid-state relay, which is used to direct RF signals from one path to another path. Coaxial switches are typically used in signal routing applications where a high level of automation is requested.",
+        "The Ranatec RF Coaxial Switch is of the type solid-state, which means electronic switching with no moving parts – they are also known as “Solid State RF Switches”. The result is coaxial switches with fast switching speed across all frequencies and long lifetime.",
+        "When you’re buying RF switches, there are several considerations regarding specifications and interfaces you need to keep in mind to select the one that matches your needs and situation:"
+      ],
+      "product_ids": [
+        "solid-state-switch-ri-2441",
+        "solid-state-switch-ri-2582",
+        "solid-state-switch-ri-2583"
+      ],
+      "product_count": 3,
+      "url": "https://ranatec.com/product-category/rf-coaxial-switch/",
+      "urls": {
+        "en-US": "https://ranatec.com/product-category/rf-coaxial-switch/",
+        "en-GB": "https://ranatec.com/en-gb/product-category/rf-coaxial-switch/",
+        "en-CA": "https://ranatec.com/en-ca/product-category/rf-coaxial-switch/"
+      },
+      "legacy_urls_redirecting_here": [
+        "https://ranatec.com/rf-coaxial-switch/"
+      ],
+      "api_url": "https://ranatec.com/agent/v1/products.json?category=rf-coaxial-switch",
+      "additional_listing_ids": []
+    },
+    {
+      "id": "rf-shield-box",
+      "name": "Shield Boxes",
+      "domain": "shielding",
+      "summary": "Off-the-shelf and customized RF shield boxes with various I/O interface configurations, ventilation, and rack mount option.",
+      "meta_description": "Ranatec RF shield boxes (2U–6U rack mount, 60 dB+ shielding) isolate devices under test from RF noise for accurate 5G, WiFi and Bluetooth testing.",
+      "overview": [
+        "Ranatec offers RF Shield Boxes that provide excellent shielding performance across a range of frequencies, including 2G, 3G, 4G, 5G, WiFi, and Bluetooth.",
+        "Designed for efficiency, most models are 19″ rack-mountable and feature easy one-hand operation with minimal waste of space.",
+        "Our smallest Shield Box, occupying only two heigh units in a 19″ rack, that can be equipped with shielding walls to create multiple compartments for testing of many devices in one box.",
+        "Our medium sized Shield Box for 19″ rack mount, that can be equipped with outlet power strip inside the box.",
+        "Our largest Shield Box for 19″ rack mount, that as standard is equipped with two integrated aluminium ventilation panels and a fan.",
+        "Provides 70 dB attenuation between 1 and 10 GHz, ideal for large equipment, with top access and powerful ventilation.",
+        "Ranatec is one of the leading RF shield box designers and producers on the market with wide expertise in RF shielding and technology. We offer modular and fully customizable RF shield boxes to meet your needs and requirements.",
+        "RF shield boxes are used within a wide variety of areas for applications such as:",
+        "RF shield boxes create an isolated testing environment that is used to guarantee precise test outputs and the possibility of test repeatability.",
+        "The purpose of RF shielding is to block radio frequencies from interfering with a product’s/device’s performance and functionality during performance/reliability testing of wireless, cellular and IoT devices. RF shielding is necessary to create an isolated test environment where both precise test outputs and test repeatability are possible."
+      ],
+      "product_ids": [
+        "customized-rf-shield-box",
+        "shield-box-ri-181",
+        "shield-box-ri-187",
+        "shield-box-ri-188",
+        "shield-box-ri-189"
+      ],
+      "product_count": 5,
+      "url": "https://ranatec.com/product-category/rf-shield-box/",
+      "urls": {
+        "en-US": "https://ranatec.com/product-category/rf-shield-box/",
+        "en-GB": "https://ranatec.com/en-gb/product-category/rf-shield-box/",
+        "en-CA": "https://ranatec.com/en-ca/product-category/rf-shield-box/"
+      },
+      "legacy_urls_redirecting_here": [],
+      "api_url": "https://ranatec.com/agent/v1/products.json?category=rf-shield-box",
+      "additional_listing_ids": []
+    },
+    {
+      "id": "forensic-box",
+      "name": "Forensic RF Shield Box",
+      "domain": "shielding",
+      "summary": "High performance Forensic RF box for analysis and protection of radio transceivers and transmitters.",
+      "meta_description": "Ranatec's RI 198 Forensic RF Box isolates mobile phones and wireless devices for law enforcement, customs and forensic investigations.",
+      "overview": [
+        "The Ranatec high-performance forensic enclosure, also referred to as a forensic faraday box, is an RF shield box designed for protection and analysis of devices that includes radio transceivers and transmitters. This type of forensic analysis enclosure is typically used by law enforcement and forensic investigators and blocks all wireless signals like WiFi, Bluetooth, 2G, 3G, LTE and 5G.",
+        "The Ranatec forensic RF shielded test enclosure is equipped with RF shielded gloves and a shielded window. For analysis and charging, the forensic box can include AC, USB, LAN, and HDMI interfaces. It can also be equipped with ventilation and fans, making it suitable for testing heat-generating devices.",
+        "Blocks WiFi, Bluetooth, 2G, 3G, LTE and 5G signals. Featuring RF-shielded gloves, a shielded window, and lighting. Can be configured with various shielded and filtered communication interfaces for secure analysis.",
+        "Forensic RF shielded boxes are suitable for applications such as protecting wireless devices from being hacked, storing wireless devices (evidence) collected at crimes scenes and for analysis of signal jammers.",
+        "Which industries can the Forensic RF shielded box be used in?",
+        "The Forensic RF shielded box is, as the name suggests, pretty much only used within the forensic industry. It is an RF shield box specifically designed for forensics technicians to be able to perform electronic device interrogations."
+      ],
+      "product_ids": [
+        "forensic-rf-box-ri-198"
+      ],
+      "product_count": 1,
+      "url": "https://ranatec.com/product-category/forensic-box/",
+      "urls": {
+        "en-US": "https://ranatec.com/product-category/forensic-box/",
+        "en-GB": "https://ranatec.com/en-gb/product-category/forensic-box/",
+        "en-CA": "https://ranatec.com/en-ca/product-category/forensic-box/"
+      },
+      "legacy_urls_redirecting_here": [],
+      "api_url": "https://ranatec.com/agent/v1/products.json?category=forensic-box",
+      "additional_listing_ids": []
+    },
+    {
+      "id": "shielded-feedthrough-filters",
+      "name": "Shielded Feedthrough Filters",
+      "domain": "shielding",
+      "summary": "EMI/RFI shielded I/O interfaces with filter suppression over all mobile frequency bands.",
+      "meta_description": "Browse Ranatec's shielded feedthrough filters for USB, LAN, HDMI, fiber and AC power, engineered for RF/EMI shielded enclosures.",
+      "overview": [
+        "Ranatec offers a variety of RF shielded EMI Feedthrough Filters for LAN, USB, HDMI, and AC power, with high-performance filter suppression over a large frequency range.",
+        "The Ranatec feedthrough filters have been trusted by customers since their launch in 2012 and can be used for all types of applications where signals need to be fed through a shielded wall.",
+        "Enables USB 2.0 signal transmission through RF shielded fabric enclosures, such as pouches and bags, providing 75 dB suppression at key frequencies. The fabric is fixed between the filter housing and a washer, with four M3 screws, for simple and reliable mounting. The cutout dimensions are the same as for RI 4171, making it modular.",
+        "Enables USB 3.0 signal transmission through RF shielded fabric enclosures, such as pouches and bags, providing 75 dB suppression at key frequencies. The fabric is fixed between the filter housing and a washer by four M3 screws, for simple and reliable mounting. The cutout dimensions are the same as for RI 4170, making it modular.",
+        "Enables Ethernet signal transmission through shielded enclosures, providing 75 dB suppression at key frequencies.",
+        "Enables USB 2.0 signal transmission through shielded enclosures with two USB ports in a compact design, supporting up to 480 Mbps.",
+        "Enables USB 2.0 signal transmission through shielded enclosures with one USB port, supporting up to 480 Mbps.",
+        "Enables USB 2.0 signal transmission through shielded enclosures in one of our smallest designs, supporting up to 480 Mbps.",
+        "USB 3.0, B-A connectors, switchable on/off power (active), panel mount",
+        "Enables USB 3.0 signal transmission through shielded enclosures and offers remote switchable on/off power (active), making it ideal for applications where the DUT is tested in the start-up phase. The filter can also be used without this feature. Supporting SuperSpeed 5 Gbps.",
+        "Enables HDMI signal transmission through shielded enclosures, providing 75 dB suppression at key frequencies.",
+        "Enables high-speed Ethernet signal transmission through shielded enclosures, providing 80 dB suppression at key frequencies."
+      ],
+      "product_ids": [
+        "feedthrough-filter-ri-4170",
+        "feedthrough-filter-ri-4171",
+        "feedthrough-filter-ri-4182",
+        "feedthrough-filter-ri-4184",
+        "feedthrough-filter-ri-4185",
+        "feedthrough-filter-ri-4188",
+        "feedthrough-filter-ri-4192",
+        "feedthrough-filter-ri-4193",
+        "feedthrough-filter-ri-4194",
+        "feedthrough-filter-ri-4199",
+        "feedthrough-filter-ri-4201",
+        "feedthrough-filter-ri-4205",
+        "feedthrough-filter-ri-4206",
+        "optical-fiber-feedthru-ri-4196"
+      ],
+      "product_count": 14,
+      "url": "https://ranatec.com/product-category/shielded-feedthrough-filters/",
+      "urls": {
+        "en-US": "https://ranatec.com/product-category/shielded-feedthrough-filters/",
+        "en-GB": "https://ranatec.com/en-gb/product-category/shielded-feedthrough-filters/",
+        "en-CA": "https://ranatec.com/en-ca/product-category/shielded-feedthrough-filters/"
+      },
+      "legacy_urls_redirecting_here": [],
+      "api_url": "https://ranatec.com/agent/v1/products.json?category=shielded-feedthrough-filters",
+      "additional_listing_ids": [
+        "110-230-vac-feedthru-filter-ri-4195",
+        "dual-usb-2-0-feedthru-filter-ri-4184",
+        "feedthrough-filter-ri-4197",
+        "filtered-terminal-block-ri-4198",
+        "hdmi-feedthru-filter-ri-4193",
+        "lan-1-gbps-feedthru-filter-ri-4182",
+        "lan-10-gbps-feedthru-filter-ri-4194",
+        "optical-fiber-feedthrough-ri-4196",
+        "ri-4170",
+        "ri-4205-110-230-vac-feedthru-filter",
+        "usb-3-0-feedthru-filter-ri-4192",
+        "usb-3-2-c-20-gbps-feedthru-filter-ri-4199"
+      ]
+    },
+    {
+      "id": "emi-ventilation-panels",
+      "name": "EMI Ventilation Panels",
+      "domain": "shielding",
+      "summary": "Enables ventilation of shielded boxes and rooms, while maintaining EMI/RFI shielding.",
+      "meta_description": "Discover Ranatec EMI ventilation panels with up to 105 dB shielding to 9 GHz, sized for 80, 120 and 225 mm fans in shielded enclosures.",
+      "overview": [
+        "EMI ventilation panel designed to be used in the most demanding shielding applications.",
+        "Fits standard fans 80x80 mm, 105 dB shielding up to 9 GHz, panel mount",
+        "Our smallest aluminium ventilation panel, that can be used with small standard fans.",
+        "Fits standard fans 120x120 mm, 105 dB shielding up to 9 GHz, panel mount",
+        "Our medium sized aluminium ventilation panel, prepared for use with standard fans.",
+        "Fits standard fans 225x225 mm, 105 dB shielding up to 9 GHz, panel mount",
+        "Our largest aluminium ventilation panel for powerful ventilation solutions."
+      ],
+      "product_ids": [
+        "emi-ventilation-panel-ri-4901",
+        "emi-ventilation-panel-ri-4905",
+        "emi-ventilation-panel-ri-4910"
+      ],
+      "product_count": 3,
+      "url": "https://ranatec.com/product-category/emi-ventilation-panels/",
+      "urls": {
+        "en-US": "https://ranatec.com/product-category/emi-ventilation-panels/",
+        "en-GB": "https://ranatec.com/en-gb/product-category/emi-ventilation-panels/",
+        "en-CA": "https://ranatec.com/en-ca/product-category/emi-ventilation-panels/"
+      },
+      "legacy_urls_redirecting_here": [],
+      "api_url": "https://ranatec.com/agent/v1/products.json?category=emi-ventilation-panels",
+      "additional_listing_ids": []
+    },
+    {
+      "id": "accessories",
+      "name": "Accessories and options",
+      "domain": null,
+      "summary": "Options and accessories listed in the Ranatec shop (RF absorption foam, internal shielding walls, bulkhead connectors, DC feedthru EMI filters, mounting brackets, frequency extension boxes). Not a category page on ranatec.com; grouped here for agents.",
+      "meta_description": null,
+      "overview": [],
+      "product_ids": [
+        "frequency-extension-box-ri-4270",
+        "frequency-extension-box-ri-4271",
+        "frequency-extension-box-ri-4272",
+        "frequency-extension-box-ri-4273",
+        "frequency-extension-box-ri-4274",
+        "frequency-extension-box-ri-4276",
+        "frequency-extension-box-ri-4278",
+        "mounting-brackets-ri-3041-07",
+        "mounting-brackets-ri-3101-16",
+        "option-rf-absorption-foam-inside-box",
+        "rf-absorption-foam-inside-box",
+        "ri-181-11-internal-shielding-wall",
+        "ri-4197",
+        "ri-4198",
+        "ri181-13-dc-feedthru-emi-filter",
+        "ri181-14-smaf-smaf-bulkhead-connector",
+        "ri181-15-rf-absorption-foam-inside-box-2u",
+        "ri187-15-rf-absorption-foam-inside-box-4u",
+        "ri188-15-rf-absorption-foam-inside-box-6u",
+        "smaf-bulkhead-connector-ri-181-14"
+      ],
+      "product_count": 20,
+      "url": "https://ranatec.com/shop/",
+      "urls": {
+        "en-US": "https://ranatec.com/shop/",
+        "en-GB": "https://ranatec.com/en-gb/shop/",
+        "en-CA": "https://ranatec.com/en-ca/shop/"
+      },
+      "legacy_urls_redirecting_here": [],
+      "api_url": "https://ranatec.com/agent/v1/products.json?category=accessories"
+    }
+  ]
+}

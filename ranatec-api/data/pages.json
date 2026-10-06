@@ -1,0 +1,166 @@
+{
+  "meta": {
+    "source": "https://ranatec.com/agent/v1/pages.json",
+    "endpoint": "pages",
+    "version": "1.0",
+    "last_updated": "2026-10-06",
+    "publisher": "Ranatec AB",
+    "canonical_site": "https://ranatec.com/",
+    "locales": [
+      "en-US",
+      "en-GB",
+      "en-CA"
+    ],
+    "locale_note": "ranatec.com publishes the same English content in three regional variants: en-US (default, https://ranatec.com/), en-GB (/en-gb/) and en-CA (/en-ca/). Content is identical; each entity lists all three URLs.",
+    "count": 12
+  },
+  "pages": [
+    {
+      "id": "home",
+      "title": "RF Test & Measurement Equipment Manufacturer",
+      "purpose": "Homepage — product domains (filtering, shielding, switching, automation), featured products, FAQ",
+      "meta_description": "Ranatec supplies unique RF test and measurement equipment for niche RF and microwave applications. Visit our website to explore our range of products.",
+      "urls": {
+        "en-US": "https://ranatec.com/",
+        "en-GB": "https://ranatec.com/en-gb/",
+        "en-CA": "https://ranatec.com/en-ca/"
+      },
+      "date_modified": "2026-10-01"
+    },
+    {
+      "id": "about-us",
+      "title": "About Us: Learn about the company mission and history",
+      "purpose": "Company background, Qamcom Group ownership, ISO 9001:2015 certification",
+      "meta_description": "Learn about RF and Microwave applications with us at Ranatec. We specialize in unique RF test & measurement equipment with over 30 years of experience.",
+      "urls": {
+        "en-US": "https://ranatec.com/about-us/",
+        "en-GB": "https://ranatec.com/en-gb/about-us/",
+        "en-CA": "https://ranatec.com/en-ca/about-us/"
+      },
+      "date_modified": "2026-09-18"
+    },
+    {
+      "id": "contact-us",
+      "title": "Contact us for RF and microwave design and measurements",
+      "purpose": "Address, phone, email",
+      "meta_description": "Interested in RF and microwave applications? Contact us at Ranatec or visit our website to ask for a quote for our unique RF test and measurement equipment.",
+      "urls": {
+        "en-US": "https://ranatec.com/contact-us/",
+        "en-GB": "https://ranatec.com/en-gb/contact-us/",
+        "en-CA": "https://ranatec.com/en-ca/contact-us/"
+      },
+      "date_modified": "2026-07-16"
+    },
+    {
+      "id": "wireless-test-automation",
+      "title": "Wireless test services tailored to customer demands",
+      "purpose": "Solution page — wireless test automation",
+      "meta_description": "We provide wireless test automation at Ranatec to increase efficiency and accuracy. Contact us for total test automation solutions tailored to customer demands.",
+      "urls": {
+        "en-US": "https://ranatec.com/wireless-test-automation/",
+        "en-GB": "https://ranatec.com/en-gb/wireless-test-automation/",
+        "en-CA": "https://ranatec.com/en-ca/wireless-test-automation/"
+      },
+      "date_modified": "2026-09-08"
+    },
+    {
+      "id": "rf-shielded-enclosure",
+      "title": "RF Shielded Enclosure - Test boxes",
+      "purpose": "Solution page — RF shielded enclosures, customised shield boxes, FAQ",
+      "meta_description": "Ranatec's RF Shielded Enclosures enables high shielding from outside interferance for any device under test. Contact us to know more about our shielding solutions!",
+      "urls": {
+        "en-US": "https://ranatec.com/rf-shielded-enclosure/",
+        "en-GB": "https://ranatec.com/en-gb/rf-shielded-enclosure/",
+        "en-CA": "https://ranatec.com/en-ca/rf-shielded-enclosure/"
+      },
+      "date_modified": "2026-09-18"
+    },
+    {
+      "id": "latest-news",
+      "title": "Latest News & Updates on RF Equipments by Ranatec",
+      "purpose": "News archive",
+      "meta_description": "Get the latest news and updates on RF test and measuring equipments from Ranatec. Make sure you are up to date with our new blogs and news.",
+      "urls": {
+        "en-US": "https://ranatec.com/latest-news/",
+        "en-GB": "https://ranatec.com/en-gb/latest-news/",
+        "en-CA": "https://ranatec.com/en-ca/latest-news/"
+      },
+      "date_modified": "2026-07-10"
+    },
+    {
+      "id": "shop",
+      "title": "Shop",
+      "purpose": "Full product listing (RFQ shop, no public prices)",
+      "meta_description": "Browse Ranatec's full range of RF and microwave test equipment, from shield boxes and switch systems to tunable filters and attenuators.",
+      "urls": {
+        "en-US": "https://ranatec.com/shop/",
+        "en-GB": "https://ranatec.com/en-gb/shop/",
+        "en-CA": "https://ranatec.com/en-ca/shop/"
+      },
+      "date_modified": "2026-09-11"
+    },
+    {
+      "id": "request-quote",
+      "title": "Request a Quote",
+      "purpose": "RFQ list / quote request",
+      "meta_description": "Request a quote from Ranatec for RF and microwave test equipment, shield boxes, switch systems and custom signal conditioning solutions.",
+      "urls": {
+        "en-US": "https://ranatec.com/request-quote/",
+        "en-GB": "https://ranatec.com/en-gb/request-quote/",
+        "en-CA": "https://ranatec.com/en-ca/request-quote/"
+      },
+      "date_modified": "2026-09-11"
+    },
+    {
+      "id": "cookies-policy",
+      "title": "Cookies Policy",
+      "purpose": "Cookie policy",
+      "meta_description": "We at Ranatec respect the privacy of your personal information and make effort to ensure your information is protected and private. Read more about our cookie policy on our page",
+      "urls": {
+        "en-US": "https://ranatec.com/cookies-policy/",
+        "en-GB": "https://ranatec.com/en-gb/cookies-policy/",
+        "en-CA": "https://ranatec.com/en-ca/cookies-policy/"
+      },
+      "date_modified": "2023-02-23"
+    },
+    {
+      "id": "cart",
+      "title": "Cart",
+      "purpose": "RFQ cart (transactional — not for indexing)",
+      "meta_description": null,
+      "urls": {
+        "en-US": "https://ranatec.com/cart/",
+        "en-GB": "https://ranatec.com/en-gb/basket/",
+        "en-CA": "https://ranatec.com/en-ca/shopping-cart/"
+      },
+      "transactional": true,
+      "date_modified": null
+    },
+    {
+      "id": "checkout",
+      "title": "Checkout",
+      "purpose": "Checkout (transactional)",
+      "meta_description": null,
+      "urls": {
+        "en-US": "https://ranatec.com/checkout/",
+        "en-GB": "https://ranatec.com/en-gb/checkout/",
+        "en-CA": "https://ranatec.com/en-ca/checkout/"
+      },
+      "transactional": true,
+      "date_modified": null
+    },
+    {
+      "id": "my-account",
+      "title": "My Account",
+      "purpose": "Customer account (login)",
+      "meta_description": null,
+      "urls": {
+        "en-US": "https://ranatec.com/my-account/",
+        "en-GB": "https://ranatec.com/en-gb/my-account/",
+        "en-CA": "https://ranatec.com/en-ca/my-account/"
+      },
+      "transactional": true,
+      "date_modified": null
+    }
+  ]
+}

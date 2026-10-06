@@ -1,0 +1,212 @@
+{
+  "meta": {
+    "source": "https://ranatec.com/agent/v1/company.json",
+    "endpoint": "company",
+    "version": "1.0",
+    "last_updated": "2026-10-06",
+    "publisher": "Ranatec AB",
+    "canonical_site": "https://ranatec.com/",
+    "locales": [
+      "en-US",
+      "en-GB",
+      "en-CA"
+    ],
+    "locale_note": "ranatec.com publishes the same English content in three regional variants: en-US (default, https://ranatec.com/), en-GB (/en-gb/) and en-CA (/en-ca/). Content is identical; each entity lists all three URLs."
+  },
+  "company": {
+    "legal_name": "Ranatec AB",
+    "brand": "Ranatec",
+    "website": "https://ranatec.com/",
+    "tagline": "We create progress.",
+    "description": "Ranatec designs and manufactures niche RF test and measurement equipment for filtering, shielding, switching and automation — used for design verification, product certification, production testing, expert troubleshooting and in-service monitoring of wireless devices and systems.",
+    "about": [
+      "A part of the Qamcom Group, Ranatec designs and manufactures niche test and measurement tools for the most demanding RF and microwave applications.",
+      "Ranatec is a specialist in test equipment for design verification, product certification, production testing as well as expert trouble-shooting and in-service monitoring.",
+      "The product portfolio has been developed in close cooperation with leading global brands within cellular infrastructure, mobile phone and radar system industries, and offers products for Wireless Test Automation, RFI/EMI Shielding and Radar Testing.",
+      "Ranatec is not only a distributor but an RF test equipment manufacturer, with sales, engineering, manufacturing and customer support in Gothenburg, Sweden. All products are designed, engineered and manufactured in Sweden.",
+      "Customers are producers of semiconductors, devices and base stations, as well as ISPs and certification institutes."
+    ],
+    "parent_company": {
+      "name": "Qamcom Group",
+      "note": "Qamcom Technology AB acquired Ranatec Instrument AB in September 2018 (source: news article 2018-09-03)."
+    },
+    "certifications": [
+      {
+        "name": "ISO 9001:2015",
+        "certificate_pdf": "https://ranatec.com/wp-content/uploads/2025/04/2460-Ranatec-AB-en.pdf"
+      }
+    ],
+    "experience": "Over 30 years of experience in RF and microwave applications (per the About Us page meta description).",
+    "headquarters": {
+      "street_address": "Falkenbergsgatan 3",
+      "postal_code": "412 85",
+      "city": "Gothenburg",
+      "country": "Sweden",
+      "country_code": "SE"
+    },
+    "contact": {
+      "email": "info@ranatec.com",
+      "phone": "+46 31 706 16 60",
+      "contact_page": {
+        "en-US": "https://ranatec.com/contact-us/",
+        "en-GB": "https://ranatec.com/en-gb/contact-us/",
+        "en-CA": "https://ranatec.com/en-ca/contact-us/"
+      },
+      "quote_page": {
+        "en-US": "https://ranatec.com/request-quote/",
+        "en-GB": "https://ranatec.com/en-gb/request-quote/",
+        "en-CA": "https://ranatec.com/en-ca/request-quote/"
+      }
+    },
+    "sales_model": "B2B, request-for-quote. Products are added to an RFQ list on ranatec.com; no public prices are shown.",
+    "product_domains": [
+      {
+        "id": "filtering",
+        "name": "Filtering",
+        "summary": "Digitally tunable band reject (notch) and band pass filters for 2G/3G/4G/5G, Wi-Fi and Bluetooth conformance and spurious-emission testing.",
+        "category_ids": [
+          "tunable-band-reject-filter",
+          "tunable-band-pass-filter"
+        ]
+      },
+      {
+        "id": "shielding",
+        "name": "Shielding",
+        "summary": "RF shield boxes (off-the-shelf and customised), forensic RF box, shielded feedthrough filters (USB, LAN, HDMI, AC, DC, optical fibre) and EMI ventilation panels.",
+        "category_ids": [
+          "rf-shield-box",
+          "forensic-box",
+          "shielded-feedthrough-filters",
+          "emi-ventilation-panels"
+        ]
+      },
+      {
+        "id": "switching",
+        "name": "Switching",
+        "summary": "Solid-state switch modules and rack-mount RF switch boxes from DC to 26.5 GHz, plus a modular platform for custom switch systems.",
+        "category_ids": [
+          "switch-box",
+          "rf-coaxial-switch"
+        ]
+      },
+      {
+        "id": "automation",
+        "name": "Automation",
+        "summary": "Digital step attenuators and attenuator boxes, Butler matrices and complete wireless test automation systems.",
+        "category_ids": [
+          "butler-matrices",
+          "digital-step-attenuator",
+          "digital-step-attenuator-module"
+        ]
+      }
+    ],
+    "industries_served": [
+      "Mobile devices and handsets",
+      "Cellular infrastructure / base stations",
+      "Semiconductors (wireless chipsets)",
+      "Test houses and certification institutes",
+      "Internet service providers / network operators",
+      "Radar systems",
+      "Automotive (multimedia and connectivity testing)",
+      "Law enforcement / digital forensics",
+      "Radio astronomy (SKAO signal-processing hardware via Qamcom)"
+    ],
+    "standards_referenced": [
+      "3GPP TS 136 521-1 (LTE UE conformance)",
+      "3GPP TS 138 521-1 (5G NR UE conformance)",
+      "ETSI conformance test specifications",
+      "IEEE 802.11 (Wi-Fi 4/5/6/6E/7)",
+      "Bluetooth",
+      "MIL-STD-285 and MIL-STD-461 (shielding)"
+    ],
+    "differentiators": [
+      "Own design, engineering and manufacturing in Gothenburg, Sweden — standard and customised products from a modular mechanical and electrical platform.",
+      "Niche focus: products where tier-1 test-equipment vendors are less competitive (e.g. first-of-a-kind tunable band reject filters 600–8000 MHz, widest-bandwidth 4×4 and 8×8 Butler matrices 2.4–8 GHz).",
+      "Responsiveness and close cooperation between sales, engineering, manufacturing and customer support."
+    ],
+    "distribution_partners": [
+      {
+        "name": "Signal Solutions",
+        "note": "Distribution agreement announced 2020-05-27",
+        "source": "https://ranatec.com/signal-solutions-inks-agreement-to-distribute-ranatec-test-measurement-tools/"
+      },
+      {
+        "name": "Conical Technologies",
+        "region": "South Africa",
+        "note": "Distributor announced 2020-04-02",
+        "source": "https://ranatec.com/conical-technologies-distributor-south-africa/"
+      }
+    ],
+    "named_contacts": [
+      {
+        "name": "Charlotte Ornstein",
+        "role": "Operations",
+        "email": "charlotte.ornstein@ranatec.com",
+        "phone": "+46 31 706 16 60",
+        "source": "https://ranatec.com/ranatec-launches-16-channel-rf-attenuator-box/",
+        "source_date": "2025-05-06"
+      },
+      {
+        "name": "Leslie Johnsen",
+        "role": "Public Relations",
+        "email": "leslie.johnsen@ranatec.com",
+        "phone": "+47 4145 8043",
+        "source": "https://ranatec.com/ranatec-launches-16-channel-rf-attenuator-box/",
+        "source_date": "2025-05-06"
+      },
+      {
+        "name": "Magnus Kilian",
+        "role": "CEO (appointed 2019-10-01; most recently named as CEO in site news on 2023-03-16)",
+        "email": "magnus.kilian@ranatec.com",
+        "source": "https://ranatec.com/ranatec-at-emv-in-stuttgart-28-30-march-2023/",
+        "source_date": "2023-03-16"
+      }
+    ],
+    "named_contacts_note": "ranatec.com has no team page. These people are named as contacts in Ranatec press releases. For quotes and general enquiries use info@ranatec.com.",
+    "social": {
+      "linkedin": "https://www.linkedin.com/company/ranatec-ab/",
+      "x_twitter": "https://twitter.com/ranatec1"
+    },
+    "founded": 1991,
+    "founded_source": "https://career.ranatec.com/jobs",
+    "careers": {
+      "url": "https://career.ranatec.com/",
+      "jobs_url": "https://career.ranatec.com/jobs",
+      "platform": "Teamtailor",
+      "language": "sv",
+      "open_positions_as_of": "2026-10-06",
+      "open_positions": [
+        {
+          "id": "job-elektronikmontor-rf-mikrovagsteknik",
+          "title": "Elektronikmontör - RF- & mikrovågsteknik",
+          "title_en": "Electronics Assembler – RF & Microwave Technology",
+          "location": "Gothenburg, Sweden",
+          "languages_required": [
+            "English",
+            "Swedish"
+          ],
+          "summary_en": "Production role: assembly (incl. soldering, ESD-protected environment), RF/microwave performance measurement, calibration, functional test, troubleshooting, quality control and documentation of Ranatec test equipment. Rolling selection.",
+          "url": "https://career.ranatec.com/jobs/8314724-elektronikmontor-rf-mikrovagsteknik"
+        }
+      ]
+    },
+    "locales": [
+      {
+        "code": "en-US",
+        "hreflang": "en-US",
+        "base_url": "https://ranatec.com/",
+        "default": true
+      },
+      {
+        "code": "en-GB",
+        "hreflang": "en-GB",
+        "base_url": "https://ranatec.com/en-gb/"
+      },
+      {
+        "code": "en-CA",
+        "hreflang": "en-CA",
+        "base_url": "https://ranatec.com/en-ca/"
+      }
+    ]
+  }
+}

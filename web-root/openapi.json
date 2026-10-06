@@ -1,0 +1,1884 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Ranatec Agent API",
+    "version": "1.0.0",
+    "description": "Read-only JSON API describing Ranatec AB (Gothenburg, Sweden) — RF test & measurement equipment for filtering, shielding, switching and automation — plus one consent-gated POST endpoint for quote requests and enquiries. Content mirrors ranatec.com in three regional English locales (en-US default, en-GB, en-CA); every entity lists all three URLs. Ranatec publishes no prices: all products are sold B2B via request for quote.",
+    "contact": {
+      "name": "Ranatec AB",
+      "email": "info@ranatec.com",
+      "url": "https://ranatec.com/contact-us/"
+    },
+    "x-agent-page": "https://ranatec.com/agent/",
+    "x-llms-txt": "https://ranatec.com/llms.txt",
+    "x-mcp-server": "https://ranatec.com/mcp"
+  },
+  "externalDocs": {
+    "description": "Machine-readable agent page",
+    "url": "https://ranatec.com/agent/"
+  },
+  "servers": [
+    {
+      "url": "https://ranatec.com/agent/v1",
+      "description": "Production"
+    }
+  ],
+  "tags": [
+    {
+      "name": "discovery"
+    },
+    {
+      "name": "company"
+    },
+    {
+      "name": "products"
+    },
+    {
+      "name": "content"
+    },
+    {
+      "name": "actions"
+    }
+  ],
+  "paths": {
+    "/index.json": {
+      "get": {
+        "tags": [
+          "discovery"
+        ],
+        "operationId": "getIndex",
+        "summary": "API index, counts and discovery links",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndexResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schema.json": {
+      "get": {
+        "tags": [
+          "discovery"
+        ],
+        "operationId": "getSchema",
+        "summary": "Field reference and conventions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SchemaResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/company.json": {
+      "get": {
+        "tags": [
+          "company"
+        ],
+        "operationId": "getCompany",
+        "summary": "Company profile, contact, certifications, locales, partners, careers",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products.json": {
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "operationId": "listProducts",
+        "summary": "List products (full specifications unless fields=summary)",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "description": "Category id",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tunable-band-reject-filter",
+                "tunable-band-pass-filter",
+                "butler-matrices",
+                "digital-step-attenuator",
+                "digital-step-attenuator-module",
+                "switch-box",
+                "rf-coaxial-switch",
+                "rf-shield-box",
+                "forensic-box",
+                "shielded-feedthrough-filters",
+                "emi-ventilation-panels",
+                "accessories"
+              ]
+            }
+          },
+          {
+            "name": "domain",
+            "in": "query",
+            "required": false,
+            "description": "Product domain",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "filtering",
+                "shielding",
+                "switching",
+                "automation"
+              ]
+            }
+          },
+          {
+            "name": "listing",
+            "in": "query",
+            "required": false,
+            "description": "\"catalogue\" = in the ranatec.com product menu; \"additional\" = extra shop listing / accessory",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "catalogue",
+                "additional"
+              ]
+            }
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "required": false,
+            "description": "Model number, e.g. \"RI 268\", \"ri-268\", \"RF2037\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Case-insensitive full-text search",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "description": "Return summary fields only",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "summary"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductsResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{id}.json": {
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "operationId": "getProduct",
+        "summary": "One product by id (slug) or model number",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Product id (e.g. tunable-band-reject-filter-ri-268) or model number (e.g. ri-268, rf2037)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SingleProductResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories.json": {
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "operationId": "listCategories",
+        "summary": "Product categories",
+        "parameters": [
+          {
+            "name": "domain",
+            "in": "query",
+            "required": false,
+            "description": "Product domain",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "filtering",
+                "shielding",
+                "switching",
+                "automation"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoriesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/{id}.json": {
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "operationId": "getCategory",
+        "summary": "One category with its products (summary fields)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tunable-band-reject-filter",
+                "tunable-band-pass-filter",
+                "butler-matrices",
+                "digital-step-attenuator",
+                "digital-step-attenuator-module",
+                "switch-box",
+                "rf-coaxial-switch",
+                "rf-shield-box",
+                "forensic-box",
+                "shielded-feedthrough-filters",
+                "emi-ventilation-panels",
+                "accessories"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SingleCategoryResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/solutions.json": {
+      "get": {
+        "tags": [
+          "company"
+        ],
+        "operationId": "listSolutions",
+        "summary": "Product domains and solution areas",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SolutionsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/news.json": {
+      "get": {
+        "tags": [
+          "content"
+        ],
+        "operationId": "listNews",
+        "summary": "News, product launches, technical articles, events (newest first)",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "description": "News type",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "product-launch",
+                "technical-article",
+                "company-news",
+                "event",
+                "distribution-partner"
+              ]
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": false,
+            "description": "Publication year, e.g. 2026",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "product",
+            "in": "query",
+            "required": false,
+            "description": "Only items mentioning this product id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Full-text search",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Max items (1–100)",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "description": "Return summary fields only",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "summary"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/news/{id}.json": {
+      "get": {
+        "tags": [
+          "content"
+        ],
+        "operationId": "getNewsItem",
+        "summary": "One news item by slug",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SingleNewsResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pages.json": {
+      "get": {
+        "tags": [
+          "content"
+        ],
+        "operationId": "listPages",
+        "summary": "Site pages with en-US / en-GB / en-CA URLs",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/faq.json": {
+      "get": {
+        "tags": [
+          "content"
+        ],
+        "operationId": "getFaq",
+        "summary": "Frequently asked questions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FaqResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contact.json": {
+      "post": {
+        "tags": [
+          "actions"
+        ],
+        "operationId": "submitInquiry",
+        "summary": "Submit a quote request or enquiry on behalf of a user",
+        "description": "Sends the enquiry to Ranatec by email. ONLY call this after the user has explicitly confirmed that the enquiry — including their name, email and company — may be sent to Ranatec AB. agent_context.user_authorized_submission must be the boolean true, otherwise the request is rejected with 403. quote_request requires at least one product id from /products.json. Rate limit: 5 submissions per IP per hour.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactRequest"
+              },
+              "example": {
+                "agent_context": {
+                  "user_authorized_submission": true,
+                  "agent_name": "ExampleAssistant",
+                  "user_request_summary": "User asked for a quote for two RI 268 filters"
+                },
+                "person": {
+                  "name": "Alex Example",
+                  "email": "alex@example.com",
+                  "job_title": "Test Engineer"
+                },
+                "company": {
+                  "name": "Example Labs GmbH",
+                  "country": "Germany"
+                },
+                "inquiry": {
+                  "type": "quote_request",
+                  "message": "Please quote 2 × RI 268 incl. RI 4278 extension box, delivery to Munich.",
+                  "products": [
+                    {
+                      "id": "tunable-band-reject-filter-ri-268",
+                      "quantity": 2
+                    },
+                    {
+                      "id": "frequency-extension-box-ri-4278",
+                      "quantity": 1
+                    }
+                  ],
+                  "timeline": "Q1 2027"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON or validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "user_authorized_submission is not true",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactErrorResponse"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Body larger than 20 KB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactErrorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Email delivery failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LocaleUrls": {
+        "type": "object",
+        "properties": {
+          "en-US": {
+            "type": "string",
+            "format": "uri"
+          },
+          "en-GB": {
+            "type": "string",
+            "format": "uri"
+          },
+          "en-CA": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "en-US",
+          "en-GB",
+          "en-CA"
+        ]
+      },
+      "Meta": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "format": "uri"
+          },
+          "endpoint": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "last_updated": {
+            "type": "string",
+            "format": "date"
+          },
+          "publisher": {
+            "type": "string"
+          },
+          "canonical_site": {
+            "type": "string",
+            "format": "uri"
+          },
+          "locales": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "locale_note": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "filters_applied": {
+            "type": "object"
+          },
+          "types": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "source",
+          "endpoint",
+          "version"
+        ]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "documentation": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "error",
+          "message"
+        ]
+      },
+      "Specification": {
+        "type": "object",
+        "properties": {
+          "parameter": {
+            "type": "string"
+          },
+          "value": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "required": [
+          "parameter"
+        ]
+      },
+      "Pricing": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "request-for-quote"
+            ]
+          },
+          "public_price": {
+            "type": "string",
+            "nullable": true
+          },
+          "how_to_buy": {
+            "type": "string"
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "model_number": {
+            "type": "string",
+            "nullable": true
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "domain": {
+            "type": "string",
+            "description": "filtering | shielding | switching | automation; null for some accessories",
+            "nullable": true
+          },
+          "listing": {
+            "type": "string",
+            "enum": [
+              "catalogue",
+              "additional"
+            ]
+          },
+          "custom": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "applications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "specifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Specification"
+            }
+          },
+          "electrical_interfaces": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "control_and_ordering": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "technical_drawings_note": {
+            "type": "string",
+            "nullable": true
+          },
+          "optional_accessories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "datasheets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "pricing": {
+            "$ref": "#/components/schemas/Pricing"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "urls": {
+            "$ref": "#/components/schemas/LocaleUrls"
+          },
+          "canonical_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "same_model_listings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "primary_listing": {
+            "type": "string",
+            "nullable": true
+          },
+          "date_published": {
+            "type": "string",
+            "nullable": true
+          },
+          "date_modified": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "categories",
+          "listing",
+          "url",
+          "urls"
+        ]
+      },
+      "ProductSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "model_number": {
+            "type": "string",
+            "nullable": true
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "domain": {
+            "type": "string",
+            "description": "filtering | shielding | switching | automation; null for some accessories",
+            "nullable": true
+          },
+          "listing": {
+            "type": "string",
+            "enum": [
+              "catalogue",
+              "additional"
+            ]
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "urls": {
+            "$ref": "#/components/schemas/LocaleUrls"
+          }
+        }
+      },
+      "Category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "domain": {
+            "type": "string",
+            "nullable": true
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "meta_description": {
+            "type": "string",
+            "nullable": true
+          },
+          "overview": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "product_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "additional_listing_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "product_count": {
+            "type": "integer"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "urls": {
+            "$ref": "#/components/schemas/LocaleUrls"
+          },
+          "legacy_urls_redirecting_here": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "api_url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "product_ids"
+        ]
+      },
+      "Domain": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "category_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Solution": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "category_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "product_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "urls": {
+            "$ref": "#/components/schemas/LocaleUrls"
+          }
+        }
+      },
+      "NewsItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "seo_title": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "product-launch",
+              "technical-article",
+              "company-news",
+              "event",
+              "distribution-partner"
+            ]
+          },
+          "date_published": {
+            "type": "string",
+            "format": "date"
+          },
+          "date_modified": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "body": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "related_product_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "urls": {
+            "$ref": "#/components/schemas/LocaleUrls"
+          },
+          "url_status": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "type",
+          "url",
+          "urls"
+        ]
+      },
+      "Page": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string",
+            "nullable": true
+          },
+          "meta_description": {
+            "type": "string",
+            "nullable": true
+          },
+          "urls": {
+            "$ref": "#/components/schemas/LocaleUrls"
+          },
+          "transactional": {
+            "type": "boolean"
+          },
+          "date_modified": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "FaqEntry": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string"
+          },
+          "a": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "q",
+          "a"
+        ]
+      },
+      "Address": {
+        "type": "object",
+        "properties": {
+          "street_address": {
+            "type": "string"
+          },
+          "postal_code": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "country_code": {
+            "type": "string"
+          }
+        }
+      },
+      "NamedContact": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "format": "uri"
+          },
+          "source_date": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "Company": {
+        "type": "object",
+        "properties": {
+          "legal_name": {
+            "type": "string"
+          },
+          "brand": {
+            "type": "string"
+          },
+          "website": {
+            "type": "string",
+            "format": "uri"
+          },
+          "tagline": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "about": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "founded": {
+            "type": "integer"
+          },
+          "parent_company": {
+            "type": "object"
+          },
+          "certifications": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "headquarters": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "contact": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "phone": {
+                "type": "string"
+              },
+              "contact_page": {
+                "$ref": "#/components/schemas/LocaleUrls"
+              },
+              "quote_page": {
+                "$ref": "#/components/schemas/LocaleUrls"
+              }
+            }
+          },
+          "sales_model": {
+            "type": "string"
+          },
+          "product_domains": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Domain"
+            }
+          },
+          "industries_served": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "standards_referenced": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "differentiators": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "distribution_partners": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "named_contacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NamedContact"
+            }
+          },
+          "social": {
+            "type": "object"
+          },
+          "careers": {
+            "type": "object"
+          },
+          "locales": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "hreflang": {
+                  "type": "string"
+                },
+                "base_url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "default": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "IndexResponse": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "locales": {
+            "type": "object"
+          },
+          "counts": {
+            "type": "object"
+          },
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "discovery": {
+            "type": "object"
+          }
+        }
+      },
+      "SchemaResponse": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "openapi": {
+            "type": "string",
+            "format": "uri"
+          },
+          "conventions": {
+            "type": "object"
+          },
+          "entities": {
+            "type": "object"
+          }
+        }
+      },
+      "CompanyResponse": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "company": {
+            "$ref": "#/components/schemas/Company"
+          }
+        },
+        "required": [
+          "meta",
+          "company"
+        ]
+      },
+      "ProductsResponse": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Product"
+                },
+                {
+                  "$ref": "#/components/schemas/ProductSummary"
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "meta",
+          "products"
+        ]
+      },
+      "SingleProductResponse": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "item": {
+            "$ref": "#/components/schemas/Product"
+          }
+        },
+        "required": [
+          "meta",
+          "item"
+        ]
+      },
+      "CategoriesResponse": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
+          }
+        },
+        "required": [
+          "meta",
+          "categories"
+        ]
+      },
+      "SingleCategoryResponse": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "item": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductSummary"
+            }
+          }
+        },
+        "required": [
+          "meta",
+          "item"
+        ]
+      },
+      "SolutionsResponse": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "domains": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Domain"
+            }
+          },
+          "solutions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Solution"
+            }
+          }
+        },
+        "required": [
+          "meta",
+          "solutions"
+        ]
+      },
+      "NewsResponse": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "news": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NewsItem"
+            }
+          }
+        },
+        "required": [
+          "meta",
+          "news"
+        ]
+      },
+      "SingleNewsResponse": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "item": {
+            "$ref": "#/components/schemas/NewsItem"
+          }
+        },
+        "required": [
+          "meta",
+          "item"
+        ]
+      },
+      "PagesResponse": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "pages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Page"
+            }
+          }
+        },
+        "required": [
+          "meta",
+          "pages"
+        ]
+      },
+      "FaqResponse": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "faq": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FaqEntry"
+            }
+          }
+        },
+        "required": [
+          "meta",
+          "faq"
+        ]
+      },
+      "AgentContext": {
+        "type": "object",
+        "properties": {
+          "user_authorized_submission": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "description": "Must be true: the user explicitly approved sending this enquiry and their contact details to Ranatec."
+          },
+          "agent_name": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "user_request_summary": {
+            "type": "string",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "user_authorized_submission"
+        ]
+      },
+      "ContactPerson": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "phone": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "job_title": {
+            "type": "string",
+            "maxLength": 120
+          }
+        },
+        "required": [
+          "name",
+          "email"
+        ]
+      },
+      "ContactCompany": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "country": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "website": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "ProductLine": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Product id from /products.json"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000,
+            "default": 1
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "ContactInquiry": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "quote_request",
+              "technical_question",
+              "custom_solution",
+              "distributor_inquiry",
+              "general"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 5000
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductLine"
+            }
+          },
+          "application": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "timeline": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "preferred_locale": {
+            "type": "string",
+            "enum": [
+              "en-US",
+              "en-GB",
+              "en-CA"
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "message"
+        ]
+      },
+      "ContactRequest": {
+        "type": "object",
+        "properties": {
+          "agent_context": {
+            "$ref": "#/components/schemas/AgentContext"
+          },
+          "person": {
+            "$ref": "#/components/schemas/ContactPerson"
+          },
+          "company": {
+            "$ref": "#/components/schemas/ContactCompany"
+          },
+          "inquiry": {
+            "$ref": "#/components/schemas/ContactInquiry"
+          }
+        },
+        "required": [
+          "agent_context",
+          "person",
+          "company",
+          "inquiry"
+        ]
+      },
+      "ContactResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "received"
+            ]
+          },
+          "lead_id": {
+            "type": "string",
+            "example": "ranatec-rfq-2026-A3F7B2C1"
+          },
+          "type": {
+            "type": "string"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "quantity": {
+                  "type": "integer"
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            }
+          },
+          "message": {
+            "type": "string"
+          },
+          "next_step": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "lead_id"
+        ]
+      },
+      "ContactErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "error"
+            ]
+          },
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "status",
+          "error",
+          "message"
+        ]
+      }
+    }
+  }
+}

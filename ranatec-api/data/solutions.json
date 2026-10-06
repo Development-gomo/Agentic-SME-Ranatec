@@ -1,0 +1,129 @@
+{
+  "meta": {
+    "source": "https://ranatec.com/agent/v1/solutions.json",
+    "endpoint": "solutions",
+    "version": "1.0",
+    "last_updated": "2026-10-06",
+    "publisher": "Ranatec AB",
+    "canonical_site": "https://ranatec.com/",
+    "locales": [
+      "en-US",
+      "en-GB",
+      "en-CA"
+    ],
+    "locale_note": "ranatec.com publishes the same English content in three regional variants: en-US (default, https://ranatec.com/), en-GB (/en-gb/) and en-CA (/en-ca/). Content is identical; each entity lists all three URLs.",
+    "count": 3
+  },
+  "domains": [
+    {
+      "id": "filtering",
+      "name": "Filtering",
+      "summary": "Digitally tunable band reject (notch) and band pass filters for 2G/3G/4G/5G, Wi-Fi and Bluetooth conformance and spurious-emission testing.",
+      "category_ids": [
+        "tunable-band-reject-filter",
+        "tunable-band-pass-filter"
+      ]
+    },
+    {
+      "id": "shielding",
+      "name": "Shielding",
+      "summary": "RF shield boxes (off-the-shelf and customised), forensic RF box, shielded feedthrough filters (USB, LAN, HDMI, AC, DC, optical fibre) and EMI ventilation panels.",
+      "category_ids": [
+        "rf-shield-box",
+        "forensic-box",
+        "shielded-feedthrough-filters",
+        "emi-ventilation-panels"
+      ]
+    },
+    {
+      "id": "switching",
+      "name": "Switching",
+      "summary": "Solid-state switch modules and rack-mount RF switch boxes from DC to 26.5 GHz, plus a modular platform for custom switch systems.",
+      "category_ids": [
+        "switch-box",
+        "rf-coaxial-switch"
+      ]
+    },
+    {
+      "id": "automation",
+      "name": "Automation",
+      "summary": "Digital step attenuators and attenuator boxes, Butler matrices and complete wireless test automation systems.",
+      "category_ids": [
+        "butler-matrices",
+        "digital-step-attenuator",
+        "digital-step-attenuator-module"
+      ]
+    }
+  ],
+  "solutions": [
+    {
+      "id": "wireless-test-automation",
+      "name": "Wireless Test Automation",
+      "summary": "Products and complete systems that rationalise wireless test set-ups: RF switching and routing, signal conditioning (digital attenuators, RF filters), tunable notch/band reject filters for spurious-emission tests and channel emulation — from discrete modules to complete test automation solutions tailored to customer demands.",
+      "details": [
+        "Wireless test automation has become a necessity to stay ahead in the race for more capable products and systems. With mobile devices covering multiple standards in multiple frequency bands using multiple antennas, conformance testing to demonstrate fulfilment of regulatory radio requirements is a key element in the product release process.",
+        "RF switching and routing products: using high quality RF switches and couplers, any RF-signal path can be set up to interconnect any device under test to any external or internal test port.",
+        "Signal conditioning products such as digital attenuators and RF filters assure the right power level and bandwidth at any port in an RF test set-up.",
+        "Advanced dedicated instruments enable accurate spurious emissions tests (wide-range electronically tunable notch filter) and channel emulators for performance verification under realistic conditions in a laboratory.",
+        "Applications span the whole life-cycle: early development and evaluation, product release and certification, production testing and in-service performance assessment."
+      ],
+      "category_ids": [
+        "tunable-band-reject-filter",
+        "butler-matrices",
+        "shielded-feedthrough-filters",
+        "rf-shield-box",
+        "digital-step-attenuator",
+        "digital-step-attenuator-module",
+        "rf-coaxial-switch",
+        "switch-box",
+        "tunable-band-pass-filter"
+      ],
+      "urls": {
+        "en-US": "https://ranatec.com/wireless-test-automation/",
+        "en-GB": "https://ranatec.com/en-gb/wireless-test-automation/",
+        "en-CA": "https://ranatec.com/en-ca/wireless-test-automation/"
+      }
+    },
+    {
+      "id": "rf-shielded-enclosure",
+      "name": "RF Shielded Enclosures (Shielded Solutions)",
+      "summary": "High-performance RF shield boxes covering all cellular and Wi-Fi bands, fully customisable shielded test enclosures, shielded LAN/USB/HDMI/AC/DC/optical-fibre feedthrough filters, RF connectors, EMI ventilation panels and accessories.",
+      "details": [
+        "RF shielded enclosure may refer to any enclosure with RF shielding properties including RF shield boxes, cabinets and rooms; its purpose is to shield the device under test from interference, so the achieved attenuation and enclosure design are crucial.",
+        "Suitable applications: automotive multimedia test, mobile telephone test, base station transceiver test, cellular network test, wireless semiconductor test, WLAN/Bluetooth/ZigBee/WiMax device test.",
+        "Feedthrough filters can be purchased separately or with a Ranatec shield box.",
+        "Custom shield boxes are built on a scalable, flexible platform. Customisable attributes: shape and size, shielding attributes, box material, power outlets (AC, DC), ventilation (vents, fans), interface connectors (LAN, USB, TNC)."
+      ],
+      "category_ids": [
+        "rf-shield-box",
+        "forensic-box",
+        "shielded-feedthrough-filters",
+        "emi-ventilation-panels"
+      ],
+      "urls": {
+        "en-US": "https://ranatec.com/rf-shielded-enclosure/",
+        "en-GB": "https://ranatec.com/en-gb/rf-shielded-enclosure/",
+        "en-CA": "https://ranatec.com/en-ca/rf-shielded-enclosure/"
+      }
+    },
+    {
+      "id": "custom-rf-test-equipment",
+      "name": "Customized RF Test Equipment Solutions",
+      "summary": "Design, engineering and manufacturing of customised RF test and measurement products — small and large customisation projects — using a modular mechanical and electrical platform for low cost and high quality.",
+      "details": [
+        "Custom solutions are developed efficiently through an agile organisation with tight cooperation between sales, engineering, manufacturing and customer support.",
+        "Customised RF switch systems: modular mainframe + plug-in modules (switch modules DC to 50 GHz, attenuators, amplifiers, mixers), 64 control ports as standard (128 optional), LAN/GPIB/RS-232 remote control.",
+        "Customised RF shield boxes: modular and fully customisable to your needs and requirements."
+      ],
+      "product_ids": [
+        "customized-rf-switch-systems",
+        "customized-rf-shield-box"
+      ],
+      "urls": {
+        "en-US": "https://ranatec.com/",
+        "en-GB": "https://ranatec.com/en-gb/",
+        "en-CA": "https://ranatec.com/en-ca/"
+      }
+    }
+  ]
+}

@@ -1,0 +1,343 @@
+# Ranatec AB
+> Swedish manufacturer of RF test and measurement equipment — tunable filters, Butler matrices, digital attenuators, RF switch boxes, RF shield boxes and shielded feedthrough filters for wireless (5G, LTE, Wi-Fi, Bluetooth) device and infrastructure testing.
+
+Ranatec AB (Gothenburg, Sweden; founded 1991; part of the Qamcom Group; ISO 9001:2015 certified) designs, engineers and manufactures niche RF and microwave test equipment for design verification, product certification (3GPP/ETSI conformance), production testing, troubleshooting and in-service monitoring. Products are sold B2B by request for quote — no public prices. Customers include semiconductor, device and base-station manufacturers, ISPs, test houses and certification institutes. The site is published in three regional English versions with identical content: en-US (default), en-GB (/en-gb/) and en-CA (/en-ca/). Last updated 2026-10-06.
+
+## Product domains
+- Filtering: Digitally tunable band reject (notch) and band pass filters for 2G/3G/4G/5G, Wi-Fi and Bluetooth conformance and spurious-emission testing.
+- Shielding: RF shield boxes (off-the-shelf and customised), forensic RF box, shielded feedthrough filters (USB, LAN, HDMI, AC, DC, optical fibre) and EMI ventilation panels.
+- Switching: Solid-state switch modules and rack-mount RF switch boxes from DC to 26.5 GHz, plus a modular platform for custom switch systems.
+- Automation: Digital step attenuators and attenuator boxes, Butler matrices and complete wireless test automation systems.
+
+## Product categories
+- [Tunable Band Reject Filters](https://ranatec.com/product-category/tunable-band-reject-filter/): Band reject filter with high resolution electronical tuning between 600-6000 MHz, for 2G/3G/4G/5G applications.
+- [Tunable Band Pass Filters](https://ranatec.com/product-category/tunable-band-pass-filter/): Band pass filter with high resolution electronical tuning between 600-10 000 MHz.
+- [Butler Matrices](https://ranatec.com/product-category/butler-matrices/): 4×4 and 8×8 Butler matrices with the widest operational bandwidth on the market, developed for frequencies from 2.4 to 8 GHz.
+- [Digital Attenuator Boxes](https://ranatec.com/product-category/digital-step-attenuator/): Digital attenuator systems with attenuation range of more than 90 dB in steps of up to 0.25 dB.
+- [Digital Step Attenuator Modules](https://ranatec.com/product-category/digital-step-attenuator-module/): Digital attenuator module with attenuation range of more than 90 dB in steps of up to 0.25 dB.
+- [Switch Boxes and RF Test Automation Systems](https://ranatec.com/product-category/switch-box/): Flexible test system automation platform that helps you to integrate your complete test system into a single box.
+- [Switch Modules](https://ranatec.com/product-category/rf-coaxial-switch/): RF and Microwave Solid State Switches with long lifetime, fast switching time, and low power consumption.
+- [Shield Boxes](https://ranatec.com/product-category/rf-shield-box/): Off-the-shelf and customized RF shield boxes with various I/O interface configurations, ventilation, and rack mount option.
+- [Forensic RF Shield Box](https://ranatec.com/product-category/forensic-box/): High performance Forensic RF box for analysis and protection of radio transceivers and transmitters.
+- [Shielded Feedthrough Filters](https://ranatec.com/product-category/shielded-feedthrough-filters/): EMI/RFI shielded I/O interfaces with filter suppression over all mobile frequency bands.
+- [EMI Ventilation Panels](https://ranatec.com/product-category/emi-ventilation-panels/): Enables ventilation of shielded boxes and rooms, while maintaining EMI/RFI shielding.
+
+## Products (49 catalogue items — price on request)
+### Tunable Band Reject Filters
+- [Tunable Band Reject Filter RI 260](https://ranatec.com/product/tunable-band-reject-filter-ri-260/): 0.7-2.7 GHz, 20 MHz reject bandwidth, rack mount
+- [Tunable Band Reject Filter RI 261](https://ranatec.com/product/tunable-band-reject-filter-ri-261/): 0.7-3.8 GHz, 20 MHz reject bandwidth, rack mount
+- [Tunable Band Reject Filter RI 262](https://ranatec.com/product/tunable-band-reject-filter-ri-262/): 0.6-4.2 GHz, 100 MHz reject bandwidth, rack mount
+- [Tunable Band Reject Filter RI 263](https://ranatec.com/product/tunable-band-reject-filter-ri-263/): 0.7-6 GHz, 100 MHz reject bandwidth, rack mount
+- [Tunable Band Reject Filter RI 264](https://ranatec.com/product/tunable-band-reject-filter-ri-264/): 0.6-2.7 GHz, 5 MHz reject bandwidth, rack mount
+- [Tunable Band Reject Filter RI 266](https://ranatec.com/product/tunable-band-reject-filter-ri-266/): 0.6-6 GHz, 5 MHz (0.6-2.7 GHz) & 100 MHz (0.7-6 GHz) reject bandwidth, rack mount
+- [Tunable Band Reject Filter RI 268](https://ranatec.com/product/tunable-band-reject-filter-ri-268/): 0.6-8 GHz, combined 5 & 160 MHz reject bandwidth, rack mount
+### Tunable Band Pass Filters
+- [Tunable Band Pass Filter RI 281](https://ranatec.com/product/tunable-band-pass-filter-ri-281/): 0.6-10 GHz, 100 MHz filter bandwidth, rack mount
+- [Tunable Band Pass Filter RI 282](https://ranatec.com/product/tunable-band-pass-filter-ri-282/): 0.6-6 GHz, combined 20 & 100 MHz filter bandwidth, rack mount
+### Butler Matrices
+- [Butler Matrix RI 3041](https://ranatec.com/product/butler-matrix-ri-3041/): 2.4-8 GHz, 4×4 ports
+- [Butler Matrix RI 3101](https://ranatec.com/product/butler-matrix-ri-3101/): 2.4-8 GHz, 8×8 ports
+### Digital Attenuator Boxes
+- [Digital Attenuator Box RF2025](https://ranatec.com/product/digital-attenuator-box-rf2025/): 4-channel, 0.1-8 GHz, 0-96 dB, rack mount
+- [Digital Attenuator Box RF2026](https://ranatec.com/product/digital-attenuator-box-rf2026/): 4-channel, 0.1-8 GHz, 20-110 dB, rack mount
+- [Digital Attenuator Box RF2034](https://ranatec.com/product/digital-attenuator-box-rf2034/): 16-channel, 0.1-8 GHz, 0-96 dB, rack mount
+- [Digital Attenuator Box RF2035](https://ranatec.com/product/digital-attenuator-box-rf2035/): 12-channel, 0.1-8 GHz, 0-96 dB, rack mount
+- [Digital Attenuator Box RF2036](https://ranatec.com/product/digital-attenuator-box-rf2036/): 8-channel, 0.1-8 GHz, 0-96 dB, rack mount
+### Digital Step Attenuator Modules
+- [Digital Attenuator RI 4410](https://ranatec.com/product/digital-attenuator-ri-4410/): 0.05-6 GHz, 0-95.25 dB, SMA(f) RF connectors
+### Switch Boxes and RF Test Automation Systems
+- [Customized RF Switch System](https://ranatec.com/product/customized-rf-switch-systems/): Customised to your requirements (contact Ranatec for a quote)
+- [Solid State Switch Box RF2018B](https://ranatec.com/product/solid-state-switch-box-rf2018b/): 12xSP4T, DC-6 GHz, solid state, terminated, rack mount
+- [Switch Box RF2020B](https://ranatec.com/product/switch-box-rf2020b/): 2xSPDT, DC-18 GHz, 3xSP4T, DC-6 GHz, rack mount
+- [Switch Box RF2022B](https://ranatec.com/product/switch-box-rf2022b/): 12xSP6T, DC-18 GHz, Low PIM (Passive Intermodulation), rack mount
+- [Switch Box RF2037](https://ranatec.com/product/switch-box-rf2037/): 4xSP6T, 2xSPDT, DC-26.5 GHz, rack mount
+- [Switch Box RF2038](https://ranatec.com/product/switch-box-rf2038/): 6xSPDT, DC-6 GHz, rack mount
+### Switch Modules
+- [Solid State Switch RI 2441](https://ranatec.com/product/solid-state-switch-ri-2441/): SP4T (Single Pole, 4 Throws), terminated, 0.1-6 GHz
+- [Solid State Switch RI 2582](https://ranatec.com/product/solid-state-switch-ri-2582/): DP8T (Dual Pole, 8 Throws), terminated, 0.1-6 GHz, high isolation between ports
+- [Solid State Switch RI 2583](https://ranatec.com/product/solid-state-switch-ri-2583/): SP8T (Single Pole, 8 Throws), terminated, 0.1-6 GHz
+### Shield Boxes
+- [Customized RF Shield Box](https://ranatec.com/product/customized-rf-shield-box/): Customised to your requirements (contact Ranatec for a quote)
+- [Shield Box RI 181](https://ranatec.com/product/shield-box-ri-181/): 2U, 60 dB at 3 GHz, rack mount
+- [Shield Box RI 187](https://ranatec.com/product/shield-box-ri-187/): 4U, 60 dB at 3 GHz, rack mount
+- [Shield Box RI 188](https://ranatec.com/product/shield-box-ri-188/): 6U, 60 dB at 3 GHz, ventilation with fan, rack mount
+- [Shield Box RI 189](https://ranatec.com/product/shield-box-ri-189/): 1.2×0.7×0.6 m
+### Forensic RF Shield Box
+- [Forensic RF Box RI 198](https://ranatec.com/product/forensic-rf-box-ri-198/): Window, gloves, lighting, tabletop
+### Shielded Feedthrough Filters
+- [Feedthrough Filter RI 4170](https://ranatec.com/product/feedthrough-filter-ri-4170/): USB 2.0, A-A connectors, fabric mount
+- [Feedthrough Filter RI 4171](https://ranatec.com/product/feedthrough-filter-ri-4171/): USB 3.0, A-A connectors, fabric mount
+- [Feedthrough Filter RI 4182](https://ranatec.com/product/feedthrough-filter-ri-4182/): LAN 1 Gbps, RJ45 connectors, panel mount
+- [Feedthrough Filter RI 4184](https://ranatec.com/product/feedthrough-filter-ri-4184/): USB 2.0, A-A connectors, dual port, panel mount
+- [Feedthrough Filter RI 4185](https://ranatec.com/product/feedthrough-filter-ri-4185/): USB 2.0, A-A connectors, single port, panel mount
+- [Feedthrough Filter RI 4188](https://ranatec.com/product/feedthrough-filter-ri-4188/): USB 2.0, mini connectors, panel mount
+- [Feedthrough Filter RI 4192](https://ranatec.com/product/feedthrough-filter-ri-4192/): USB 3.0, B-A connectors, switchable on/off power (active), panel mount
+- [Feedthrough Filter RI 4193](https://ranatec.com/product/feedthrough-filter-ri-4193/): HDMI 1.4b, A-A connectors, panel mount
+- [Feedthrough Filter RI 4194](https://ranatec.com/product/feedthrough-filter-ri-4194/): LAN 10 Gbps, RJ45 connectors, panel mount
+- [Feedthrough Filter RI 4199](https://ranatec.com/product/feedthrough-filter-ri-4199/): USB 3.2, C-C connectors, panel mount
+- [Feedthrough Filter RI 4201](https://ranatec.com/product/feedthrough-filter-ri-4201/): USB 3.0, A-A connectors, panel mount
+- [Feedthrough Filter RI 4205](https://ranatec.com/product/feedthrough-filter-ri-4205/): 110/230 VAC, 10 Amp, C14(m)-C13(f) connectors, outside shielded enclosure, panel mount
+- [Feedthrough Filter RI 4206](https://ranatec.com/product/feedthrough-filter-ri-4206/): 110/230 VAC, 10 Amp, C14(m)-C13(f) connectors, inside shielded enclosure, panel mount
+- [Optical Fiber Feedthru RI 4196](https://ranatec.com/product/optical-fiber-feedthru-ri-4196/): 0.1-15 GHz, 120 dB attenuation, 6 channel, MIL-STD-285 and 461
+### EMI Ventilation Panels
+- [EMI Ventilation Panel RI 4901](https://ranatec.com/product/emi-ventilation-panel-ri-4901/): Fits standard fans 80×80 mm, 105 dB shielding up to 9 GHz, panel mount
+- [EMI Ventilation Panel RI 4905](https://ranatec.com/product/emi-ventilation-panel-ri-4905/): Fits standard fans 120×120 mm, 105 dB shielding up to 9 GHz, panel mount
+- [EMI Ventilation Panel RI 4910](https://ranatec.com/product/emi-ventilation-panel-ri-4910/): Fits standard fans 225×225 mm, 105 dB shielding up to 9 GHz, panel mount
+### Accessories and options
+- [Frequency Extension Box RI 4270](https://ranatec.com/product/frequency-extension-box-ri-4270/)
+- [Frequency Extension Box RI 4271](https://ranatec.com/product/frequency-extension-box-ri-4271/)
+- [Frequency Extension Box RI 4272](https://ranatec.com/product/frequency-extension-box-ri-4272/)
+- [Frequency Extension Box RI 4273](https://ranatec.com/product/frequency-extension-box-ri-4273/)
+- [Frequency Extension Box RI 4274](https://ranatec.com/product/frequency-extension-box-ri-4274/)
+- [Frequency Extension Box RI 4276](https://ranatec.com/product/frequency-extension-box-ri-4276/)
+- [Frequency Extension Box RI 4278](https://ranatec.com/product/frequency-extension-box-ri-4278/)
+- [Mounting brackets RI 3041-07](https://ranatec.com/product/mounting-brackets-ri-3041-07/)
+- [Mounting brackets RI 3101-16](https://ranatec.com/product/mounting-brackets-ri-3101-16/)
+- [Option RF Absorption Foam inside box](https://ranatec.com/product/option-rf-absorption-foam-inside-box/)
+- [RF Absorption foam inside box](https://ranatec.com/product/rf-absorption-foam-inside-box/)
+- [RI 181-11 Internal shielding wall](https://ranatec.com/product/ri-181-11-internal-shielding-wall/)
+- [RI 4197](https://ranatec.com/product/ri-4197/)
+- [RI 4198](https://ranatec.com/product/ri-4198/)
+- [RI181-13 DC Feedthru EMI Filter](https://ranatec.com/product/ri181-13-dc-feedthru-emi-filter/)
+- [RI181-14 SMA(f)-SMA(f) Bulkhead Connector](https://ranatec.com/product/ri181-14-smaf-smaf-bulkhead-connector/)
+- [RI181-15 RF Absorption foam inside box (2U)](https://ranatec.com/product/ri181-15-rf-absorption-foam-inside-box-2u/)
+- [RI187-15 RF Absorption foam inside box (4U)](https://ranatec.com/product/ri187-15-rf-absorption-foam-inside-box-4u/)
+- [RI188-15 RF Absorption foam inside box (6U)](https://ranatec.com/product/ri188-15-rf-absorption-foam-inside-box-6u/)
+- [SMA(f) Bulkhead Connector RI 181-14](https://ranatec.com/product/smaf-bulkhead-connector-ri-181-14/)
+
+## Key facts
+- Founded 1991; headquarters, engineering and manufacturing in Gothenburg, Sweden
+- Part of the Qamcom Group (acquired by Qamcom Technology AB in 2018)
+- ISO 9001:2015 certified
+- All products designed, engineered and manufactured in Sweden; standard and customised products
+- First-of-a-kind RI 268 tunable band reject filter 600–8000 MHz (combined 5 & 160 MHz) for 5G NR / Wi-Fi 7 conformance testing
+- Widest-bandwidth 4×4 (RI 3041) and 8×8 (RI 3101) Butler matrices, 2.4–8 GHz
+- Customer results: 5G test system delivered to a FAANG client (2020); 100 kEUR order for RI 266 filters (2021); signal-processing hardware for the SKAO radio telescope via Qamcom (2023)
+
+## Contact
+- Ranatec AB, Falkenbergsgatan 3, 412 85 Gothenburg, Sweden | info@ranatec.com | +46 31 706 16 60
+- Press: Leslie Johnsen (Public Relations) | leslie.johnsen@ranatec.com; Operations: Charlotte Ornstein | charlotte.ornstein@ranatec.com (as named in 2025 press releases)
+
+## Key pages
+- [RF Test & Measurement Equipment Manufacturer](https://ranatec.com/): Homepage — product domains (filtering, shielding, switching, automation), featured products, FAQ
+- [About Us: Learn about the company mission and history](https://ranatec.com/about-us/): Company background, Qamcom Group ownership, ISO 9001:2015 certification
+- [Contact us for RF and microwave design and measurements](https://ranatec.com/contact-us/): Address, phone, email
+- [Wireless test services tailored to customer demands](https://ranatec.com/wireless-test-automation/): Solution page — wireless test automation
+- [RF Shielded Enclosure - Test boxes](https://ranatec.com/rf-shielded-enclosure/): Solution page — RF shielded enclosures, customised shield boxes, FAQ
+- [Latest News & Updates on RF Equipments by Ranatec](https://ranatec.com/latest-news/): News archive
+- [Shop](https://ranatec.com/shop/): Full product listing (RFQ shop, no public prices)
+- [Request a Quote](https://ranatec.com/request-quote/): RFQ list / quote request
+- [Cookies Policy](https://ranatec.com/cookies-policy/): Cookie policy
+- [Careers](https://career.ranatec.com/): open positions (Swedish)
+
+## Machine-readable resources
+- [Agent page (complete semantic HTML + JSON-LD)](https://ranatec.com/agent/)
+- [llms-full.txt (all specifications and articles)](https://ranatec.com/llms-full.txt)
+- [ai.txt (AI usage permissions)](https://ranatec.com/ai.txt)
+- [REST API index](https://ranatec.com/agent/v1/index.json)
+- [Products API](https://ranatec.com/agent/v1/products.json)
+- [OpenAPI specification](https://ranatec.com/openapi.json)
+- [MCP server (Streamable HTTP)](https://ranatec.com/mcp)
+- [MCP tool list](https://ranatec.com/mcp/tools)
+- [API catalog (APIs.json)](https://ranatec.com/api-catalog.json)
+- [API catalog (RFC 9727)](https://ranatec.com/.well-known/api-catalog)
+- [XML sitemap](https://ranatec.com/sitemap_index.xml)
+
+## Customer results (selected)
+- [Ranatec delivers 5G test system to FAANG client](https://ranatec.com/ranatec-delivers-5g-test-system-to-faang-client/) (2020-12-14)
+- [Ranatec secures 100K EUR order for RI 266 tunable band reject filters for mobile device conformance testing](https://ranatec.com/ranatec-secures-100-keur-order-for-ri-266-tunable-band-reject-filters-for-mobile-device-conformance-testing/) (2021-12-17)
+- [Ranatec selected by Qamcom to build advanced signal processing hardware for major SKAO initiative – world’s largest radio telescopes](https://ranatec.com/ranatec-selected-by-qamcom-to-build-advanced-signal-processing-hardware-for-major-skao-initiative-worlds-largest-radio-telescopes/) (2023-09-19)
+- [Ranatec sees boom in 5G equipment orders from Asia in 1st half of 2020](https://ranatec.com/ranatec-sees-boom-in-5g-equipment-orders-from-asia-in-1st-half-of-2020/) (2020-06-25)
+
+## News and articles
+- [Introducing 8 & 12-channel Attenuator Boxes Designed for Advanced RF Test Performance](https://ranatec.com/8-12-channel-attenuator-boxes-designed-for-advanced-rf-test-performance/) (2026-05-20)
+- [Tunable Band Reject Filter for Multiple Bandwidth RF Testing](https://ranatec.com/tunable-bandreject-filter-for-multiple-bandwidth-rf-testing/) (2026-05-14)
+- [Introducing 6GHz and 26.5GHz high-performance RF Switch Boxes](https://ranatec.com/introducing-6ghz-and-26-5ghz-high-performance-rf-switch-boxes/) (2026-05-12)
+- [How to Build a Test System for 5G, WiFi and Bluetooth](https://ranatec.com/how-to-build-a-test-system-for-5g-wifi-and-bluetooth/) (2026-04-28)
+- [RF Shield Boxes for Wireless & 5G Device Testing](https://ranatec.com/rf-shield-boxes-for-wireless-and-5g-device-testing/) (2026-03-27)
+- [Tunable Bandreject Filter for Carrier Aggregation Measurements](https://ranatec.com/tunable-bandreject-filter-for-carrier-aggregation-measurements/) (2025-11-11)
+- [You Need a Tunable Bandreject Filter with Sharp Slopes for Spurious Emission Measurements](https://ranatec.com/tunable-bandreject-filter-with-sharp-slopes-for-spurious-emission-measurements/) (2025-10-24)
+- [Ranatec at European Microwave Week 2025](https://ranatec.com/ranatec-at-european-microwave-week-2025/) (2025-09-16)
+- [How to use the Ranatec RI 3101 Butler Matrix 8×8 for antenna beamforming](https://ranatec.com/how-to-use-the-ranatec-ri-3101-butler-matrix-8x8-for-antenna-beamforming/) (2025-09-12)
+- [Ranatec introduces panel-mountable RI 4201 SuperSpeed USB 3.0 Feedthrough Filter](https://ranatec.com/ranatec-introduces-panel-mountable-ri-4201-superspeed-usb-3-0-feedthrough-filter/) (2025-06-03)
+- [Ranatec Feedthrough Filters for Shielded Cabinets](https://ranatec.com/ranatec-feedthrough-filters-for-shielded-cabinets/) (2025-06-02)
+- [Ranatec Launches 16-Channel RF Attenuator Box](https://ranatec.com/ranatec-launches-16-channel-rf-attenuator-box/) (2025-05-06)
+- [Tunable bandreject filters compared to tunable notch filters](https://ranatec.com/tunable-bandreject-filters-compared-to-tunable-notch-filters/) (2025-02-05)
+- [Ranatec introduces digitally tunable RI 282 Band Pass Filter](https://ranatec.com/ranatec-introduces-digitally-tunable-ri-282-band-pass-filter/) (2024-10-09)
+- [Ranatec introduces next generation AC Feedthru Filters with 10 Amp rated current](https://ranatec.com/ranatec-introduces-next-generation-ac-feedthru-filters-with-10-amp-rated-current/) (2024-05-08)
+- [Compact RI 3041 4×4 Butler Matrix from Ranatec brings frequency testing to next level with leading bandwidth performance](https://ranatec.com/compact-ri-3041-4x4-butler-matrix-from-ranatec-brings-frequency-testing-to-next-level-with-leading-bandwidth-performance/) (2024-03-07)
+- [Ranatec selected by Qamcom to build advanced signal processing hardware for major SKAO initiative – world’s largest radio telescopes](https://ranatec.com/ranatec-selected-by-qamcom-to-build-advanced-signal-processing-hardware-for-major-skao-initiative-worlds-largest-radio-telescopes/) (2023-09-19)
+- [Ranatec at EMV in Stuttgart 28-30 March 2023](https://ranatec.com/ranatec-at-emv-in-stuttgart-28-30-march-2023/) (2023-03-16)
+- [Ranatec introduces first-of-kind RI 268 Tunable Band Reject Filter](https://ranatec.com/ranatec-introduces-first-of-kind-ri-268-tunable-band-reject-filter/) (2022-12-08)
+- [Ranatec introduces first-to-market USB 3.2 Feedthru Filter featuring benchmark 20 Gbps data and 100 W power](https://ranatec.com/ranatec-introduces-first-to-market-usb-3-2-feedthru-filter/) (2022-01-27)
+- [Ranatec secures 100K EUR order for RI 266 tunable band reject filters for mobile device conformance testing](https://ranatec.com/ranatec-secures-100-keur-order-for-ri-266-tunable-band-reject-filters-for-mobile-device-conformance-testing/) (2021-12-17)
+- [Ranatec introduces lightweight RI 189 Big RF Shield Box](https://ranatec.com/ranatec-introduces-lightweight-ri-189-big-rf-shield-box/) (2021-11-04)
+- [Ranatec launches the RI 198 RF Forensic Box for law enforcement](https://ranatec.com/ranatec-launches-the-ri-198-rf-forensic-box-for-law-enforcement/) (2021-09-27)
+- [Ranatec presents: The RI 4196 Fiber Optic Feedthru Element](https://ranatec.com/ranatec-introduces-the-high-performance-ri-4196-fiber-optic-feedthru-element/) (2021-06-17)
+- [Ranatec presents its new high-performance RI 4901 EMI Ventilation Panel](https://ranatec.com/ranatec-presents-emi-ventilation-panel/) (2021-04-28)
+- [Ranatec introduces dynamic new brand profile](https://ranatec.com/ranatec-introduces-dynamic-new-brand-profile/) (2021-03-11)
+- [Ranatec expands niche product portfolio – introduces the RI 4195 AC 110/230V Feedthru Filter](https://ranatec.com/ranatec-expands-niche-product-portfolio-introduces-the-ri-4195-ac-110-230v-feedthru-filter/) (2021-01-27)
+- [Ranatec – CEO recap for 2020](https://ranatec.com/ranatec-ceo-recap-for-2020/) (2020-12-22)
+- [Ranatec delivers 5G test system to FAANG client](https://ranatec.com/ranatec-delivers-5g-test-system-to-faang-client/) (2020-12-14)
+- [Ranatec introduces benchmark bandwidth performance with new RI 3101 8×8 Butler Matrix](https://ranatec.com/ranatec-introduces-benchmark-bandwidth-performance-with-new-ri-3101-8x8-butler-matrix/) (2020-11-16)
+- [Swedish innovator delivers warp-speed in Ranatec’s new 10 Gbps shielded ethernet feedthru filter](https://ranatec.com/swedish-innovator-delivers-warp-speed-in-ranatecs-new-10-gbps-shielded-ethernet-feedthru-filter/) (2020-10-08)
+- [Inside view: Invitation to meet the Ranatec CEO](https://ranatec.com/inside-view-invitation-to-meet-the-ranatec-ceo/) (2020-09-08)
+- [Ranatec sees boom in 5G equipment orders from Asia in 1st half of 2020](https://ranatec.com/ranatec-sees-boom-in-5g-equipment-orders-from-asia-in-1st-half-of-2020/) (2020-06-25)
+- [Signal Solutions inks agreement to distribute Ranatec test & measurement tools in Finland, Poland, and the US](https://ranatec.com/signal-solutions-inks-agreement-to-distribute-ranatec-test-measurement-tools/) (2020-05-27)
+- [Ranatec introduces RF2018B high-performance ”plug and play” switch system for high-volume RF test processes](https://ranatec.com/ranatec-introduces-rf2018b-solid-state-switch-system/) (2020-04-06)
+- [Conical Technologies now official Ranatec distributor for South Africa](https://ranatec.com/conical-technologies-distributor-south-africa/) (2020-04-02)
+- [Meet us at the EMV Exhibition](https://ranatec.com/meet-us-at-the-emv-exhibition/) (2020-02-11)
+- [Ranatec Introduces Versatile RI 4193 HDMI Feedthru Filter for RF Test and Measurement Applications](https://ranatec.com/ranatec-introduces-versatile-ri-4193-hdmi-feedthru-filter-for-rf-test-and-measurement-applications/) (2020-01-30)
+- [Ranatec introduces RI 266 Tunable Notch Filter 450-6000 MHz to meet new RF test and measurement requirements for wireless devices](https://ranatec.com/ranatec-introduces-ri-266-tunable-notch-filter/) (2019-12-04)
+- [3 Applications and Characteristics of Digital Step Attenuators](https://ranatec.com/digital-step-attenuators-applications-and-characteristics/) (2019-10-22)
+- [Magnus Kilian appointed new CEO of Ranatec AB](https://ranatec.com/magnus-kilian-appointed-new-ceo-of-ranatec-ab/) (2019-10-01)
+- [Digital Step Attenuator](https://ranatec.com/en-gb/digital-step-attenuator/) (2019-05-07)
+- [Shielded USB 3.0 Feedthru Filter](https://ranatec.com/en-gb/shielded-usb-3-0-feedthru-filter/) (2019-03-29)
+- [New Management at Ranatec](https://ranatec.com/new-management-at-ranatec/) (2018-09-03)
+
+## Social media
+- [LinkedIn](https://www.linkedin.com/company/ranatec-ab/)
+- [X / Twitter](https://twitter.com/ranatec1)
+
+## en-GB pages (hreflang en-GB alternates — United Kingdom)
+### Pages
+- [Home (en-GB)](https://ranatec.com/en-gb/)
+- [About Us: Learn about the company mission and history (en-GB)](https://ranatec.com/en-gb/about-us/)
+- [Contact us for RF and microwave design and measurements (en-GB)](https://ranatec.com/en-gb/contact-us/)
+- [Wireless test services tailored to customer demands (en-GB)](https://ranatec.com/en-gb/wireless-test-automation/)
+- [RF Shielded Enclosure - Test boxes (en-GB)](https://ranatec.com/en-gb/rf-shielded-enclosure/)
+- [Latest News & Updates on RF Equipments by Ranatec (en-GB)](https://ranatec.com/en-gb/latest-news/)
+- [Shop (en-GB)](https://ranatec.com/en-gb/shop/)
+- [Request a Quote (en-GB)](https://ranatec.com/en-gb/request-quote/)
+- [Cookies Policy (en-GB)](https://ranatec.com/en-gb/cookies-policy/)
+### Product categories
+- [Tunable Band Reject Filters (en-GB)](https://ranatec.com/en-gb/product-category/tunable-band-reject-filter/)
+- [Tunable Band Pass Filters (en-GB)](https://ranatec.com/en-gb/product-category/tunable-band-pass-filter/)
+- [Butler Matrices (en-GB)](https://ranatec.com/en-gb/product-category/butler-matrices/)
+- [Digital Attenuator Boxes (en-GB)](https://ranatec.com/en-gb/product-category/digital-step-attenuator/)
+- [Digital Step Attenuator Modules (en-GB)](https://ranatec.com/en-gb/product-category/digital-step-attenuator-module/)
+- [Switch Boxes and RF Test Automation Systems (en-GB)](https://ranatec.com/en-gb/product-category/switch-box/)
+- [Switch Modules (en-GB)](https://ranatec.com/en-gb/product-category/rf-coaxial-switch/)
+- [Shield Boxes (en-GB)](https://ranatec.com/en-gb/product-category/rf-shield-box/)
+- [Forensic RF Shield Box (en-GB)](https://ranatec.com/en-gb/product-category/forensic-box/)
+- [Shielded Feedthrough Filters (en-GB)](https://ranatec.com/en-gb/product-category/shielded-feedthrough-filters/)
+- [EMI Ventilation Panels (en-GB)](https://ranatec.com/en-gb/product-category/emi-ventilation-panels/)
+### News and articles
+- [Introducing 8 & 12-channel Attenuator Boxes Designed for Advanced RF Test Performance (en-GB)](https://ranatec.com/en-gb/8-12-channel-attenuator-boxes-designed-for-advanced-rf-test-performance/) (2026-05-20)
+- [Tunable Band Reject Filter for Multiple Bandwidth RF Testing (en-GB)](https://ranatec.com/en-gb/tunable-bandreject-filter-for-multiple-bandwidth-rf-testing/) (2026-05-14)
+- [Introducing 6GHz and 26.5GHz high-performance RF Switch Boxes (en-GB)](https://ranatec.com/en-gb/introducing-6ghz-and-26-5ghz-high-performance-rf-switch-boxes/) (2026-05-12)
+- [How to Build a Test System for 5G, WiFi and Bluetooth (en-GB)](https://ranatec.com/en-gb/how-to-build-a-test-system-for-5g-wifi-and-bluetooth/) (2026-04-28)
+- [RF Shield Boxes for Wireless & 5G Device Testing (en-GB)](https://ranatec.com/en-gb/rf-shield-boxes-for-wireless-and-5g-device-testing/) (2026-03-27)
+- [Tunable Bandreject Filter for Carrier Aggregation Measurements (en-GB)](https://ranatec.com/en-gb/tunable-bandreject-filter-for-carrier-aggregation-measurements/) (2025-11-11)
+- [You Need a Tunable Bandreject Filter with Sharp Slopes for Spurious Emission Measurements (en-GB)](https://ranatec.com/en-gb/tunable-bandreject-filter-with-sharp-slopes-for-spurious-emission-measurements/) (2025-10-24)
+- [Ranatec at European Microwave Week 2025 (en-GB)](https://ranatec.com/en-gb/ranatec-at-european-microwave-week-2025/) (2025-09-16)
+- [How to use the Ranatec RI 3101 Butler Matrix 8×8 for antenna beamforming (en-GB)](https://ranatec.com/en-gb/how-to-use-the-ranatec-ri-3101-butler-matrix-8x8-for-antenna-beamforming/) (2025-09-12)
+- [Ranatec introduces panel-mountable RI 4201 SuperSpeed USB 3.0 Feedthrough Filter (en-GB)](https://ranatec.com/en-gb/ranatec-introduces-panel-mountable-ri-4201-superspeed-usb-3-0-feedthrough-filter/) (2025-06-03)
+- [Ranatec Feedthrough Filters for Shielded Cabinets (en-GB)](https://ranatec.com/en-gb/ranatec-feedthrough-filters-for-shielded-cabinets/) (2025-06-02)
+- [Ranatec Launches 16-Channel RF Attenuator Box (en-GB)](https://ranatec.com/en-gb/ranatec-launches-16-channel-rf-attenuator-box/) (2025-05-06)
+- [Tunable bandreject filters compared to tunable notch filters (en-GB)](https://ranatec.com/en-gb/tunable-bandreject-filters-compared-to-tunable-notch-filters/) (2025-02-05)
+- [Ranatec introduces digitally tunable RI 282 Band Pass Filter (en-GB)](https://ranatec.com/en-gb/ranatec-introduces-digitally-tunable-ri-282-band-pass-filter/) (2024-10-09)
+- [Ranatec introduces next generation AC Feedthru Filters with 10 Amp rated current (en-GB)](https://ranatec.com/en-gb/ranatec-introduces-next-generation-ac-feedthru-filters-with-10-amp-rated-current/) (2024-05-08)
+- [Compact RI 3041 4×4 Butler Matrix from Ranatec brings frequency testing to next level with leading bandwidth performance (en-GB)](https://ranatec.com/en-gb/compact-ri-3041-4x4-butler-matrix-from-ranatec-brings-frequency-testing-to-next-level-with-leading-bandwidth-performance/) (2024-03-07)
+- [Ranatec selected by Qamcom to build advanced signal processing hardware for major SKAO initiative – world’s largest radio telescopes (en-GB)](https://ranatec.com/en-gb/ranatec-selected-by-qamcom-to-build-advanced-signal-processing-hardware-for-major-skao-initiative-worlds-largest-radio-telescopes/) (2023-09-19)
+- [Ranatec at EMV in Stuttgart 28-30 March 2023 (en-GB)](https://ranatec.com/en-gb/ranatec-at-emv-in-stuttgart-28-30-march-2023/) (2023-03-16)
+- [Ranatec introduces first-of-kind RI 268 Tunable Band Reject Filter (en-GB)](https://ranatec.com/en-gb/ranatec-introduces-first-of-kind-ri-268-tunable-band-reject-filter/) (2022-12-08)
+- [Ranatec introduces first-to-market USB 3.2 Feedthru Filter featuring benchmark 20 Gbps data and 100 W power (en-GB)](https://ranatec.com/en-gb/ranatec-introduces-first-to-market-usb-3-2-feedthru-filter/) (2022-01-27)
+- [Ranatec secures 100K EUR order for RI 266 tunable band reject filters for mobile device conformance testing (en-GB)](https://ranatec.com/en-gb/ranatec-secures-100-keur-order-for-ri-266-tunable-band-reject-filters-for-mobile-device-conformance-testing/) (2021-12-17)
+- [Ranatec introduces lightweight RI 189 Big RF Shield Box (en-GB)](https://ranatec.com/en-gb/ranatec-introduces-lightweight-ri-189-big-rf-shield-box/) (2021-11-04)
+- [Ranatec launches the RI 198 RF Forensic Box for law enforcement (en-GB)](https://ranatec.com/en-gb/ranatec-launches-the-ri-198-rf-forensic-box-for-law-enforcement/) (2021-09-27)
+- [Ranatec presents: The RI 4196 Fiber Optic Feedthru Element (en-GB)](https://ranatec.com/en-gb/ranatec-introduces-the-high-performance-ri-4196-fiber-optic-feedthru-element/) (2021-06-17)
+- [Ranatec presents its new high-performance RI 4901 EMI Ventilation Panel (en-GB)](https://ranatec.com/en-gb/ranatec-presents-emi-ventilation-panel/) (2021-04-28)
+- [Ranatec introduces dynamic new brand profile (en-GB)](https://ranatec.com/en-gb/ranatec-introduces-dynamic-new-brand-profile/) (2021-03-11)
+- [Ranatec expands niche product portfolio – introduces the RI 4195 AC 110/230V Feedthru Filter (en-GB)](https://ranatec.com/en-gb/ranatec-expands-niche-product-portfolio-introduces-the-ri-4195-ac-110-230v-feedthru-filter/) (2021-01-27)
+- [Ranatec – CEO recap for 2020 (en-GB)](https://ranatec.com/en-gb/ranatec-ceo-recap-for-2020/) (2020-12-22)
+- [Ranatec delivers 5G test system to FAANG client (en-GB)](https://ranatec.com/en-gb/ranatec-delivers-5g-test-system-to-faang-client/) (2020-12-14)
+- [Ranatec introduces benchmark bandwidth performance with new RI 3101 8×8 Butler Matrix (en-GB)](https://ranatec.com/en-gb/ranatec-introduces-benchmark-bandwidth-performance-with-new-ri-3101-8x8-butler-matrix/) (2020-11-16)
+- [Swedish innovator delivers warp-speed in Ranatec’s new 10 Gbps shielded ethernet feedthru filter (en-GB)](https://ranatec.com/en-gb/swedish-innovator-delivers-warp-speed-in-ranatecs-new-10-gbps-shielded-ethernet-feedthru-filter/) (2020-10-08)
+- [Inside view: Invitation to meet the Ranatec CEO (en-GB)](https://ranatec.com/en-gb/inside-view-invitation-to-meet-the-ranatec-ceo/) (2020-09-08)
+- [Ranatec sees boom in 5G equipment orders from Asia in 1st half of 2020 (en-GB)](https://ranatec.com/en-gb/ranatec-sees-boom-in-5g-equipment-orders-from-asia-in-1st-half-of-2020/) (2020-06-25)
+- [Signal Solutions inks agreement to distribute Ranatec test & measurement tools in Finland, Poland, and the US (en-GB)](https://ranatec.com/en-gb/signal-solutions-inks-agreement-to-distribute-ranatec-test-measurement-tools/) (2020-05-27)
+- [Ranatec introduces RF2018B high-performance ”plug and play” switch system for high-volume RF test processes (en-GB)](https://ranatec.com/en-gb/ranatec-introduces-rf2018b-solid-state-switch-system/) (2020-04-06)
+- [Conical Technologies now official Ranatec distributor for South Africa (en-GB)](https://ranatec.com/en-gb/conical-technologies-distributor-south-africa/) (2020-04-02)
+- [Meet us at the EMV Exhibition (en-GB)](https://ranatec.com/en-gb/meet-us-at-the-emv-exhibition/) (2020-02-11)
+- [Ranatec Introduces Versatile RI 4193 HDMI Feedthru Filter for RF Test and Measurement Applications (en-GB)](https://ranatec.com/en-gb/ranatec-introduces-versatile-ri-4193-hdmi-feedthru-filter-for-rf-test-and-measurement-applications/) (2020-01-30)
+- [Ranatec introduces RI 266 Tunable Notch Filter 450-6000 MHz to meet new RF test and measurement requirements for wireless devices (en-GB)](https://ranatec.com/en-gb/ranatec-introduces-ri-266-tunable-notch-filter/) (2019-12-04)
+- [3 Applications and Characteristics of Digital Step Attenuators (en-GB)](https://ranatec.com/en-gb/digital-step-attenuators-applications-and-characteristics/) (2019-10-22)
+- [Magnus Kilian appointed new CEO of Ranatec AB (en-GB)](https://ranatec.com/en-gb/magnus-kilian-appointed-new-ceo-of-ranatec-ab/) (2019-10-01)
+- [Digital Step Attenuator (en-GB)](https://ranatec.com/en-gb/digital-step-attenuator/) (2019-05-07)
+- [Shielded USB 3.0 Feedthru Filter (en-GB)](https://ranatec.com/en-gb/shielded-usb-3-0-feedthru-filter/) (2019-03-29)
+- [New Management at Ranatec (en-GB)](https://ranatec.com/en-gb/new-management-at-ranatec/) (2018-09-03)
+Product pages are also available under /en-gb/product/{slug}/ and canonicalise to the en-US product URL.
+
+## en-CA pages (hreflang en-CA alternates — Canada)
+### Pages
+- [Home (en-CA)](https://ranatec.com/en-ca/)
+- [About Us: Learn about the company mission and history (en-CA)](https://ranatec.com/en-ca/about-us/)
+- [Contact us for RF and microwave design and measurements (en-CA)](https://ranatec.com/en-ca/contact-us/)
+- [Wireless test services tailored to customer demands (en-CA)](https://ranatec.com/en-ca/wireless-test-automation/)
+- [RF Shielded Enclosure - Test boxes (en-CA)](https://ranatec.com/en-ca/rf-shielded-enclosure/)
+- [Latest News & Updates on RF Equipments by Ranatec (en-CA)](https://ranatec.com/en-ca/latest-news/)
+- [Shop (en-CA)](https://ranatec.com/en-ca/shop/)
+- [Request a Quote (en-CA)](https://ranatec.com/en-ca/request-quote/)
+- [Cookies Policy (en-CA)](https://ranatec.com/en-ca/cookies-policy/)
+### Product categories
+- [Tunable Band Reject Filters (en-CA)](https://ranatec.com/en-ca/product-category/tunable-band-reject-filter/)
+- [Tunable Band Pass Filters (en-CA)](https://ranatec.com/en-ca/product-category/tunable-band-pass-filter/)
+- [Butler Matrices (en-CA)](https://ranatec.com/en-ca/product-category/butler-matrices/)
+- [Digital Attenuator Boxes (en-CA)](https://ranatec.com/en-ca/product-category/digital-step-attenuator/)
+- [Digital Step Attenuator Modules (en-CA)](https://ranatec.com/en-ca/product-category/digital-step-attenuator-module/)
+- [Switch Boxes and RF Test Automation Systems (en-CA)](https://ranatec.com/en-ca/product-category/switch-box/)
+- [Switch Modules (en-CA)](https://ranatec.com/en-ca/product-category/rf-coaxial-switch/)
+- [Shield Boxes (en-CA)](https://ranatec.com/en-ca/product-category/rf-shield-box/)
+- [Forensic RF Shield Box (en-CA)](https://ranatec.com/en-ca/product-category/forensic-box/)
+- [Shielded Feedthrough Filters (en-CA)](https://ranatec.com/en-ca/product-category/shielded-feedthrough-filters/)
+- [EMI Ventilation Panels (en-CA)](https://ranatec.com/en-ca/product-category/emi-ventilation-panels/)
+### News and articles
+- [Introducing 8 & 12-channel Attenuator Boxes Designed for Advanced RF Test Performance (en-CA)](https://ranatec.com/en-ca/8-12-channel-attenuator-boxes-designed-for-advanced-rf-test-performance/) (2026-05-20)
+- [Tunable Band Reject Filter for Multiple Bandwidth RF Testing (en-CA)](https://ranatec.com/en-ca/tunable-bandreject-filter-for-multiple-bandwidth-rf-testing/) (2026-05-14)
+- [Introducing 6GHz and 26.5GHz high-performance RF Switch Boxes (en-CA)](https://ranatec.com/en-ca/introducing-6ghz-and-26-5ghz-high-performance-rf-switch-boxes/) (2026-05-12)
+- [How to Build a Test System for 5G, WiFi and Bluetooth (en-CA)](https://ranatec.com/en-ca/how-to-build-a-test-system-for-5g-wifi-and-bluetooth/) (2026-04-28)
+- [RF Shield Boxes for Wireless & 5G Device Testing (en-CA)](https://ranatec.com/en-ca/rf-shield-boxes-for-wireless-and-5g-device-testing/) (2026-03-27)
+- [Tunable Bandreject Filter for Carrier Aggregation Measurements (en-CA)](https://ranatec.com/en-ca/tunable-bandreject-filter-for-carrier-aggregation-measurements/) (2025-11-11)
+- [You Need a Tunable Bandreject Filter with Sharp Slopes for Spurious Emission Measurements (en-CA)](https://ranatec.com/en-ca/tunable-bandreject-filter-with-sharp-slopes-for-spurious-emission-measurements/) (2025-10-24)
+- [Ranatec at European Microwave Week 2025 (en-CA)](https://ranatec.com/en-ca/ranatec-at-european-microwave-week-2025/) (2025-09-16)
+- [How to use the Ranatec RI 3101 Butler Matrix 8×8 for antenna beamforming (en-CA)](https://ranatec.com/en-ca/how-to-use-the-ranatec-ri-3101-butler-matrix-8x8-for-antenna-beamforming/) (2025-09-12)
+- [Ranatec introduces panel-mountable RI 4201 SuperSpeed USB 3.0 Feedthrough Filter (en-CA)](https://ranatec.com/en-ca/ranatec-introduces-panel-mountable-ri-4201-superspeed-usb-3-0-feedthrough-filter/) (2025-06-03)
+- [Ranatec Feedthrough Filters for Shielded Cabinets (en-CA)](https://ranatec.com/en-ca/ranatec-feedthrough-filters-for-shielded-cabinets/) (2025-06-02)
+- [Ranatec Launches 16-Channel RF Attenuator Box (en-CA)](https://ranatec.com/en-ca/ranatec-launches-16-channel-rf-attenuator-box/) (2025-05-06)
+- [Tunable bandreject filters compared to tunable notch filters (en-CA)](https://ranatec.com/en-ca/tunable-bandreject-filters-compared-to-tunable-notch-filters/) (2025-02-05)
+- [Ranatec introduces digitally tunable RI 282 Band Pass Filter (en-CA)](https://ranatec.com/en-ca/ranatec-introduces-digitally-tunable-ri-282-band-pass-filter/) (2024-10-09)
+- [Ranatec introduces next generation AC Feedthru Filters with 10 Amp rated current (en-CA)](https://ranatec.com/en-ca/ranatec-introduces-next-generation-ac-feedthru-filters-with-10-amp-rated-current/) (2024-05-08)
+- [Compact RI 3041 4×4 Butler Matrix from Ranatec brings frequency testing to next level with leading bandwidth performance (en-CA)](https://ranatec.com/en-ca/compact-ri-3041-4x4-butler-matrix-from-ranatec-brings-frequency-testing-to-next-level-with-leading-bandwidth-performance/) (2024-03-07)
+- [Ranatec selected by Qamcom to build advanced signal processing hardware for major SKAO initiative – world’s largest radio telescopes (en-CA)](https://ranatec.com/en-ca/ranatec-selected-by-qamcom-to-build-advanced-signal-processing-hardware-for-major-skao-initiative-worlds-largest-radio-telescopes/) (2023-09-19)
+- [Ranatec at EMV in Stuttgart 28-30 March 2023 (en-CA)](https://ranatec.com/en-ca/ranatec-at-emv-in-stuttgart-28-30-march-2023/) (2023-03-16)
+- [Ranatec introduces first-of-kind RI 268 Tunable Band Reject Filter (en-CA)](https://ranatec.com/en-ca/ranatec-introduces-first-of-kind-ri-268-tunable-band-reject-filter/) (2022-12-08)
+- [Ranatec introduces first-to-market USB 3.2 Feedthru Filter featuring benchmark 20 Gbps data and 100 W power (en-CA)](https://ranatec.com/en-ca/ranatec-introduces-first-to-market-usb-3-2-feedthru-filter/) (2022-01-27)
+- [Ranatec secures 100K EUR order for RI 266 tunable band reject filters for mobile device conformance testing (en-CA)](https://ranatec.com/en-ca/ranatec-secures-100-keur-order-for-ri-266-tunable-band-reject-filters-for-mobile-device-conformance-testing/) (2021-12-17)
+- [Ranatec introduces lightweight RI 189 Big RF Shield Box (en-CA)](https://ranatec.com/en-ca/ranatec-introduces-lightweight-ri-189-big-rf-shield-box/) (2021-11-04)
+- [Ranatec launches the RI 198 RF Forensic Box for law enforcement (en-CA)](https://ranatec.com/en-ca/ranatec-launches-the-ri-198-rf-forensic-box-for-law-enforcement/) (2021-09-27)
+- [Ranatec presents: The RI 4196 Fiber Optic Feedthru Element (en-CA)](https://ranatec.com/en-ca/ranatec-introduces-the-high-performance-ri-4196-fiber-optic-feedthru-element/) (2021-06-17)
+- [Ranatec presents its new high-performance RI 4901 EMI Ventilation Panel (en-CA)](https://ranatec.com/en-ca/ranatec-presents-emi-ventilation-panel/) (2021-04-28)
+- [Ranatec introduces dynamic new brand profile (en-CA)](https://ranatec.com/en-ca/ranatec-introduces-dynamic-new-brand-profile/) (2021-03-11)
+- [Ranatec expands niche product portfolio – introduces the RI 4195 AC 110/230V Feedthru Filter (en-CA)](https://ranatec.com/en-ca/ranatec-expands-niche-product-portfolio-introduces-the-ri-4195-ac-110-230v-feedthru-filter/) (2021-01-27)
+- [Ranatec – CEO recap for 2020 (en-CA)](https://ranatec.com/en-ca/ranatec-ceo-recap-for-2020/) (2020-12-22)
+- [Ranatec delivers 5G test system to FAANG client (en-CA)](https://ranatec.com/en-ca/ranatec-delivers-5g-test-system-to-faang-client/) (2020-12-14)
+- [Ranatec introduces benchmark bandwidth performance with new RI 3101 8×8 Butler Matrix (en-CA)](https://ranatec.com/en-ca/ranatec-introduces-benchmark-bandwidth-performance-with-new-ri-3101-8x8-butler-matrix/) (2020-11-16)
+- [Swedish innovator delivers warp-speed in Ranatec’s new 10 Gbps shielded ethernet feedthru filter (en-CA)](https://ranatec.com/en-ca/swedish-innovator-delivers-warp-speed-in-ranatecs-new-10-gbps-shielded-ethernet-feedthru-filter/) (2020-10-08)
+- [Inside view: Invitation to meet the Ranatec CEO (en-CA)](https://ranatec.com/en-ca/inside-view-invitation-to-meet-the-ranatec-ceo/) (2020-09-08)
+- [Ranatec sees boom in 5G equipment orders from Asia in 1st half of 2020 (en-CA)](https://ranatec.com/en-ca/ranatec-sees-boom-in-5g-equipment-orders-from-asia-in-1st-half-of-2020/) (2020-06-25)
+- [Signal Solutions inks agreement to distribute Ranatec test & measurement tools in Finland, Poland, and the US (en-CA)](https://ranatec.com/en-ca/signal-solutions-inks-agreement-to-distribute-ranatec-test-measurement-tools/) (2020-05-27)
+- [Ranatec introduces RF2018B high-performance ”plug and play” switch system for high-volume RF test processes (en-CA)](https://ranatec.com/en-ca/ranatec-introduces-rf2018b-solid-state-switch-system/) (2020-04-06)
+- [Conical Technologies now official Ranatec distributor for South Africa (en-CA)](https://ranatec.com/en-ca/conical-technologies-distributor-south-africa/) (2020-04-02)
+- [Meet us at the EMV Exhibition (en-CA)](https://ranatec.com/en-ca/meet-us-at-the-emv-exhibition/) (2020-02-11)
+- [Ranatec Introduces Versatile RI 4193 HDMI Feedthru Filter for RF Test and Measurement Applications (en-CA)](https://ranatec.com/en-ca/ranatec-introduces-versatile-ri-4193-hdmi-feedthru-filter-for-rf-test-and-measurement-applications/) (2020-01-30)
+- [Ranatec introduces RI 266 Tunable Notch Filter 450-6000 MHz to meet new RF test and measurement requirements for wireless devices (en-CA)](https://ranatec.com/en-ca/ranatec-introduces-ri-266-tunable-notch-filter/) (2019-12-04)
+- [3 Applications and Characteristics of Digital Step Attenuators (en-CA)](https://ranatec.com/en-ca/digital-step-attenuators-applications-and-characteristics/) (2019-10-22)
+- [Magnus Kilian appointed new CEO of Ranatec AB (en-CA)](https://ranatec.com/en-ca/magnus-kilian-appointed-new-ceo-of-ranatec-ab/) (2019-10-01)
+- [Digital Step Attenuator (en-CA)](https://ranatec.com/en-ca/digital-step-attenuator/) (2019-05-07)
+- [Shielded USB 3.0 Feedthru Filter (en-CA)](https://ranatec.com/en-ca/shielded-usb-3-0-feedthru-filter/) (2019-03-29)
+- [New Management at Ranatec (en-CA)](https://ranatec.com/en-ca/new-management-at-ranatec/) (2018-09-03)
+Product pages are also available under /en-ca/product/{slug}/ and canonicalise to the en-US product URL.
+
+## Optional
+- [Cookies policy](https://ranatec.com/cookies-policy/)

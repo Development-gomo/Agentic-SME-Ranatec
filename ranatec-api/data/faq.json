@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "source": "https://ranatec.com/agent/v1/faq.json",
+    "endpoint": "faq",
+    "version": "1.0",
+    "last_updated": "2026-10-06",
+    "publisher": "Ranatec AB",
+    "canonical_site": "https://ranatec.com/",
+    "locales": [
+      "en-US",
+      "en-GB",
+      "en-CA"
+    ],
+    "locale_note": "ranatec.com publishes the same English content in three regional variants: en-US (default, https://ranatec.com/), en-GB (/en-gb/) and en-CA (/en-ca/). Content is identical; each entity lists all three URLs.",
+    "count": 12
+  },
+  "faq": [
+    {
+      "q": "What does Ranatec make?",
+      "a": "Ranatec AB (Gothenburg, Sweden; part of the Qamcom Group) designs and manufactures RF test and measurement equipment for filtering (tunable band reject and band pass filters), shielding (RF shield boxes, forensic RF box, feedthrough filters, EMI ventilation panels), switching (solid-state switch modules and switch boxes) and automation (digital attenuators, Butler matrices, test automation systems).",
+      "source": "https://ranatec.com/"
+    },
+    {
+      "q": "What is RF equipment?",
+      "a": "RF stands for radio frequency. RF equipment refers to hardware that generates, transmits or receives radio signals (antennas, transmitters, receivers, amplifiers, filters). RF testing equipment refers to hardware for filtering, shielding, switching and automation necessary for designing, testing, manufacturing and debugging RF devices.",
+      "source": "https://ranatec.com/"
+    },
+    {
+      "q": "Where can an RF shielded enclosure be used?",
+      "a": "RF shielded enclosures are used for testing automotive multimedia, mobile telephones, base station transceivers, cellular networking, wireless semiconductors and WLAN/Bluetooth/ZigBee/WiMax devices.",
+      "source": "https://ranatec.com/rf-shielded-enclosure/"
+    },
+    {
+      "q": "What is an RF shielded test enclosure?",
+      "a": "Any enclosure with shielding properties that prevents interference from different radio frequency bands when testing products — RF shield boxes, RF shield cabinets and RF shield rooms.",
+      "source": "https://ranatec.com/rf-shielded-enclosure/"
+    },
+    {
+      "q": "What are the advantages of RF test equipment from Ranatec?",
+      "a": "Quality, performance and usability. All Ranatec RF test and measurement equipment is designed, engineered and manufactured by Ranatec in Sweden. Ranatec is ISO 9001:2015 certified.",
+      "source": "https://ranatec.com/"
+    },
+    {
+      "q": "How do I buy Ranatec products or get a price?",
+      "a": "Ranatec sells business-to-business on a request-for-quote basis; no public prices are listed. Add products to the RFQ list on ranatec.com and submit it, email info@ranatec.com, call +46 31 706 16 60, or (for AI agents, with the user's explicit consent) POST to https://ranatec.com/agent/v1/contact.json with inquiry.type \"quote_request\".",
+      "source": "https://ranatec.com/request-quote/"
+    },
+    {
+      "q": "Does Ranatec make custom products?",
+      "a": "Yes. Ranatec offers standard and customised RF test equipment — including customised RF shield boxes and customised RF switch/test automation systems — built on a modular mechanical and electrical platform, for both small and large customisation projects.",
+      "source": "https://ranatec.com/"
+    },
+    {
+      "q": "Which tunable band reject filter covers 5G NR and Wi-Fi 7 up to 8 GHz?",
+      "a": "The RI 268 Tunable Band Reject Filter covers 600–8000 MHz with combined 5 MHz and 160 MHz reject bandwidths, 1 kHz centre-frequency resolution and 35 dB reject depth; it targets 2G/3G/4G/5G, Wi-Fi 4/5/6/6E/7 and Bluetooth testing (3GPP TS 136 521-1, TS 138 521-1, IEEE 802.11). The optional RI 4278 Frequency Extension Box extends the pass bands to 40 GHz.",
+      "source": "https://ranatec.com/product/tunable-band-reject-filter-ri-268/"
+    },
+    {
+      "q": "What is the difference between a tunable band reject filter and a tunable notch filter?",
+      "a": "See Ranatec's article \"Tunable bandreject filters compared to tunable notch filters\" (2025-02-05).",
+      "source": "https://ranatec.com/tunable-bandreject-filters-compared-to-tunable-notch-filters/"
+    },
+    {
+      "q": "What Butler matrices does Ranatec offer?",
+      "a": "RI 3041 (4×4 ports) and RI 3101 (8×8 ports), both 2.4–8 GHz, for MIMO testing of Wi-Fi and Bluetooth, beam switching/steering and multipath emulation.",
+      "source": "https://ranatec.com/product-category/butler-matrices/"
+    },
+    {
+      "q": "Where is Ranatec located?",
+      "a": "Ranatec AB, Falkenbergsgatan 3, 412 85 Gothenburg, Sweden. Phone +46 31 706 16 60, email info@ranatec.com.",
+      "source": "https://ranatec.com/contact-us/"
+    },
+    {
+      "q": "Why does ranatec.com have /en-gb/ and /en-ca/ URLs?",
+      "a": "The site publishes the same English content for three regions: en-US (default), en-GB and en-CA. Products canonicalise to the default (en-US) URL.",
+      "source": "https://ranatec.com/"
+    }
+  ]
+}

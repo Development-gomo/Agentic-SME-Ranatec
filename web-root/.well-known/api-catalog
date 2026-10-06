@@ -1,0 +1,57 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://ranatec.com/agent/v1",
+      "service-desc": [
+        {
+          "href": "https://ranatec.com/openapi.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://ranatec.com/agent/",
+          "type": "text/html"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://ranatec.com/agent/v1/index.json",
+          "type": "application/json"
+        }
+      ]
+    },
+    {
+      "anchor": "https://ranatec.com/mcp",
+      "service-doc": [
+        {
+          "href": "https://ranatec.com/mcp/tools",
+          "type": "application/json"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://ranatec.com/mcp/health",
+          "type": "application/json"
+        }
+      ]
+    },
+    {
+      "anchor": "https://ranatec.com/",
+      "describedby": [
+        {
+          "href": "https://ranatec.com/api-catalog.json",
+          "type": "application/json"
+        },
+        {
+          "href": "https://ranatec.com/llms.txt",
+          "type": "text/plain"
+        },
+        {
+          "href": "https://ranatec.com/ai.txt",
+          "type": "text/plain"
+        }
+      ]
+    }
+  ]
+}

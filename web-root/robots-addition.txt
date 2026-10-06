@@ -1,0 +1,33 @@
+# ─── Ranatec Agentic Web — additions for https://ranatec.com/robots.txt ───
+# The live robots.txt (Yoast) already allows GPTBot, ClaudeBot, Claude-Web, Claude-User,
+# Claude-SearchBot, anthropic-ai, PerplexityBot, Google-Extended, DeepseekBot, FacebookBot and
+# a group of other AI crawlers. Add the user-agents below (not yet listed) and the discovery lines
+# at the END of the file. Keep the existing "User-agent: *" rules unchanged.
+
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: Perplexity-User
+User-agent: Applebot-Extended
+User-agent: GoogleOther
+User-agent: Amazonbot
+User-agent: MistralAI-User
+User-agent: Meta-ExternalAgent
+User-agent: Diffbot
+Allow: /
+Allow: /agent/
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /ai.txt
+Allow: /openapi.json
+Allow: /api-catalog.json
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /my-account/
+Disallow: /en-gb/basket/
+Disallow: /en-ca/shopping-cart/
+
+# Discovery (non-standard directives are ignored by crawlers that don't support them)
+LLM-Readable: https://ranatec.com/agent/
+LLM-Text: https://ranatec.com/llms.txt
+AI-Policy: https://ranatec.com/ai.txt
+Sitemap: https://ranatec.com/sitemap_index.xml

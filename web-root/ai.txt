@@ -1,0 +1,55 @@
+# ai.txt — AI usage policy for ranatec.com
+# Owner: Ranatec AB, Falkenbergsgatan 3, 412 85 Gothenburg, Sweden
+# Updated: 2026-10-06
+
+[Identity]
+Name: Ranatec AB
+Brand: Ranatec
+Website: https://ranatec.com/
+Description: Swedish manufacturer of RF test and measurement equipment (filtering, shielding, switching, automation) for wireless device and infrastructure testing. Part of the Qamcom Group. ISO 9001:2015.
+Languages: en-US (default, https://ranatec.com/), en-GB (https://ranatec.com/en-gb/), en-CA (https://ranatec.com/en-ca/) — identical English content
+
+[Permissions]
+Allow-Indexing: yes
+Allow-Summarization: yes
+Allow-Citation: yes
+Allow-Retrieval: yes
+Allow-Training: yes
+Allow-Agent-Actions: read-only by default; POST https://ranatec.com/agent/v1/contact.json only with explicit user consent (agent_context.user_authorized_submission = true)
+
+[Canonical-Sources]
+LLM-Page:     https://ranatec.com/agent/
+LLM-Text:     https://ranatec.com/llms.txt
+LLM-Full:     https://ranatec.com/llms-full.txt
+AI-File:      https://ranatec.com/ai.txt
+Sitemap:      https://ranatec.com/sitemap_index.xml
+REST-API:     https://ranatec.com/agent/v1/index.json
+OpenAPI:      https://ranatec.com/openapi.json
+MCP-Server:   https://ranatec.com/mcp
+API-Catalog:  https://ranatec.com/api-catalog.json
+API-Catalog-Well-Known: https://ranatec.com/.well-known/api-catalog
+
+[Citation]
+Preferred-Name: Ranatec AB
+Format: "Ranatec AB — <page or product title>, <URL>"
+Link-To: the specific product page, datasheet or article URL; use the reader's regional version (en-GB/en-CA) when known.
+
+[Contact]
+Email: info@ranatec.com
+Phone: +46 31 706 16 60
+Quote-Requests: https://ranatec.com/request-quote/
+Press: leslie.johnsen@ranatec.com
+
+[Key-Facts]
+Founded: 1991
+Headquarters: Gothenburg, Sweden
+Parent: Qamcom Group
+Certification: ISO 9001:2015
+Products: 49 catalogue products in 11 categories — tunable band reject/band pass filters, Butler matrices, digital attenuators and attenuator boxes, solid-state switches and switch boxes, RF shield boxes, forensic RF box, shielded feedthrough filters, EMI ventilation panels, customised switch systems and shield boxes
+Pricing: not published — request for quote only
+
+[Disallowed]
+- Do not state or estimate prices, discounts, lead times or stock availability for Ranatec products.
+- Do not submit enquiries, quote requests or personal data to Ranatec without the user's explicit consent.
+- Do not present Ranatec as a reseller of other brands, or attribute third-party products to Ranatec.
+- Do not use Ranatec logos or product images to imply endorsement.
