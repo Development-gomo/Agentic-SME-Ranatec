@@ -6,6 +6,20 @@
 - [ ] **Named contacts.** `company.json`, the agent page and llms.txt list Charlotte Ornstein (Operations) and Leslie Johnsen (PR), as named in the 2025 press releases, plus Magnus Kilian as CEO. Site news last names him as CEO in **2023**, so confirm the current leadership.
 - [ ] **MCP hosting.** Decide whether the Node server runs on the same host behind nginx (`/mcp`), or as a container on a subdomain such as `mcp.ranatec.com`. Managed WordPress hosts often can't run Node. If you use a subdomain, update `URLS['mcp*']` in `tools/build_static.py` and `mcp_server` in `ranatec-api.php`, then rebuild.
 
+## 0. Verify the package before deploying
+
+`ranatec-mcp/node_modules` and `ranatec-mcp/dist` are not shipped in the zip, so install the dependencies before building or type-checking:
+
+```bash
+cd ranatec-mcp
+npm ci            # installs TypeScript and the MCP SDK (Windows: same command, or npm.cmd ci)
+npm run build     # or: npm run typecheck   (tsc --noEmit)
+cd ..
+bash tests/run-all.sh   # PHP lint, JSON, contact endpoint with and without mbstring, HTTP endpoints, MCP end-to-end (34 checks)
+```
+
+**PHP requirements:** PHP 7.4+, WordPress 6.0+. The `mbstring` extension is recommended but **not required**: the plugin uses its own UTF-8 helpers (`Ranatec_Agent_API::str_len()` / `str_sub()`) that fall back to PCRE when `mbstring` is missing. WordPress core also polyfills `mb_substr` / `mb_strlen`.
+
 ## 1. WordPress plugin
 
 - [ ] Zip `ranatec-api/` and upload it via Plugins → Add New → Upload, or copy it to `wp-content/plugins/ranatec-api/`.

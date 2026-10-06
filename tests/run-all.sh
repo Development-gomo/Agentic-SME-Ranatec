@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# One-command verification of the whole package (run from the repo root):
+#   bash tests/run-all.sh
+# Needs: php (CLI), node >= 20, npm. Installs MCP dependencies with `npm ci` if missing.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+PHP_PORT=${PHP_PORT:-8095}; MCP_PORT=${MCP_PORT:-3095}
+TMP=$(mktemp -d); pass=0; fail=0
+ok()  { echo "PASS $*"; pass=$((pass+1)); }
+bad() { echo "FAIL $*"; fail=$((fail+1)); }
+cleanup() { [[ -n "${PHP_PID:-}" ]] && kill "$PHP_PID" 2>/dev/null || true; [[ -n "${MCP_PID:-}" ]] && kill "$MCP_PID" 2>/dev/null || true; rm -rf "$TMP"; rm -f "$(php -r 'echo sys_get_temp_dir();')"/rl-ranatec_api_rl_* "$(php -r 'echo sys_get_temp_dir();')"/ranatec-mail.txt; }
+trap cleanup EXIT
+cleanup_rl() { rm -f "$(php -r 'echo sys_get_temp_dir();')"/rl-ranatec_api_rl_*; }
+
+echo "== PHP"
+for f in ranatec-api/ranatec-api.php ranatec-api/includes/*.php tests/*.php; do php -l "$f" >/dev/null && ok "lint $f" || bad "lint $f"; done
+for f in ranatec-api/data/*.json ranatec-api/openapi.json ranatec-api/public/*.json; do python3 -c "import json,sys;json.load(open(sys.argv[1]))" "$f" && ok "json $f" || bad "json $f"; done
+
+BODY='{"agent_context":{"user_authorized_submission":true},"person":{"name":"Jörg Ångström","email":"qa@example.com"},"company":{"name":"Prüf GmbH"},"inquiry":{"type":"quote_request","message":"Angebot für 2 × RI 268 bitte.","products":[{"id":"tunable-band-reject-filter-ri-268","quantity":2}]}}'
+cleanup_rl; echo "$BODY" | php tests/wp-stub-harness.php contact '' POST | grep -q '"status": "received"' && ok "contact (mbstring on)" || bad "contact (mbstring on)"
+if ! php -n -m | grep -qi mbstring; then
+  cleanup_rl; echo "$BODY" | php -n tests/wp-stub-harness.php contact '' POST | grep -q '"status": "received"' && ok "contact (mbstring OFF)" || bad "contact (mbstring OFF)"
+fi
+cleanup_rl; echo "${BODY/true/false}" | php tests/wp-stub-harness.php contact '' POST | grep -q 'STATUS 403' && ok "contact without consent → 403" || bad "contact without consent → 403"
+
+echo "== HTTP (PHP built-in server)"
+php -S 127.0.0.1:$PHP_PORT tests/php-router.php >"$TMP/php.log" 2>&1 & PHP_PID=$!
+for i in $(seq 1 40); do curl -s -o /dev/null "http://127.0.0.1:$PHP_PORT/agent/v1/index.json" && break; sleep 0.25; done
+for p in agent/ agent/v1/index.json agent/v1/products.json agent/v1/products/ri-268.json agent/v1/categories/butler-matrices.json agent/v1/news.json agent/v1/faq.json openapi.json llms.txt llms-full.txt ai.txt api-catalog.json .well-known/api-catalog; do
+  code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:$PHP_PORT/$p"); [[ $code == 200 ]] && ok "GET /$p" || bad "GET /$p ($code)"
+done
+
+echo "== MCP server"
+( cd ranatec-mcp && { [[ -d node_modules ]] || npm ci --no-audit --no-fund >/dev/null; } && npm run build >/dev/null ) && ok "npm ci + build" || bad "npm ci + build"
+RANATEC_API_BASE="http://127.0.0.1:$PHP_PORT/agent/v1" PORT=$MCP_PORT node ranatec-mcp/dist/index.js >"$TMP/mcp.log" 2>&1 & MCP_PID=$!
+for i in $(seq 1 40); do curl -s -o /dev/null "http://127.0.0.1:$MCP_PORT/health" && break; sleep 0.25; done
+cleanup_rl
+( cd ranatec-mcp && MCP_URL="http://127.0.0.1:$MCP_PORT/mcp" npm test --silent ) && ok "MCP smoke test (14 checks)" || bad "MCP smoke test"
+
+echo; echo "$pass passed, $fail failed"; [[ $fail -eq 0 ]]

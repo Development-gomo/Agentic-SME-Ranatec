@@ -58,6 +58,14 @@ An AI-agent-ready layer for **[ranatec.com](https://ranatec.com/)** (WordPress +
 
 ## Tests
 
+One command runs everything (PHP lint, JSON, the contact endpoint with and without `mbstring`, HTTP endpoints and the MCP end-to-end test). It runs `npm ci` itself if `node_modules` is missing:
+
+```bash
+bash tests/run-all.sh      # 34 checks
+```
+
+Individual steps:
+
 ```bash
 # Plugin (no WordPress needed: tests/wp-stubs.php stubs the WP functions used)
 php tests/wp-stub-harness.php products '' GET 'category=butler-matrices&fields=summary' </dev/null

@@ -64,7 +64,7 @@ final class Ranatec_Agent_Contact
         if (!$email || !is_email($email)) $errors['person.email'] = 'valid email required';
         if ($cname === '') $errors['company.name'] = 'required';
         if (!in_array($type, self::TYPES, true)) $errors['inquiry.type'] = 'one of: ' . implode(', ', self::TYPES);
-        if (mb_strlen($message) < 10) $errors['inquiry.message'] = 'required (min 10 characters)';
+        if (Ranatec_Agent_API::str_len($message) < 10) $errors['inquiry.message'] = 'required (min 10 characters)';
 
         // ---- products (validated against products.json) ----
         $lines = [];
@@ -157,12 +157,12 @@ final class Ranatec_Agent_Contact
 
     private static function text($v, $max)
     {
-        return mb_substr(sanitize_text_field(is_scalar($v) ? (string) $v : ''), 0, $max);
+        return Ranatec_Agent_API::str_sub(sanitize_text_field(is_scalar($v) ? (string) $v : ''), $max);
     }
 
     private static function textarea($v, $max)
     {
-        return mb_substr(sanitize_textarea_field(is_scalar($v) ? (string) $v : ''), 0, $max);
+        return Ranatec_Agent_API::str_sub(sanitize_textarea_field(is_scalar($v) ? (string) $v : ''), $max);
     }
 
     private static function err($code, $message, $fields = null)

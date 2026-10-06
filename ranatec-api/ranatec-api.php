@@ -3,7 +3,7 @@
  * Plugin Name:       Ranatec Agent API
  * Plugin URI:        https://ranatec.com/agent/
  * Description:       Agentic Web package for ranatec.com — serves the machine-readable agent page (/agent/), clean JSON endpoints (/agent/v1/*.json), the OpenAPI spec (/openapi.json), llms.txt, ai.txt and the API catalog, plus an agent-safe RFQ / contact endpoint.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            GO MO Group for Ranatec AB
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('RANATEC_API_VERSION', '1.0.0');
+define('RANATEC_API_VERSION', '1.0.1');
 define('RANATEC_API_DIR', plugin_dir_path(__FILE__));
 define('RANATEC_API_DATA', RANATEC_API_DIR . 'data/');
 define('RANATEC_API_PUBLIC', RANATEC_API_DIR . 'public/');
@@ -340,6 +340,27 @@ final class Ranatec_Agent_API
     private static function lc($s)
     {
         return function_exists('mb_strtolower') ? mb_strtolower($s, 'UTF-8') : strtolower($s);
+    }
+
+    /** UTF-8 string length that works with or without the mbstring extension. */
+    public static function str_len($s)
+    {
+        $s = (string) $s;
+        if (function_exists('mb_strlen')) {
+            return mb_strlen($s, 'UTF-8');
+        }
+        $n = preg_match_all('/./us', $s);
+        return $n === false ? strlen($s) : $n;
+    }
+
+    /** UTF-8 safe substring (from position 0) that works with or without the mbstring extension. */
+    public static function str_sub($s, $max)
+    {
+        $s = (string) $s;
+        if (function_exists('mb_substr')) {
+            return mb_substr($s, 0, $max, 'UTF-8');
+        }
+        return preg_match('/^.{0,' . (int) $max . '}/us', $s, $m) ? $m[0] : substr($s, 0, $max);
     }
 
     public static function load($name)

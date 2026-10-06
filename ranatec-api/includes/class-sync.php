@@ -139,7 +139,7 @@ final class Ranatec_Agent_Sync
                 $item = [
                     'id' => $slug,
                     'model_number' => $m ? self::norm_model($m[1]) : null,
-                    'summary' => $short ? mb_substr($short, 0, 200) : null,
+                    'summary' => $short ? Ranatec_Agent_API::str_sub($short, 200) : null,
                     'listing' => $cats ? 'catalogue' : 'additional',
                     'custom' => strpos($slug, 'customized-') === 0,
                     'description' => self::split_paragraphs($wc->get_description()),
