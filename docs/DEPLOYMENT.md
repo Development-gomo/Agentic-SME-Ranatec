@@ -15,7 +15,7 @@ cd ranatec-mcp
 npm ci            # installs TypeScript and the MCP SDK (Windows: same command, or npm.cmd ci)
 npm run build     # or: npm run typecheck   (tsc --noEmit)
 cd ..
-bash tests/run-all.sh   # PHP lint, JSON, contact endpoint with and without mbstring, HTTP endpoints, MCP end-to-end (34 checks)
+bash tests/run-all.sh   # PHP lint, JSON, contact endpoint with and without mbstring, HTTP endpoints, MCP end-to-end (36 checks)
 ```
 
 **PHP requirements:** PHP 7.4+, WordPress 6.0+. The `mbstring` extension is recommended but **not required**: the plugin uses its own UTF-8 helpers (`Ranatec_Agent_API::str_len()` / `str_sub()`) that fall back to PCRE when `mbstring` is missing. WordPress core also polyfills `mb_substr` / `mb_strlen`.

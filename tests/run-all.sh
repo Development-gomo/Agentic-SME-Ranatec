@@ -25,7 +25,8 @@ cleanup_rl; echo "${BODY/true/false}" | php tests/wp-stub-harness.php contact ''
 
 echo "== HTTP (PHP built-in server)"
 php -S 127.0.0.1:$PHP_PORT tests/php-router.php >"$TMP/php.log" 2>&1 & PHP_PID=$!
-for i in $(seq 1 40); do curl -s -o /dev/null "http://127.0.0.1:$PHP_PORT/agent/v1/index.json" && break; sleep 0.25; done
+ready=0; for i in $(seq 1 80); do curl -s -o /dev/null "http://127.0.0.1:$PHP_PORT/agent/v1/index.json" && { ready=1; break; }; sleep 0.25; done
+[[ $ready == 1 ]] && ok "PHP server ready on :$PHP_PORT" || { bad "PHP server did not start on :$PHP_PORT (port in use?)"; cat "$TMP/php.log"; }
 for p in agent/ agent/v1/index.json agent/v1/products.json agent/v1/products/ri-268.json agent/v1/categories/butler-matrices.json agent/v1/news.json agent/v1/faq.json openapi.json llms.txt llms-full.txt ai.txt api-catalog.json .well-known/api-catalog; do
   code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:$PHP_PORT/$p"); [[ $code == 200 ]] && ok "GET /$p" || bad "GET /$p ($code)"
 done
@@ -33,8 +34,13 @@ done
 echo "== MCP server"
 ( cd ranatec-mcp && { [[ -d node_modules ]] || npm ci --no-audit --no-fund >/dev/null; } && npm run build >/dev/null ) && ok "npm ci + build" || bad "npm ci + build"
 RANATEC_API_BASE="http://127.0.0.1:$PHP_PORT/agent/v1" PORT=$MCP_PORT node ranatec-mcp/dist/index.js >"$TMP/mcp.log" 2>&1 & MCP_PID=$!
-for i in $(seq 1 40); do curl -s -o /dev/null "http://127.0.0.1:$MCP_PORT/health" && break; sleep 0.25; done
+ready=0; for i in $(seq 1 80); do curl -s -o /dev/null "http://127.0.0.1:$MCP_PORT/health" && { ready=1; break; }; sleep 0.25; done
+[[ $ready == 1 ]] && ok "MCP server ready on :$MCP_PORT" || { bad "MCP server did not start on :$MCP_PORT (port in use?)"; cat "$TMP/mcp.log"; }
 cleanup_rl
-( cd ranatec-mcp && MCP_URL="http://127.0.0.1:$MCP_PORT/mcp" npm test --silent ) && ok "MCP smoke test (14 checks)" || bad "MCP smoke test"
+if ( cd ranatec-mcp && MCP_URL="http://127.0.0.1:$MCP_PORT/mcp" npm test --silent ) >"$TMP/smoke.log" 2>&1; then
+  cat "$TMP/smoke.log"; ok "MCP smoke test (14 checks)"
+else
+  cat "$TMP/smoke.log"; echo "--- mcp server log:"; tail -20 "$TMP/mcp.log"; bad "MCP smoke test"
+fi
 
 echo; echo "$pass passed, $fail failed"; [[ $fail -eq 0 ]]

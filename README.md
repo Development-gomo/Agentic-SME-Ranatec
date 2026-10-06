@@ -61,7 +61,7 @@ An AI-agent-ready layer for **[ranatec.com](https://ranatec.com/)** (WordPress +
 One command runs everything (PHP lint, JSON, the contact endpoint with and without `mbstring`, HTTP endpoints and the MCP end-to-end test). It runs `npm ci` itself if `node_modules` is missing:
 
 ```bash
-bash tests/run-all.sh      # 34 checks
+bash tests/run-all.sh      # 36 checks
 ```
 
 Individual steps:
