@@ -8,6 +8,7 @@
  *   GET  /mcp/health   liveness + upstream API check   (also /health)
  *   GET  /mcp/tools    tool list for discovery          (also /tools)
  */
+import { createRequire } from "node:module";
 import express, { type Request, type Response } from "express";
 import rateLimit from "express-rate-limit";
 import { z } from "zod";
@@ -15,7 +16,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 
 const NAME = "ranatec-mcp";
-const VERSION = "1.0.0";
+// Single source of truth: package.json (stamped from the repo VERSION file by tools/release.sh).
+const VERSION: string = (createRequire(import.meta.url)("../package.json") as { version: string }).version;
 const API_BASE = (process.env.RANATEC_API_BASE ?? "https://ranatec.com/agent/v1").replace(/\/$/, "");
 const PORT = parseInt(process.env.PORT ?? "3000", 10);
 const API_TIMEOUT = parseInt(process.env.API_TIMEOUT_MS ?? "10000", 10);

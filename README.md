@@ -56,12 +56,18 @@ An AI-agent-ready layer for **[ranatec.com](https://ranatec.com/)** (WordPress +
 | New/edited news post or product | Nothing. The daily sync (or *Sync now*) updates the API. Then run `python3 tools/build_static.py` and redeploy `public/` so the agent page and llms files match. |
 | New product specs/categories, larger changes | Full refresh: `FIRECRAWL_API_KEY=… tools/crawl.sh && python3 tools/extract.py && python3 tools/build_data.py && python3 tools/build_static.py` |
 
+## Versioning and releases
+
+The repo-root `VERSION` file is the single source of truth. `bash tools/release.sh` stamps it into the plugin header and `RANATEC_API_VERSION`, the MCP `package.json`/`package-lock.json` and every data file's `meta.version`. It then regenerates the OpenAPI spec, agent page and catalogs and runs `tools/check_versions.py` plus the full test suite. If everything passes, it writes `release/ranatec-api-<v>.zip`, `release/MANIFEST.md` and `release/ranatec-agentic-web-package-<v>.zip`. The package zip contains the plugin zip and manifest under `release/`. The MCP server reads its version from `package.json` at runtime, so `/mcp/health` always reports the released version.
+
+To cut a new release: edit `VERSION`, run `bash tools/release.sh`, commit.
+
 ## Tests
 
 One command runs everything (PHP lint, JSON, the contact endpoint with and without `mbstring`, HTTP endpoints and the MCP end-to-end test). It runs `npm ci` itself if `node_modules` is missing:
 
 ```bash
-bash tests/run-all.sh      # 36 checks
+bash tests/run-all.sh      # 37 checks
 ```
 
 Individual steps:

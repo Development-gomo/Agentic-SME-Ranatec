@@ -31,6 +31,8 @@ URLS = {
 }
 LOCALES = [('en-US', 'United States (default)', SITE + '/'), ('en-GB', 'United Kingdom', SITE + '/en-gb/'), ('en-CA', 'Canada', SITE + '/en-ca/')]
 
+PACKAGE_VERSION = open(os.path.join(ROOT, 'VERSION')).read().strip()
+
 def load(n):
     return json.load(open(os.path.join(DATA, n + '.json'), encoding='utf-8'))
 
@@ -86,7 +88,7 @@ def build_openapi():
         'openapi': '3.0.3',
         'info': {
             'title': 'Ranatec Agent API',
-            'version': '1.0.0',
+            'version': PACKAGE_VERSION,
             'description': 'Read-only JSON API describing Ranatec AB (Gothenburg, Sweden) — RF test & measurement equipment for filtering, shielding, switching and automation — plus one consent-gated POST endpoint for quote requests and enquiries. Content mirrors ranatec.com in three regional English locales (en-US default, en-GB, en-CA); every entity lists all three URLs. Ranatec publishes no prices: all products are sold B2B via request for quote.',
             'contact': {'name': 'Ranatec AB', 'email': 'info@ranatec.com', 'url': SITE + '/contact-us/'},
             'x-agent-page': URLS['agent'], 'x-llms-txt': URLS['llms'], 'x-mcp-server': URLS['mcp'],
@@ -258,7 +260,7 @@ def build_agent_page():
     a('<title>Ranatec AB — Machine-Readable Agent Page | RF Test &amp; Measurement Equipment</title>')
     a(f'<meta name="description" content="Complete machine-readable profile of Ranatec AB (Gothenburg, Sweden): {len(catalogue)} RF test and measurement products with specifications, categories, solutions, news, contact and RFQ process. Built for LLMs and AI agents.">')
     a('<meta name="robots" content="index, follow, max-snippet:-1">')
-    a(f'<meta name="last-crawled" content="{UPDATED}">\n<meta name="generator" content="Ranatec Agentic Web package 1.0 (GO MO Group)">')
+    a(f'<meta name="last-crawled" content="{UPDATED}">\n<meta name="generator" content="Ranatec Agentic Web package {PACKAGE_VERSION} (GO MO Group)">')
     a(f'<link rel="canonical" href="{URLS["agent"]}">')
     for code, _, base in LOCALES:
         pass
@@ -757,7 +759,7 @@ def build_catalog(spec):
         'name': 'Ranatec AB — API and machine-readable resource catalog',
         'description': 'All machine-readable resources published for ranatec.com: agent page, llms.txt, ai.txt, REST API (/agent/v1), OpenAPI, MCP server, sitemap and robots.txt.',
         'image': SITE + '/wp-content/uploads/2021/02/logo_ranatec_black_gradient_promise.svg',
-        'url': URLS['catalog'], 'created': UPDATED, 'modified': UPDATED, 'specificationVersion': '0.16',
+        'url': URLS['catalog'], 'created': UPDATED, 'modified': UPDATED, 'specificationVersion': '0.16', 'X-package-version': PACKAGE_VERSION,
         'tags': ['RF test equipment', 'test and measurement', 'wireless testing', '5G', 'Wi-Fi', 'EMC shielding', 'B2B', 'request for quote', 'agent-ready', 'Sweden'],
         'apis': [
             {'name': 'Ranatec agent page', 'description': 'Complete semantic HTML representation of ranatec.com with schema.org JSON-LD (Organization, Product ×%d, FAQPage, Person, ItemList).' % len(catalogue),

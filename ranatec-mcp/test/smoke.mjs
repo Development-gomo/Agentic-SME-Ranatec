@@ -2,6 +2,9 @@
 // Usage: MCP_URL=http://127.0.0.1:3000/mcp node test/smoke.mjs
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import { readFileSync } from "node:fs";
+
+const PKG_VERSION = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")).version;
 
 const url = new URL(process.env.MCP_URL ?? "http://127.0.0.1:3000/mcp");
 const client = new Client({ name: "ranatec-smoke", version: "1.0.0" });
@@ -9,6 +12,10 @@ await client.connect(new StreamableHTTPClientTransport(url));
 const parse = (r) => JSON.parse(r.content[0].text);
 let failures = 0;
 const check = (name, cond, info = "") => { console.log(`${cond ? "PASS" : "FAIL"} ${name}${info ? " — " + info : ""}`); if (!cond) failures++; };
+
+const health = await (await fetch(new URL("/mcp/health", url))).json();
+check("health reports package version", health.version === PKG_VERSION, `${health.version} (package.json ${PKG_VERSION})`);
+check("server info reports package version", client.getServerVersion()?.version === PKG_VERSION, client.getServerVersion()?.version);
 
 const { tools } = await client.listTools();
 check("listTools returns 12 tools", tools.length === 12, tools.map((t) => t.name).join(", "));

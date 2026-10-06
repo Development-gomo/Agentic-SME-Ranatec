@@ -207,7 +207,7 @@ final class Ranatec_Agent_Sync
         return array_merge([
             'source' => RANATEC_API_BASE . '/' . $endpoint . '.json',
             'endpoint' => $endpoint,
-            'version' => '1.0',
+            'version' => RANATEC_API_VERSION,
             'last_updated' => gmdate('Y-m-d'),
             'publisher' => 'Ranatec AB',
             'canonical_site' => RANATEC_API_SITE . '/',

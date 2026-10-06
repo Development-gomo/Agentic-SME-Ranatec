@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Ranatec Agent API",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "description": "Read-only JSON API describing Ranatec AB (Gothenburg, Sweden) — RF test & measurement equipment for filtering, shielding, switching and automation — plus one consent-gated POST endpoint for quote requests and enquiries. Content mirrors ranatec.com in three regional English locales (en-US default, en-GB, en-CA); every entity lists all three URLs. Ranatec publishes no prices: all products are sold B2B via request for quote.",
     "contact": {
       "name": "Ranatec AB",

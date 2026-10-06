@@ -8,7 +8,7 @@ d = json.load(open(os.path.join(BASE, 'site-data.json')))
 SITE = 'https://ranatec.com'
 API = SITE + '/agent/v1'
 TODAY = os.environ.get('RANATEC_DATE') or __import__('datetime').date.today().isoformat()
-VERSION = '1.0'
+VERSION = open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'VERSION')).read().strip()
 JUNK = re.compile(r'(Customize with extra items|quantity|quote request list|Add to RFQ|View Cart)', re.I)
 MODEL = re.compile(r'\b(RI ?\d{3,4}(?:-\d{2})?B?|RF ?\d{4}B?)\b')
 
