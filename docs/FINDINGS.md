@@ -42,6 +42,12 @@ These issues came up while building the agent package. None of them blocks deplo
 14. "Magnus **Killian**" in two 2020 news posts (RF2018B launch and RI 4193 HDMI launch). The name is spelled "Kilian" elsewhere.
 15. **No team or leadership page.** The only named people appear in press releases, and the CEO was last named on the site in 2023. A short "Management" section on About Us would give AI answers an authoritative current source.
 
+## Low: internal links
+
+16. **Internal links point at old URLs (13 redirecting paths, 1 broken).** News articles and some product pages still link to legacy paths that now 301, e.g. `/rf-shield-box/` (13 pages), `/butler-matrix/` (6), `/wireless-test-automation/tunable-notch-filter/` (6), `/rf-shielded-enclosure/shielded-lan-usb-feedthru-filters/` (5), `/forensic-box/` (4), `/product/ri-268-tunable-notch-filter/` (from the RI 4278 product page). `/shielded-enclosure/shielded-lan-usb-feedthru-filters/` returns **404** and is linked from the en-GB/en-CA copies of the legacy 2019 articles. Author archives (`/author/charlotte/`, `/author/gomogroup/`) are linked from page templates but redirect to the homepage.
+    *Fix:* run a search-and-replace on post content to point these links at their final URLs; remove the author links from the templates.
+17. **Two copies of the ISO 9001 certificate.** About Us links `2025/04/2460-Ranatec-AB-en.pdf`; six news articles still link an older `2022/06/2460-Ranatec-AB-en.pdf`. Point all of them at the current certificate.
+
 ## Already good
 
 - robots.txt already allows GPTBot, ClaudeBot, Claude-User, Claude-SearchBot, PerplexityBot, Google-Extended and others.
