@@ -1,6 +1,6 @@
 # Render Blueprint for the Ranatec MCP server.
 # Render → New → Blueprint → connect this repository/branch → Apply.
-# After the first deploy: Settings → Custom Domains → add mcp.ranatec.com (see docs/DEPLOYMENT-ODERLAND.md, Part C).
+# Public URL: https://agentic-mcp-sme-ranatec.onrender.com (MCP endpoint https://agentic-mcp-sme-ranatec.onrender.com/mcp). See docs/DEPLOYMENT-ODERLAND.md, Part C.
 services:
   - type: web
     name: ranatec-mcp
@@ -8,7 +8,7 @@ services:
     rootDir: ranatec-mcp
     region: frankfurt          # closest to the Oderland servers in Sweden
     plan: starter              # paid instance: stays awake. The free plan sleeps after inactivity (slow first agent call).
-    buildCommand: npm ci && npm run build
+    buildCommand: npm ci --include=dev && npm run build
     startCommand: npm start
     healthCheckPath: /live     # liveness only; /health also checks the WordPress API and returns 503 until the plugin is live
     autoDeploy: true

@@ -1,6 +1,6 @@
 # Deploying on Oderland (cPanel + LiteSpeed): step by step
 
-ranatec.com is hosted on Oderland. It runs **LiteSpeed** and **PHP 8.2**, managed through **cPanel**. The WordPress plugin goes on Oderland. The **MCP server runs on Render** at `https://mcp.ranatec.com/mcp` (`render.yaml` in the repo root). Ignore `ranatec-mcp/nginx-mcp.conf`.
+ranatec.com is hosted on Oderland. It runs **LiteSpeed** and **PHP 8.2**, managed through **cPanel**. The WordPress plugin goes on Oderland. The **MCP server runs on Render** at `https://agentic-mcp-sme-ranatec.onrender.com/mcp` (`render.yaml` in the repo root). Ignore `ranatec-mcp/nginx-mcp.conf`.
 
 Files you need, all in `release/`:
 
@@ -20,10 +20,10 @@ Expect about 30–45 minutes. Do it in a quiet hour, and keep the **Before you s
 1. **Confirm the open questions with Ranatec:**
    - Agent quote requests go to `info@ranatec.com` (confirmed).
    - Current CEO: not confirmed. The package no longer names a current CEO, so nothing needs changing.
-   - MCP server: Render, on `https://mcp.ranatec.com/mcp` (confirmed).
+   - MCP server: Render, at `https://agentic-mcp-sme-ranatec.onrender.com/mcp` (confirmed).
 2. **Get access:** a WordPress admin login for ranatec.com, and Ranatec's cPanel login at Oderland (via Oderland's customer portal).
 3. **Take a backup.** In cPanel, use **Backup** (or JetBackup if listed) to take a full account backup, or at least the files and database.
-4. **Render account** with access to the GitHub repo `Development-gomo/Agentic-SME-Ranatec`, and access to the ranatec.com DNS (cPanel **Zone Editor** at Oderland).
+4. **Render account** with access to the GitHub repo that holds the MCP server. No DNS changes are needed: the server uses Render's own address.
 
 ---
 
@@ -74,28 +74,28 @@ Expect about 30–45 minutes. Do it in a quiet hour, and keep the **Before you s
 
 ---
 
-## Part C: MCP server on Render + mcp.ranatec.com (~20 min)
+## Part C: MCP server on Render (~15 min)
 
 15. In Render, go to **New → Blueprint**, connect `Development-gomo/Agentic-SME-Ranatec` and pick the release branch, then click **Apply**. `render.yaml` sets everything:
     - root folder `ranatec-mcp`
-    - build `npm ci && npm run build`, start `npm start`
+    - build `npm ci --include=dev && npm run build`, start `npm start`
     - Node 22, Frankfurt, health check `/live`
     - environment variables `RANATEC_API_BASE=https://ranatec.com/agent/v1` and `TRUST_PROXY=1`
 16. Keep the **Starter** plan. The free plan sleeps when idle, so the first agent call after a quiet period is slow.
-17. When the deploy is green, open `https://<service>.onrender.com/tools`. It should list **12 tools** and `"version"` should match the release.
-18. In Render, go to **Settings → Custom Domains**, add `mcp.ranatec.com`, and copy the target Render shows.
-19. In Oderland cPanel, go to **Zone Editor** → ranatec.com → add a **CNAME** record: `mcp` → `<service>.onrender.com`. Wait until Render shows the domain as **Verified** and the certificate as issued (minutes, up to about an hour).
+17. The service must be named **`agentic-mcp-sme-ranatec`** so its address is `https://agentic-mcp-sme-ranatec.onrender.com`. That address is what the plugin, agent page, llms.txt, ai.txt, OpenAPI and API catalogs advertise.
+18. Build command: `npm ci --include=dev && npm run build` (plain `npm run build` fails because the dependencies aren't installed). Start command: `npm start`.
+19. If you leave the Root Directory empty, the repo root must contain `package.json`, `package-lock.json`, `tsconfig.json` and `src/`. Otherwise set Root Directory to `ranatec-mcp`.
 20. **Test it:**
-    - `https://mcp.ranatec.com/mcp/tools` should list 12 tools.
-    - `https://mcp.ranatec.com/mcp/health` should return `"status":"ok"` and `"upstream":"ok"`. Part A must be live for this.
-    - Opening `https://mcp.ranatec.com/mcp` in a browser returning **405** is correct; MCP clients use POST.
+    - `https://agentic-mcp-sme-ranatec.onrender.com/mcp/tools` should list 12 tools.
+    - `https://agentic-mcp-sme-ranatec.onrender.com/mcp/health` should return `"status":"ok"` and `"upstream":"ok"`. Part A must be live for this.
+    - Opening `https://agentic-mcp-sme-ranatec.onrender.com/mcp` in a browser returning **405** is correct; MCP clients use POST.
 21. **End-to-end test** from your machine, using the unzipped package. The last check sends one real quote-request email:
     ```bash
-    cd ranatec-mcp && npm ci && MCP_URL=https://mcp.ranatec.com/mcp npm test
+    cd ranatec-mcp && npm ci && MCP_URL=https://agentic-mcp-sme-ranatec.onrender.com/mcp npm test
     ```
-22. **Optional:** connect it in an MCP client, e.g. a custom connector with URL `https://mcp.ranatec.com/mcp`.
+22. **Optional:** connect it in an MCP client, e.g. a custom connector with URL `https://agentic-mcp-sme-ranatec.onrender.com/mcp`.
 
-**If something fails:** check the Render **Logs** tab. If `/health` shows `"upstream":"http_404"`, finish Part A (and the Permalinks save) first.
+**If something fails:** check the Render **Logs** tab. A build error like `Cannot find module 'express'` means the build command is missing `npm ci --include=dev`. If `/health` shows `"upstream":"http_404"`, finish Part A (and the Permalinks save) first.
 
 **Alternative (not used): cPanel Setup Node.js App on Oderland.** Upload `ranatec-mcp-<version>-cpanel.zip` to a `ranatec-mcp` folder outside `public_html`, create the app with startup file `app.cjs` and set the `RANATEC_API_BASE` variable, then click **Run NPM Install** → **Restart**. If you serve it at a different URL, change `RANATEC_MCP_URL` in `ranatec-api/ranatec-api.php` and run `bash tools/release.sh`.
 
@@ -111,5 +111,5 @@ Expect about 30–45 minutes. Do it in a quiet hour, and keep the **Before you s
 ## Rollback
 
 - **Plugin:** go to **Plugins → Ranatec Agent API → Deactivate**, then **Settings → Permalinks → Save**. The site goes back to exactly how it was. The plugin doesn't change any WordPress content.
-- **MCP server:** suspend the Render service and delete the `mcp` CNAME record.
+- **MCP server:** suspend the Render service.
 - **robots.txt:** remove the pasted block.

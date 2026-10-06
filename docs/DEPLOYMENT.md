@@ -7,7 +7,7 @@
 
 - [ ] **Contact recipient.** Agent submissions go to `info@ranatec.com` by default. You can change this in Tools → Ranatec Agent API.
 - [ ] **Named contacts.** `company.json`, the agent page and llms.txt list Charlotte Ornstein (Operations) and Leslie Johnsen (PR), as named in the 2025 press releases, plus Magnus Kilian as CEO. Site news last names him as CEO in **2023**, so confirm the current leadership.
-- [ ] **MCP hosting.** Decide whether the Node server runs on the same host behind nginx (`/mcp`), or as a container on a subdomain such as `mcp.ranatec.com`. Managed WordPress hosts often can't run Node. If you use a subdomain, update `URLS['mcp*']` in `tools/build_static.py` and `mcp_server` in `ranatec-api.php`, then rebuild.
+- [ ] **MCP hosting.** Decide whether the Node server runs on the same host behind nginx (`/mcp`), or as a container on a separate host. **Chosen: Render, at `https://agentic-mcp-sme-ranatec.onrender.com/mcp`.** Managed WordPress hosts often can't run Node. If you use a subdomain, update `URLS['mcp*']` in `tools/build_static.py` and `mcp_server` in `ranatec-api.php`, then rebuild.
 
 ## 0. Verify the package before deploying
 

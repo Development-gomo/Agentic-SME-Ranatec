@@ -3,7 +3,7 @@
  * Plugin Name:       Ranatec Agent API
  * Plugin URI:        https://ranatec.com/agent/
  * Description:       Agentic Web package for ranatec.com — serves the machine-readable agent page (/agent/), clean JSON endpoints (/agent/v1/*.json), the OpenAPI spec (/openapi.json), llms.txt, ai.txt and the API catalog, plus an agent-safe RFQ / contact endpoint.
- * Version:           1.0.3
+ * Version:           1.0.4
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            GO MO Group for Ranatec AB
@@ -15,14 +15,14 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('RANATEC_API_VERSION', '1.0.3');
+define('RANATEC_API_VERSION', '1.0.4');
 define('RANATEC_API_DIR', plugin_dir_path(__FILE__));
 define('RANATEC_API_DATA', RANATEC_API_DIR . 'data/');
 define('RANATEC_API_PUBLIC', RANATEC_API_DIR . 'public/');
 define('RANATEC_API_SITE', 'https://ranatec.com');
 define('RANATEC_API_BASE', RANATEC_API_SITE . '/agent/v1');
-// MCP server (hosted on Render, custom domain). tools/build_static.py reads this value, so change it only here.
-define('RANATEC_MCP_URL', 'https://mcp.ranatec.com/mcp');
+// MCP server (hosted on Render). tools/build_static.py reads this value, so change it only here.
+define('RANATEC_MCP_URL', 'https://agentic-mcp-sme-ranatec.onrender.com/mcp');
 
 require_once RANATEC_API_DIR . 'includes/class-contact.php';
 require_once RANATEC_API_DIR . 'includes/class-sync.php';
