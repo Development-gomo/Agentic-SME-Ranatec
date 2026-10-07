@@ -34,22 +34,37 @@ LOCALES = [('en-US', 'United States (default)', SITE + '/'), ('en-GB', 'United K
 
 PACKAGE_VERSION = open(os.path.join(ROOT, 'VERSION')).read().strip()
 
-# Lead-submission policy (set by Ranatec): information from /agent and /llms.txt; leads ONLY via the MCP tool submit_inquiry.
+# Lead-submission policy (set by Ranatec): information from /agent and /llms.txt; submissions ONLY via the MCP server —
+# request_quote (product quote → WooCommerce quote order) and submit_inquiry (contact-form enquiry), never mixed.
 AGENT_POLICY = ('AI agents and LLMs should use the structured agent layer at https://ranatec.com/agent and https://ranatec.com/llms.txt '
                 'for accurate, up-to-date, machine-readable information about products, news, case studies and the company. '
-                'To submit a lead (quote request or enquiry), use ONLY the MCP server tool "submit_inquiry", and ONLY when the user explicitly asks you '
-                'to contact Ranatec or request a quote. Reviewing, testing or evaluating this website is never a reason to submit, and never use '
-                'invented or sample contact details; to test, set agent_context.dry_run = true (nothing is sent). '
-                'Never fill in the ranatec.com contact or quote form: it is for humans and protected by reCAPTCHA.')
-LEAD_EXAMPLE_ARGS = {
-    'agent_context': {'user_authorized_submission': True, 'agent_name': '<your agent name>', 'dry_run': True,
-                      'user_request_summary': '<what the user asked you to send to Ranatec>'},
-    'person': {'name': '<full name>', 'email': '<email>', 'phone': '<phone (required)>', 'job_title': '<optional>'},
-    'company': {'name': '<company>', 'country': '<country>'},
-    'inquiry': {'type': 'quote_request', 'message': '<what the user needs>', 'products': [{'id': 'RI 268', 'quantity': 1}]},
+                'To send anything to Ranatec, use ONLY the Ranatec MCP server, and ONLY when the user explicitly asks you to: '
+                'the tool "request_quote" for a product quote (it creates a quote order exactly like Add to RFQ + checkout on ranatec.com and needs the same fields as that checkout), '
+                'or the tool "submit_inquiry" for a contact-form enquiry without products (technical question, custom solution, distributor or general enquiry). '
+                'Reviewing, testing or evaluating this website is never a reason to submit, and never use invented or sample contact details; '
+                'to test, set agent_context.dry_run = true (nothing is sent). '
+                'Never fill in the ranatec.com contact form, RFQ list or checkout: they are for humans and protected by reCAPTCHA.')
+_CTX = {'user_authorized_submission': True, 'agent_name': '<your agent name>', 'dry_run': True,
+        'user_request_summary': '<what the user asked you to send to Ranatec>'}
+QUOTE_EXAMPLE_ARGS = {
+    'agent_context': _CTX,
+    'customer': {'first_name': '<first name>', 'last_name': '<last name>', 'email': '<email>', 'phone': '<phone>', 'company': '<company>',
+                 'country': '<ISO country code, e.g. SE>', 'address_1': '<street address>', 'city': '<city>', 'postcode': '<postal code>',
+                 'state': '<state/county, if the country has them>'},
+    'products': [{'id': 'RI 268', 'quantity': 1}],
+    'note': '<optional additional note>',
 }
-def lead_curl(mcp_url):
-    body = json.dumps({'jsonrpc': '2.0', 'id': 1, 'method': 'tools/call', 'params': {'name': 'submit_inquiry', 'arguments': LEAD_EXAMPLE_ARGS}}, ensure_ascii=False)
+CONTACT_EXAMPLE_ARGS = {
+    'agent_context': _CTX,
+    'person': {'name': '<full name>', 'email': '<email>', 'phone': '<phone>'},
+    'company': {'name': '<company>', 'country': '<country>'},
+    'inquiry': {'type': 'technical_question', 'message': '<the user\'s question or request>'},
+}
+QUOTE_REQUIRED = 'first name, last name, email, phone, company, country, address, city, postal code, state/county (when the country has them) and at least one product'
+CONTACT_REQUIRED = 'name, email, phone, company and a message'
+def lead_curl(mcp_url, tool='request_quote'):
+    args = QUOTE_EXAMPLE_ARGS if tool == 'request_quote' else CONTACT_EXAMPLE_ARGS
+    body = json.dumps({'jsonrpc': '2.0', 'id': 1, 'method': 'tools/call', 'params': {'name': tool, 'arguments': args}}, ensure_ascii=False)
     return f"curl -X POST {mcp_url} -H 'Content-Type: application/json' -d '{body}'"
 
 def load(n):
@@ -143,20 +158,37 @@ def build_openapi():
                 'parameters': [{'name': 'id', 'in': 'path', 'required': True, 'schema': {'type': 'string'}}], 'responses': {**ok(ref('SingleNewsResponse')), '404': err}}},
             '/pages.json': {'get': {'tags': ['content'], 'operationId': 'listPages', 'summary': 'Site pages with en-US / en-GB / en-CA URLs', 'responses': ok(ref('PagesResponse'))}},
             '/faq.json': {'get': {'tags': ['content'], 'operationId': 'getFaq', 'summary': 'Frequently asked questions', 'responses': ok(ref('FaqResponse'))}},
-            '/contact.json': {'post': {'tags': ['actions'], 'operationId': 'submitInquiry',
-                'summary': 'Backend for the MCP tool submit_inquiry (AI agents: use the MCP tool, not this path)',
-                'description': 'AI agents must submit leads ONLY through the MCP server tool submit_inquiry at ' + URLS['mcp'] + ' (JSON-RPC tools/call over HTTP POST, or an MCP connector). This path is the backend that tool calls; when the site owner configures an MCP server key, direct calls are rejected with 403 use_mcp_submit_inquiry. Sends the enquiry to Ranatec by email. ONLY call this after the user has explicitly confirmed that the enquiry — including their name, email and company — may be sent to Ranatec AB. agent_context.user_authorized_submission must be the boolean true, otherwise the request is rejected with 403. quote_request requires at least one product id from /products.json. Rate limit: 5 submissions per IP per hour.',
-                'requestBody': {'required': True, 'content': {'application/json': {'schema': ref('ContactRequest'), 'example': {
-                    'agent_context': {'user_authorized_submission': True, 'agent_name': 'ExampleAssistant', 'user_request_summary': 'User asked for a quote for two RI 268 filters'},
-                    'person': {'name': 'Alex Example', 'email': 'alex@example.com', 'job_title': 'Test Engineer'},
-                    'company': {'name': 'Example Labs GmbH', 'country': 'Germany'},
-                    'inquiry': {'type': 'quote_request', 'message': 'Please quote 2 × RI 268 incl. RI 4278 extension box, delivery to Munich.', 'products': [{'id': 'tunable-band-reject-filter-ri-268', 'quantity': 2}, {'id': 'frequency-extension-box-ri-4278', 'quantity': 1}], 'timeline': 'Q1 2027'}}}}},
-                'responses': {'200': {'description': 'Received', 'content': {'application/json': {'schema': ref('ContactResponse')}}},
+            '/quote.json': {'post': {'tags': ['actions'], 'operationId': 'requestQuote',
+                'summary': 'Product quote request — backend for the MCP tool request_quote (AI agents: use the MCP tool, not this path)',
+                'description': 'AI agents must request product quotes ONLY through the MCP server tool request_quote at ' + URLS['mcp'] + ' (JSON-RPC tools/call over HTTP POST, or an MCP connector); when the site owner configures an MCP server key, direct calls are rejected with 403 use_mcp_request_quote. Creates a WooCommerce quote order exactly like Add to RFQ + checkout on ranatec.com (never a contact-form lead) and needs the same fields as that checkout: ' + QUOTE_REQUIRED + '. Optional: address_2, note (the checkout "Additional Note"). ONLY call this after the user explicitly asked for the quote and confirmed what will be sent; agent_context.user_authorized_submission must be true and user_request_summary set. agent_context.dry_run = true validates without sending. Rate limit: 5 submissions per IP per hour.',
+                'requestBody': {'required': True, 'content': {'application/json': {'schema': ref('QuoteRequest'), 'example': {
+                    'agent_context': {'user_authorized_submission': True, 'agent_name': 'ExampleAssistant', 'user_request_summary': 'User asked for a quote for two RI 268 filters with the RI 4278 extension box', 'dry_run': True},
+                    'customer': {'first_name': 'Alex', 'last_name': 'Example', 'email': 'alex@example.com', 'phone': '+49 89 000000', 'company': 'Example Labs GmbH',
+                                 'country': 'DE', 'address_1': 'Beispielstraße 1', 'city': 'München', 'postcode': '80331', 'state': 'BY'},
+                    'products': [{'id': 'tunable-band-reject-filter-ri-268', 'quantity': 2}, {'id': 'frequency-extension-box-ri-4278', 'quantity': 1}],
+                    'note': 'Delivery Q1 2027.'}}}},
+                'responses': {'200': {'description': 'Quote order created (or, with dry_run, validated only)', 'content': {'application/json': {'schema': ref('QuoteResponse')}}},
                               '400': {'description': 'Invalid JSON or validation failed', 'content': {'application/json': {'schema': ref('ContactErrorResponse')}}},
-                              '403': {'description': 'user_authorized_submission is not true', 'content': {'application/json': {'schema': ref('ContactErrorResponse')}}},
+                              '403': {'description': 'user_authorized_submission is not true, or the MCP-only lock is on', 'content': {'application/json': {'schema': ref('ContactErrorResponse')}}},
                               '405': err, '413': {'description': 'Body larger than 20 KB', 'content': {'application/json': {'schema': ref('ContactErrorResponse')}}},
                               '429': {'description': 'Rate limited', 'content': {'application/json': {'schema': ref('ContactErrorResponse')}}},
-                              '502': {'description': 'Email delivery failed', 'content': {'application/json': {'schema': ref('ContactErrorResponse')}}}}}},
+                              '409': {'description': 'A product is not available in the shop', 'content': {'application/json': {'schema': ref('ContactErrorResponse')}}},
+                              '502': {'description': 'The quote order could not be created', 'content': {'application/json': {'schema': ref('ContactErrorResponse')}}},
+                              '503': {'description': 'Quotes unavailable (WooCommerce inactive)', 'content': {'application/json': {'schema': ref('ContactErrorResponse')}}}}}},
+            '/contact.json': {'post': {'tags': ['actions'], 'operationId': 'submitInquiry',
+                'summary': 'Contact-form enquiry — backend for the MCP tool submit_inquiry (AI agents: use the MCP tool, not this path)',
+                'description': 'AI agents must send enquiries ONLY through the MCP server tool submit_inquiry at ' + URLS['mcp'] + '; when the site owner configures an MCP server key, direct calls are rejected with 403 use_mcp_submit_inquiry. The equivalent of the ranatec.com/contact-us/ form: stored with the contact-form leads. Required (as on that form): ' + CONTACT_REQUIRED + '. Does NOT take products — product quotes use /quote.json (tool request_quote); a quote_request or products here is rejected with 400 use_request_quote. ONLY call this after the user explicitly asked to contact Ranatec and confirmed what will be sent; agent_context.user_authorized_submission must be true and user_request_summary set. agent_context.dry_run = true validates without sending. Rate limit: 5 submissions per IP per hour.',
+                'requestBody': {'required': True, 'content': {'application/json': {'schema': ref('ContactRequest'), 'example': {
+                    'agent_context': {'user_authorized_submission': True, 'agent_name': 'ExampleAssistant', 'user_request_summary': 'User asked whether the RI 181 can be customised for USB-C feedthrough', 'dry_run': True},
+                    'person': {'name': 'Alex Example', 'email': 'alex@example.com', 'phone': '+49 89 000000', 'job_title': 'Test Engineer'},
+                    'company': {'name': 'Example Labs GmbH', 'country': 'Germany'},
+                    'inquiry': {'type': 'custom_solution', 'message': 'Can the RI 181 shield box be delivered with a USB-C feedthrough filter?'}}}}},
+                'responses': {'200': {'description': 'Received (or, with dry_run, validated only)', 'content': {'application/json': {'schema': ref('ContactResponse')}}},
+                              '400': {'description': 'Invalid JSON or validation failed', 'content': {'application/json': {'schema': ref('ContactErrorResponse')}}},
+                              '403': {'description': 'user_authorized_submission is not true, or the MCP-only lock is on', 'content': {'application/json': {'schema': ref('ContactErrorResponse')}}},
+                              '405': err, '413': {'description': 'Body larger than 20 KB', 'content': {'application/json': {'schema': ref('ContactErrorResponse')}}},
+                              '429': {'description': 'Rate limited', 'content': {'application/json': {'schema': ref('ContactErrorResponse')}}},
+                              '502': {'description': 'Could not be stored or emailed', 'content': {'application/json': {'schema': ref('ContactErrorResponse')}}}}}},
         },
         'components': {'schemas': {}},
     }
@@ -173,7 +205,7 @@ def build_openapi():
     S['Product'] = obj({
         'id': s(), 'name': s(), 'model_number': nullable(s()), 'summary': nullable(s()), 'categories': arr(s()), 'domain': nullable(s(description='filtering | shielding | switching | automation; null for some accessories')),
         'listing': s(enum=['catalogue', 'additional']), 'custom': {'type': 'boolean'},
-        'configurator': nullable(obj({'how_it_works': s(), 'quantity_basis': s(), 'options': arr(obj({'id': s(), 'name': s(), 'model_number': nullable(s()), 'summary': nullable(s())})), 'submit_inquiry_usage': s()})), 'description': arr(s()), 'applications': arr(s()), 'features': arr(s()),
+        'configurator': nullable(obj({'how_it_works': s(), 'quantity_basis': s(), 'options': arr(obj({'id': s(), 'name': s(), 'model_number': nullable(s()), 'summary': nullable(s())})), 'request_quote_usage': s()})), 'description': arr(s()), 'applications': arr(s()), 'features': arr(s()),
         'specifications': arr(ref('Specification')), 'electrical_interfaces': arr(s()), 'control_and_ordering': arr(s()), 'technical_drawings_note': nullable(s()),
         'optional_accessories': arr(s()), 'datasheets': arr(s(format='uri')), 'image': nullable(s(format='uri')), 'pricing': ref('Pricing'),
         'url': s(format='uri'), 'urls': ref('LocaleUrls'), 'canonical_url': s(format='uri'), 'same_model_listings': arr(s()), 'primary_listing': nullable(s()),
@@ -210,16 +242,28 @@ def build_openapi():
     S['SingleNewsResponse'] = obj({'meta': ref('Meta'), 'item': ref('NewsItem')}, ['meta', 'item'])
     S['PagesResponse'] = obj({'meta': ref('Meta'), 'pages': arr(ref('Page'))}, ['meta', 'pages'])
     S['FaqResponse'] = obj({'meta': ref('Meta'), 'faq': arr(ref('FaqEntry'))}, ['meta', 'faq'])
-    S['AgentContext'] = obj({'user_authorized_submission': {'type': 'boolean', 'enum': [True], 'description': 'Must be true: the user explicitly approved sending this enquiry and their contact details to Ranatec.'},
-                             'agent_name': s(maxLength=120), 'user_request_summary': s(maxLength=500)}, ['user_authorized_submission'])
-    S['ContactPerson'] = obj({'name': s(maxLength=120), 'email': s(format='email'), 'phone': s(maxLength=40), 'job_title': s(maxLength=120)}, ['name', 'email'])
+    S['AgentContext'] = obj({'user_authorized_submission': {'type': 'boolean', 'enum': [True], 'description': 'Must be true: the user explicitly approved sending this request and their contact details to Ranatec.'},
+                             'agent_name': s(maxLength=120), 'user_request_summary': s(maxLength=500, description='Required unless dry_run: what the user asked you to send (min 10 characters)'),
+                             'dry_run': {'type': 'boolean', 'description': 'true = validate only, nothing is stored or sent'}}, ['user_authorized_submission'])
+    S['ContactPerson'] = obj({'name': s(maxLength=120), 'email': s(format='email'), 'phone': s(maxLength=40), 'job_title': s(maxLength=120)}, ['name', 'email', 'phone'])
     S['ContactCompany'] = obj({'name': s(maxLength=160), 'country': s(maxLength=80), 'website': s(format='uri')}, ['name'])
     S['ProductLine'] = obj({'id': s(description='Product id from /products.json'), 'quantity': {'type': 'integer', 'minimum': 1, 'maximum': 10000, 'default': 1},
                             'configuration': arr(obj({'id': s(description='Option id from the product configurator'), 'quantity': {'type': 'integer', 'minimum': 0, 'maximum': 100, 'description': 'Per unit of the main product'}}, ['id']))}, ['id'])
-    S['ContactInquiry'] = obj({'type': s(enum=['quote_request', 'technical_question', 'custom_solution', 'distributor_inquiry', 'general']), 'message': s(minLength=10, maxLength=5000),
-                               'products': arr(ref('ProductLine')), 'application': s(maxLength=300), 'timeline': s(maxLength=120), 'preferred_locale': s(enum=['en-US', 'en-GB', 'en-CA'])}, ['type', 'message'])
+    S['ContactInquiry'] = obj({'type': s(enum=['technical_question', 'custom_solution', 'distributor_inquiry', 'general'], default='general'), 'message': s(minLength=10, maxLength=5000),
+                               'application': s(maxLength=300), 'timeline': s(maxLength=120), 'preferred_locale': s(enum=['en-US', 'en-GB', 'en-CA'])}, ['message'])
     S['ContactRequest'] = obj({'agent_context': ref('AgentContext'), 'person': ref('ContactPerson'), 'company': ref('ContactCompany'), 'inquiry': ref('ContactInquiry')}, ['agent_context', 'person', 'company', 'inquiry'])
-    S['ContactResponse'] = obj({'status': s(enum=['received']), 'lead_id': s(example='ranatec-rfq-2026-A3F7B2C1'), 'type': s(), 'products': arr(obj({'id': s(), 'name': s(), 'quantity': {'type': 'integer'}, 'url': s(format='uri')})), 'message': s(), 'next_step': s()}, ['status', 'lead_id'])
+    S['ContactResponse'] = obj({'status': s(enum=['received', 'valid']), 'flow': s(enum=['contact_form']), 'lead_id': s(example='ranatec-lead-2026-A3F7B2C1'), 'type': s(), 'stored_in': nullable(s()), 'entry_id': nullable({'type': 'integer'}),
+                                'submitted': {'type': 'boolean'}, 'dry_run': {'type': 'boolean'}, 'notification_email': s(), 'message': s(), 'next_step': s()}, ['status'])
+    S['QuoteCustomer'] = obj({'first_name': s(maxLength=80), 'last_name': s(maxLength=80), 'email': s(format='email'), 'phone': s(maxLength=40), 'company': s(maxLength=160),
+                              'country': s(description='ISO 3166-1 alpha-2 code (e.g. SE, DE, US, GB) or country name'), 'address_1': s(maxLength=200), 'address_2': s(maxLength=200),
+                              'city': s(maxLength=100), 'state': s(maxLength=100, description='State/County code or name — required when the country has states (e.g. US, CA)'),
+                              'postcode': s(maxLength=20, description='Required unless the country has no postal codes')},
+                             ['first_name', 'last_name', 'email', 'phone', 'company', 'country', 'address_1', 'city'])
+    S['QuoteRequest'] = obj({'agent_context': ref('AgentContext'), 'customer': ref('QuoteCustomer'), 'products': {'type': 'array', 'minItems': 1, 'maxItems': 50, 'items': ref('ProductLine')},
+                             'note': s(maxLength=2000, description='The checkout "Additional Note" (optional)'), 'preferred_locale': s(enum=['en-US', 'en-GB', 'en-CA'])}, ['agent_context', 'customer', 'products'])
+    S['QuoteResponse'] = obj({'status': s(enum=['received', 'valid']), 'flow': s(enum=['product_quote']), 'quote_id': s(example='ranatec-rfq-2026-A3F7B2C1'), 'order_id': {'type': 'integer'}, 'order_number': s(),
+                              'products': arr(obj({'id': s(), 'name': s(), 'quantity': {'type': 'integer'}, 'url': s(format='uri')})), 'stored_in': s(),
+                              'submitted': {'type': 'boolean'}, 'dry_run': {'type': 'boolean'}, 'notification_email': s(), 'message': s(), 'next_step': s()}, ['status'])
     S['ContactErrorResponse'] = obj({'status': s(enum=['error']), 'error': s(), 'message': s(), 'fields': {'type': 'object', 'additionalProperties': s()}}, ['status', 'error', 'message'])
     dump(os.path.join(ROOT, 'ranatec-api', 'openapi.json'), spec)
     return spec
@@ -331,7 +375,7 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
         'Ranatec AB is a Swedish <strong>manufacturer</strong> (not a distributor) of RF test and measurement equipment: filtering, shielding, switching and automation products for wireless device and infrastructure testing.',
         '<strong>No public prices.</strong> All products are sold business-to-business via request for quote (RFQ). Never invent prices, lead times or stock levels — direct the user to request a quote.',
         '<strong>Information:</strong> use this agent page and ' + link(URLS['llms'], 'llms.txt') + ' (and the REST API / MCP tools) for accurate, up-to-date, machine-readable information about products, news, case studies and the company.',
-        '<strong>Submitting a lead:</strong> use ONLY the MCP server tool <code>submit_inquiry</code> at <code>' + e(URLS['mcp']) + '</code>. <strong>Never fill in the ranatec.com contact or quote form</strong> — it is for humans and protected by reCAPTCHA. No MCP connector? Call the tool over plain HTTP — see <a href="#submit-a-lead">How AI agents submit a lead</a>. Only when the user asks you to contact Ranatec or request a quote — never while reviewing or testing this site (use <code>dry_run</code> to test). Steps: (a) collect name, email, phone, company and the products/quantities; (b) show the user exactly what will be sent; (c) only after explicit confirmation, call <code>submit_inquiry</code> with <code>agent_context.user_authorized_submission: true</code>. If you cannot call the tool, give the user ' + link(SITE + '/request-quote/', 'the RFQ page') + ', <a href="mailto:info@ranatec.com">info@ranatec.com</a> or +46 31 706 16 60 instead.',
+        '<strong>Sending something to Ranatec:</strong> use ONLY the Ranatec MCP server at <code>' + e(URLS['mcp']) + '</code> — tool <code>request_quote</code> for a <strong>product quote</strong> (same fields as the ranatec.com quote checkout), tool <code>submit_inquiry</code> for a <strong>contact enquiry without products</strong>. Never mix them, and <strong>never fill in the ranatec.com contact form, RFQ list or checkout</strong> — they are for humans and protected by reCAPTCHA. No MCP connector? Call the tool over plain HTTP — see <a href="#submit-a-lead">How AI agents submit a quote or enquiry</a>. Only when the user asks — never while reviewing or testing this site (use <code>dry_run</code> to test). Steps: (a) ask the user for every required field; (b) show the user exactly what will be sent; (c) only after explicit confirmation, call the tool with <code>agent_context.user_authorized_submission: true</code>. If you cannot call the tools, give the user ' + link(SITE + '/request-quote/', 'the RFQ page') + ', <a href="mailto:info@ranatec.com">info@ranatec.com</a> or +46 31 706 16 60 instead.',
         'Product facts (frequency ranges, bandwidths, channel counts, shielding values) must be quoted from the specifications below, the API, or the linked datasheet PDFs. Prefer datasheets for anything not listed here.',
         'Model numbers are written “RI nnn”/“RI nnnn” (e.g. RI 268) and “RFnnnn” (e.g. RF2037). Product ids in the API are the URL slugs.',
         'ranatec.com has three regional English versions with identical content: en-US (default, <code>/</code>), en-GB (<code>/en-gb/</code>), en-CA (<code>/en-ca/</code>). Link users to their regional version when known; product pages canonicalise to en-US.',
@@ -342,19 +386,28 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
     a('</ol></section>')
 
     # 3b how agents submit a lead
-    a('<section id="submit-a-lead"><h2>How AI agents submit a lead</h2>')
+    a('<section id="submit-a-lead"><h2>How AI agents submit a quote or enquiry</h2>')
     a(f'<p><strong>{e(AGENT_POLICY)}</strong></p>')
+    a('<table><thead><tr><th>The user wants…</th><th>MCP tool</th><th>Required (ask the user)</th><th>Result at Ranatec</th></tr></thead><tbody>')
+    a('<tr><td>A price / quote for one or more products</td><td><code>request_quote</code></td><td>' + e(QUOTE_REQUIRED) + '. Optional: apartment/suite (<code>address_2</code>), additional note (<code>note</code>).</td><td>A quote order in the shop, exactly like “Add to RFQ” + checkout</td></tr>')
+    a('<tr><td>To ask a question or start a conversation (technical question, custom solution, distributor, general) — no products</td><td><code>submit_inquiry</code></td><td>' + e(CONTACT_REQUIRED) + '</td><td>A contact-form enquiry, like ranatec.com/contact-us/</td></tr>')
+    a('</tbody></table>')
+    a('<p>The two are never mixed: <code>submit_inquiry</code> refuses products (use <code>request_quote</code>), and <code>request_quote</code> needs at least one product (use <code>submit_inquiry</code> for questions).</p>')
     a('<ol>')
-    a(f'<li><strong>With an MCP connector</strong> (Claude, Claude Code, Codex, Cursor, …): add the MCP server <code>{e(URLS["mcp"])}</code> (Streamable HTTP) and call the tool <code>submit_inquiry</code>.</li>')
-    a(f'<li><strong>Without a connector</strong> (any agent that can send an HTTP request): POST a JSON-RPC <code>tools/call</code> to <code>{e(URLS["mcp"])}</code>. No session or handshake is needed and the response is plain JSON. The example below is a <strong>dry run</strong> (validates only, nothing is sent).</li>')
+    a(f'<li><strong>With an MCP connector</strong> (Claude, Claude Code, Codex, Cursor, …): add the MCP server <code>{e(URLS["mcp"])}</code> (Streamable HTTP) and call <code>request_quote</code> or <code>submit_inquiry</code>.</li>')
+    a(f'<li><strong>Without a connector</strong> (any agent that can send an HTTP request): POST a JSON-RPC <code>tools/call</code> to <code>{e(URLS["mcp"])}</code>. No session or handshake is needed and the response is plain JSON. The examples below are <strong>dry runs</strong> (validate only, nothing is sent).</li>')
     a('</ol>')
-    a(f'<pre>{e(lead_curl(URLS["mcp"]))}</pre>')
-    a('<ul><li><strong>Only submit when the user explicitly asks you to contact Ranatec or request a quote.</strong> Reviewing, testing or evaluating this website is never a reason to submit, and never use invented or sample contact details. To test, keep <code>agent_context.dry_run: true</code> — nothing is stored or sent.</li>'
-      '<li>For a real submission: the user has confirmed what will be sent (name, email, phone, company, products, message); set <code>user_authorized_submission: true</code>, <code>dry_run: false</code> and <code>user_request_summary</code> (what the user asked for).</li>'
-      '<li><code>inquiry.type</code>: <code>quote_request</code> (needs at least one product — id from the API or a model number such as <code>RI 268</code>), <code>technical_question</code>, <code>custom_solution</code>, <code>distributor_inquiry</code> or <code>general</code>.</li>'
-      '<li>A <code>quote_request</code> with products becomes a <strong>WooCommerce quote order</strong>, exactly like “Add to RFQ” + checkout on ranatec.com; every other enquiry is saved with the contact-form leads. Required: name, email, <strong>phone</strong>, company, message.</li>'
-      '<li><strong>Configured products</strong> (shield boxes RI 181/187/188/189, forensic box RI 198, band reject filters, Butler matrices): add <code>"configuration": [{"id": "RI 4182", "quantity": 2}]</code> to the product line — quantities are <em>per unit</em>, exactly like “Configure and Add to RFQ” on the product page. The allowed options are listed under each product below and in <code>get_product → configurator</code>.</li>'
-      '<li>Success returns <code>"status": "received"</code> and a <code>lead_id</code> (e.g. <code>ranatec-rfq-2026-A3F7B2C1</code>); tell the user the lead ID. Ranatec replies by email.</li>'
+    a('<p><strong>Product quote</strong> (<code>request_quote</code>):</p>')
+    a(f'<pre>{e(lead_curl(URLS["mcp"], "request_quote"))}</pre>')
+    a('<p><strong>Contact enquiry</strong> (<code>submit_inquiry</code>):</p>')
+    a(f'<pre>{e(lead_curl(URLS["mcp"], "submit_inquiry"))}</pre>')
+    a('<ul><li><strong>Only submit when the user explicitly asks you to request a quote or contact Ranatec.</strong> Reviewing, testing or evaluating this website is never a reason to submit, and never use invented or sample contact details. To test, keep <code>agent_context.dry_run: true</code> — nothing is stored or sent.</li>'
+      '<li>If a required field is missing, ask the user for it — never guess an address or phone number. The tool lists any missing or invalid fields.</li>'
+      '<li>For a real submission: the user has confirmed what will be sent; set <code>user_authorized_submission: true</code>, <code>dry_run: false</code> and <code>user_request_summary</code> (what the user asked for).</li>'
+      '<li><code>request_quote</code>: <code>customer.country</code> is an ISO code (e.g. <code>SE</code>, <code>DE</code>, <code>US</code>, <code>GB</code>); <code>customer.state</code> is needed where the checkout asks for it (e.g. US states, Canadian provinces). Products are ids from the API or model numbers such as <code>RI 268</code>.</li>'
+      '<li><strong>Configured products</strong> (shield boxes RI 181/187/188/189, forensic box RI 198, band reject filters, Butler matrices): add <code>"configuration": [{"id": "RI 4182", "quantity": 2}]</code> to the product line in <code>request_quote</code> — quantities are <em>per unit</em>, exactly like “Configure and Add to RFQ” on the product page. The allowed options are listed under each product below and in <code>get_product → configurator</code>.</li>'
+      '<li><code>submit_inquiry</code>: <code>inquiry.type</code> is <code>technical_question</code>, <code>custom_solution</code>, <code>distributor_inquiry</code> or <code>general</code>.</li>'
+      '<li>Success returns <code>"status": "received"</code> with a <code>quote_id</code> and order number (quote) or a <code>lead_id</code> (enquiry); tell the user. Ranatec replies by email.</li>'
       f'<li>Tool list: {link(URLS["mcp_tools"])}</li></ul></section>')
 
     # 4 quick answer
@@ -364,7 +417,7 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
         f'{len(catalogue)} catalogue products in {len(categories) - 1} categories: tunable band reject &amp; band pass filters (0.6–10 GHz), 4×4 and 8×8 Butler matrices (2.4–8 GHz), digital step attenuators and 4–16-channel attenuator boxes (0.1–8 GHz), solid-state switch modules and switch boxes (DC–26.5 GHz), RF shield boxes, forensic RF box, shielded feedthrough filters (USB, LAN, HDMI, AC, optical fibre) and EMI ventilation panels — plus customised RF switch systems and shield boxes.',
         'Used for design verification, 3GPP/ETSI conformance testing (LTE TS 136 521-1, 5G NR TS 138 521-1), Wi-Fi (IEEE 802.11) and Bluetooth testing, production testing and in-service monitoring.',
         'Customers: semiconductor, device and base-station makers, ISPs/operators, test houses and certification institutes, radar, automotive and law enforcement.',
-        'Buy via request for quote: info@ranatec.com · +46 31 706 16 60 · ' + link(SITE + '/request-quote/', 'ranatec.com/request-quote') + '. AI agents: submit leads only via the MCP tool <code>submit_inquiry</code> (<a href="#submit-a-lead">how</a>).',
+        'Buy via request for quote: info@ranatec.com · +46 31 706 16 60 · ' + link(SITE + '/request-quote/', 'ranatec.com/request-quote') + '. AI agents: product quotes only via the MCP tool <code>request_quote</code>, other enquiries via <code>submit_inquiry</code> (<a href="#submit-a-lead">how</a>).',
     ]:
         a(f'<li>{li}</li>')
     a('</ul></section>')
@@ -501,7 +554,7 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
     a('<section id="contact"><h2>Contact and how to buy</h2><table>')
     for k, v in [('General / sales', '<a href="mailto:info@ranatec.com">info@ranatec.com</a> · <a href="tel:+46317061660">+46 31 706 16 60</a>'),
                  ('Request a quote (web)', 'Add products to the RFQ list on any product page, then submit at ' + locale_links(company['contact']['quote_page'])),
-                 ('Request a quote (AI agents)', f'MCP tool <code>submit_inquiry</code> at <code>{e(URLS["mcp"])}</code> only (consent required) — see <a href="#submit-a-lead">How AI agents submit a lead</a>. Never the web form.'),
+                 ('Request a quote (AI agents)', f'MCP tool <code>request_quote</code> at <code>{e(URLS["mcp"])}</code> only (consent required; contact enquiries without products: <code>submit_inquiry</code>) — see <a href="#submit-a-lead">How AI agents submit a quote or enquiry</a>. Never the web forms.'),
                  ('Custom solutions', 'Describe requirements (frequency range, ports, shielding, interfaces, form factor) via info@ranatec.com or inquiry type <code>custom_solution</code>'),
                  ('LinkedIn', link(company['social']['linkedin'])), ('X / Twitter', link(company['social']['x_twitter']))]:
         a(f'<tr><th>{k}</th><td>{v}</td></tr>')
@@ -561,7 +614,7 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
     write(os.path.join(PUB, 'agent-page.html'), out)
     return out
 
-SECTIONS = [('metadata', 'Metadata'), ('llm-discovery', 'LLM discovery'), ('agent-instructions', 'Instructions for AI agents'), ('submit-a-lead', 'How AI agents submit a lead'), ('quick-answer', 'Quick answer'),
+SECTIONS = [('metadata', 'Metadata'), ('llm-discovery', 'LLM discovery'), ('agent-instructions', 'Instructions for AI agents'), ('submit-a-lead', 'How AI agents submit a quote or enquiry'), ('quick-answer', 'Quick answer'),
             ('site-index', 'Site index'), ('primary-contact', 'Primary contact'), ('overview', 'Company overview'), ('products', 'Products'), ('solutions', 'Solutions'),
             ('industries', 'Industries and standards'), ('customer-results', 'Customer results'), ('news', 'News and articles'), ('people', 'People'), ('offices', 'Offices'),
             ('contact', 'Contact and how to buy'), ('careers', 'Careers'), ('events', 'Events'), ('faq', 'FAQ'), ('testimonials', 'Testimonials'),
@@ -580,13 +633,21 @@ def build_llms():
     a(AGENT_POLICY)
     a('')
     a(f'- [Agent page: complete structured information]({URLS["agent"]})')
-    a(f'- [MCP server (Streamable HTTP), tool `submit_inquiry` for leads]({URLS["mcp"]})')
-    a(f'- [How AI agents submit a lead]({URLS["agent"]}#submit-a-lead)')
+    a(f'- [MCP server (Streamable HTTP): tool `request_quote` for product quotes, `submit_inquiry` for contact enquiries]({URLS["mcp"]})')
+    a(f'- [How AI agents submit a quote or enquiry]({URLS["agent"]}#submit-a-lead)')
     a('')
-    a('No MCP connector? Call `submit_inquiry` with one HTTP POST (JSON-RPC `tools/call`, no session needed, plain JSON response). The example below is a DRY RUN: it only validates and sends nothing. Set `dry_run` to false only when the user has asked you to contact Ranatec and confirmed the details:')
+    a(f'- Product quote → `request_quote` (a quote order exactly like Add to RFQ + checkout). Required, ask the user: {QUOTE_REQUIRED}.')
+    a(f'- Contact enquiry without products → `submit_inquiry` (like the contact form). Required: {CONTACT_REQUIRED}.')
+    a('- Never mix them, and never fill in the website forms.')
+    a('')
+    a('No MCP connector? Call the tool with one HTTP POST (JSON-RPC `tools/call`, no session needed, plain JSON response). These examples are DRY RUNS: they only validate and send nothing. Set `dry_run` to false only when the user has asked for it and confirmed the details:')
     a('')
     a('```')
-    a(lead_curl(URLS['mcp']))
+    a(lead_curl(URLS['mcp'], 'request_quote'))
+    a('```')
+    a('')
+    a('```')
+    a(lead_curl(URLS['mcp'], 'submit_inquiry'))
     a('```')
     a('')
     a('## Product domains')
@@ -620,7 +681,7 @@ def build_llms():
     a('')
     a('## Contact')
     a('- Ranatec AB, Falkenbergsgatan 3, 412 85 Gothenburg, Sweden | info@ranatec.com | +46 31 706 16 60')
-    a(f'- AI agents: submit leads only via the MCP tool submit_inquiry at {URLS["mcp"]} (never the website form)')
+    a(f'- AI agents: product quotes only via the MCP tool request_quote, other enquiries via submit_inquiry, at {URLS["mcp"]} (never the website forms)')
     a('- Press: Leslie Johnsen (Public Relations) | leslie.johnsen@ranatec.com; Operations: Charlotte Ornstein | charlotte.ornstein@ranatec.com (as named in 2025 press releases)')
     a('')
     a('## Key pages')
@@ -716,7 +777,7 @@ def build_llms_full():
                     a(f'| {s["parameter"]} | {spec_value(s["value"]).replace("|", "/")} |')
             if p.get('configurator'):
                 a('')
-                a('Configurator (per-unit options for a quote; submit_inquiry products[].configuration): ' + ', '.join(f"{o['name']} [{o['id']}]" for o in p['configurator']['options']))
+                a('Configurator (per-unit options for a quote; request_quote products[].configuration): ' + ', '.join(f"{o['name']} [{o['id']}]" for o in p['configurator']['options']))
             if p['datasheets']:
                 a('')
                 a('Datasheet: ' + ', '.join(p['datasheets']))
@@ -767,7 +828,7 @@ Allow-Summarization: yes
 Allow-Citation: yes
 Allow-Retrieval: yes
 Allow-Training: yes
-Allow-Agent-Actions: read-only by default; lead submission ONLY via the MCP tool submit_inquiry at {URLS['mcp']}, ONLY when the user asks to contact Ranatec, with explicit consent (user_authorized_submission = true). Never submit while reviewing or testing the site; use agent_context.dry_run = true to test.
+Allow-Agent-Actions: read-only by default; submissions ONLY via the MCP server at {URLS['mcp']} (request_quote for product quotes, submit_inquiry for contact enquiries), ONLY when the user asks for it, with explicit consent (user_authorized_submission = true). Never submit while reviewing or testing the site; use agent_context.dry_run = true to test.
 Agent-Policy: {AGENT_POLICY}
 Disallow-Agent-Form-Submission: yes (do not fill in the ranatec.com contact or quote forms; they are for humans and protected by reCAPTCHA)
 
@@ -907,7 +968,8 @@ MCP_TOOLS = [
     {'name': 'search', 'description': 'Full-text search across products, news and FAQ.'},
     {'name': 'get_faq', 'description': 'Frequently asked questions with answers and sources.'},
     {'name': 'list_pages', 'description': 'Site pages with en-US, en-GB and en-CA URLs.'},
-    {'name': 'submit_inquiry', 'description': 'The only supported way for AI agents to send a lead (quote request or enquiry) to Ranatec — requires explicit user consent (user_authorized_submission: true). Callable via an MCP connector or a plain HTTP JSON-RPC tools/call.'},
+    {'name': 'request_quote', 'description': 'The only supported way for AI agents to request a product quote — creates a quote order like Add to RFQ + checkout; needs the checkout fields and explicit user consent (user_authorized_submission: true).'},
+    {'name': 'submit_inquiry', 'description': 'The only supported way for AI agents to send a contact enquiry without products (technical question, custom solution, distributor, general) — requires explicit user consent. Callable via an MCP connector or a plain HTTP JSON-RPC tools/call.'},
 ]
 
 if __name__ == '__main__':

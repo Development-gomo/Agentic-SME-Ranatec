@@ -146,7 +146,7 @@ final class Ranatec_Agent_Sync
                     'description' => self::split_paragraphs($wc->get_description()),
                     'applications' => [], 'features' => [], 'specifications' => [], 'electrical_interfaces' => [],
                     'control_and_ordering' => [], 'technical_drawings_note' => null, 'optional_accessories' => [], 'datasheets' => [],
-                    'pricing' => ['model' => 'request-for-quote', 'public_price' => null, 'how_to_buy' => 'Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = "quote_request" and the product id(s).'],
+                    'pricing' => ['model' => 'request-for-quote', 'public_price' => null, 'how_to_buy' => 'Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool request_quote (product id or model number + the checkout fields), never the website forms.'],
                     'same_model_listings' => [],
                     'note' => 'Added automatically by WordPress sync; detailed specifications not yet captured — see the product page and datasheet.',
                 ];
@@ -385,29 +385,29 @@ final class Ranatec_Agent_Sync
         submit_button('Flush rewrite rules', 'secondary', 'submit', false);
         echo '</form>';
 
-        echo '<h2>Agent contact / RFQ endpoint</h2><form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
+        echo '<h2>Agent submissions (contact enquiries and product quotes)</h2><form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
         wp_nonce_field('ranatec_api_settings');
         echo '<input type="hidden" name="action" value="ranatec_api_settings" />';
-        echo '<p><label>Deliver submissions from <code>POST /agent/v1/contact.json</code> to: <input type="email" name="recipient" class="regular-text" value="' . esc_attr($recipient) . '" /></label></p>';
+        echo '<p><label>Notification emails for agent enquiries and quotes go to: <input type="email" name="recipient" class="regular-text" value="' . esc_attr($recipient) . '" /></label></p>';
         $key_set = get_option(self::OPTION_MCP_KEY, '') !== '';
         echo '<p><label>MCP server key: <input type="password" name="mcp_key" class="regular-text" autocomplete="new-password" placeholder="' . ($key_set ? '•••••••• (set — leave empty to keep)' : 'not set — leads accepted from any caller') . '" /></label><br>';
-        echo '<span class="description">When set, <code>contact.json</code> accepts leads <strong>only</strong> from the Ranatec MCP server (tool <code>submit_inquiry</code>). Use the same value as the <code>RANATEC_MCP_KEY</code> environment variable on Render. Long random value, e.g. 40+ characters.</span><br>';
+        echo '<span class="description">When set, <code>contact.json</code> and <code>quote.json</code> accept submissions <strong>only</strong> from the Ranatec MCP server (tools <code>submit_inquiry</code> and <code>request_quote</code>). Use the same value as the <code>RANATEC_MCP_KEY</code> environment variable on Render. Long random value, e.g. 40+ characters.</span><br>';
         echo '<label><input type="checkbox" name="mcp_key_clear" value="1" /> Remove the key (accept leads from any caller again)</label></p>';
         $acf = Ranatec_Agent_Contact::acf7db_available();
-        echo '<h3>Lead storage</h3><p>Agent leads are saved in <strong>Advanced CF7 DB</strong> as entries of the contact form, next to website leads: '
+        echo '<h3>Contact enquiries</h3><p>Agent contact enquiries (MCP tool <code>submit_inquiry</code>, no products) are saved in <strong>Advanced CF7 DB</strong> as entries of the contact form, next to website leads: '
             . ($acf ? '<span style="color:#008a20">tables found ✓</span>' : '<strong style="color:#b32d2e">tables not found — activate Advanced CF7 DB, otherwise leads are only emailed</strong>') . '</p>';
         echo '<p><label>Contact Form 7 form ID: <input type="number" name="cf7_form_id" min="1" value="' . esc_attr(Ranatec_Agent_Contact::cf7_form_id()) . '" class="small-text" /></label> <span class="description">(ranatec.com/contact-us/ uses form 50)</span></p>';
         echo '<p><label>Field mapping (JSON, lead field → form field):<br><textarea name="cf7_fields" rows="4" cols="70" class="code">' . esc_textarea(wp_json_encode(Ranatec_Agent_Contact::cf7_fields(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . '</textarea></label></p>';
         if (function_exists('wc_get_order_statuses')) {
             $cur = (string) get_option('ranatec_api_quote_status', '');
-            echo '<h3>Product quote requests</h3><p>Agent quote requests with products are created as <strong>WooCommerce orders</strong> (currently status: <code>' . esc_html(Ranatec_Agent_Contact::quote_order_status()) . '</code>). Status: <select name="quote_status"><option value="">Automatic (YITH “new quote request” if available, else Pending)</option>';
+            echo '<h3>Product quote requests</h3><p>Agent product quotes (MCP tool <code>request_quote</code>, with the checkout fields) are created as <strong>WooCommerce orders</strong>, never as contact-form leads (currently status: <code>' . esc_html(Ranatec_Agent_Contact::quote_order_status()) . '</code>). Status: <select name="quote_status"><option value="">Automatic (YITH “new quote request” if available, else Pending)</option>';
             foreach (wc_get_order_statuses() as $k => $label) {
                 $v = substr($k, 3);
                 echo '<option value="' . esc_attr($v) . '"' . selected($cur, $v, false) . '>' . esc_html($label) . '</option>';
             }
             echo '</select></p>';
         } else {
-            echo '<h3>Product quote requests</h3><p><strong>WooCommerce not active</strong> — quote requests are stored with the contact-form leads.</p>';
+            echo '<h3>Product quote requests</h3><p><strong>WooCommerce not active</strong> — agent product quotes are refused (the agent is told to email info@ranatec.com).</p>';
         }
         echo '<p><label><input type="checkbox" name="notify_email" value="1" ' . (Ranatec_Agent_Contact::notify_enabled() ? 'checked' : '') . ' /> Also send a notification email to the recipient above</label></p>';
         submit_button('Save', 'secondary', 'submit', false);
@@ -468,7 +468,7 @@ final class Ranatec_Agent_Sync
                     $msg .= ' MCP server key NOT saved: use at least 24 characters, no spaces.';
                 } else {
                     update_option(self::OPTION_MCP_KEY, $key, false);
-                    $msg .= ' MCP server key saved — contact.json now accepts leads only from the MCP server.';
+                    $msg .= ' MCP server key saved — contact.json and quote.json now accept submissions only from the MCP server.';
                 }
             }
         }

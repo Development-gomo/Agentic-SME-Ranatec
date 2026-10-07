@@ -26,7 +26,7 @@ An AI-agent-ready layer for **[ranatec.com](https://ranatec.com/)** (WordPress +
 | API catalog (RFC 9727 linkset) | `ranatec-api/public/well-known-api-catalog.json` | `https://ranatec.com/.well-known/api-catalog` |
 | WordPress plugin (REST API, sync, admin) | `ranatec-api/` | `https://ranatec.com/agent/v1/index.json` |
 | OpenAPI 3.0.3 spec (13 operations, 36 schemas) | `ranatec-api/openapi.json` | `https://ranatec.com/openapi.json` |
-| MCP server (12 tools) | `ranatec-mcp/` | `https://ranatec.com/mcp` |
+| MCP server (13 tools) | `ranatec-mcp/` | `https://ranatec.com/mcp` |
 | robots.txt additions | `web-root/robots-addition.txt` | merge into `https://ranatec.com/robots.txt` |
 | Site findings for the Ranatec team | `docs/FINDINGS.md` | |
 | Deployment checklist (Oderland, step by step) | `docs/DEPLOYMENT-ODERLAND.md` | |
@@ -46,8 +46,8 @@ An AI-agent-ready layer for **[ranatec.com](https://ranatec.com/)** (WordPress +
 ```
 
 * **`ranatec-api/`**: WordPress plugin. It uses rewrite rules + `template_redirect`, not `/wp-json/`, and serves the JSON data files with `readfile()`. It supports filters (`?category=`, `?domain=`, `?q=`, `?type=`, `?year=`, `?product=`, `?fields=summary`) and lookup by id or model number (`/agent/v1/products/ri-268.json`). A daily WP-Cron sync keeps `news.json` / `products.json` in step with WordPress, and **Tools → Ranatec Agent API** has *Sync now*, *Flush rewrite rules* and the contact recipient.
-* **Contact / RFQ**: `POST /agent/v1/contact.json`, with types `quote_request | technical_question | custom_solution | distributor_inquiry | general`. Product ids are validated against the catalogue, and requests are limited to 5 per IP per hour. Consent is enforced in **three layers**: the MCP tool description, the MCP Zod schema (`z.literal(true)`) and the PHP check (403).
-* **`ranatec-mcp/`**: Node/TypeScript, `@modelcontextprotocol/sdk` 1.32, stateless Streamable HTTP, 100 req/min rate limit, 10 s upstream timeout and a 5-minute cache. Tools: `get_company`, `list_products`, `get_product`, `compare_products`, `list_categories`, `list_solutions`, `list_news`, `get_news_item`, `search`, `get_faq`, `list_pages`, `submit_inquiry`.
+* **Two separate submission flows, never mixed**: `POST /agent/v1/quote.json` (MCP tool `request_quote`) creates a WooCommerce quote order like Add to RFQ + checkout and requires the checkout fields (first/last name, email, phone, company, country, address, city, postal code, state where applicable). `POST /agent/v1/contact.json` (MCP tool `submit_inquiry`) is the contact form (name, email, phone, company, message; types `technical_question | custom_solution | distributor_inquiry | general`, no products) and stores to Advanced CF7 DB. Product ids are validated against the catalogue, and requests are limited to 5 per IP per hour. Consent is enforced in **three layers**: the MCP tool description, the MCP Zod schema (`z.literal(true)`) and the PHP check (403).
+* **`ranatec-mcp/`**: Node/TypeScript, `@modelcontextprotocol/sdk` 1.32, stateless Streamable HTTP, 100 req/min rate limit, 10 s upstream timeout and a 5-minute cache. Tools: `get_company`, `list_products`, `get_product`, `compare_products`, `list_categories`, `list_solutions`, `list_news`, `get_news_item`, `search`, `get_faq`, `list_pages`, `request_quote`, `submit_inquiry`.
 * **`tools/`**: the reproducible build pipeline (`crawl.sh` → `extract.py` → `build_data.py` → `build_static.py`). Every artifact is generated from `ranatec-api/data/*.json`, so the URLs stay consistent across all files.
 
 ## Refreshing content

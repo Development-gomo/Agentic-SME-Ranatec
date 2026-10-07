@@ -6,7 +6,7 @@
   "created": "2026-10-06",
   "modified": "2026-10-06",
   "specificationVersion": "0.16",
-  "X-package-version": "1.0.9",
+  "X-package-version": "1.1.0",
   "tags": [
     "RF test equipment",
     "test and measurement",
@@ -179,9 +179,15 @@
         },
         {
           "type": "X-endpoint",
+          "route": "/agent/v1/quote.json",
+          "method": "POST",
+          "description": "Product quote request — backend for the MCP tool request_quote (AI agents: use the MCP tool, not this path) — requires agent_context.user_authorized_submission: true"
+        },
+        {
+          "type": "X-endpoint",
           "route": "/agent/v1/contact.json",
           "method": "POST",
-          "description": "Backend for the MCP tool submit_inquiry (AI agents: use the MCP tool, not this path) — requires agent_context.user_authorized_submission: true"
+          "description": "Contact-form enquiry — backend for the MCP tool submit_inquiry (AI agents: use the MCP tool, not this path) — requires agent_context.user_authorized_submission: true"
         }
       ],
       "tags": [
@@ -257,8 +263,13 @@
         },
         {
           "type": "X-mcp-tool",
+          "name": "request_quote",
+          "description": "The only supported way for AI agents to request a product quote — creates a quote order like Add to RFQ + checkout; needs the checkout fields and explicit user consent (user_authorized_submission: true)."
+        },
+        {
+          "type": "X-mcp-tool",
           "name": "submit_inquiry",
-          "description": "The only supported way for AI agents to send a lead (quote request or enquiry) to Ranatec — requires explicit user consent (user_authorized_submission: true). Callable via an MCP connector or a plain HTTP JSON-RPC tools/call."
+          "description": "The only supported way for AI agents to send a contact enquiry without products (technical question, custom solution, distributor, general) — requires explicit user consent. Callable via an MCP connector or a plain HTTP JSON-RPC tools/call."
         },
         {
           "type": "X-health",

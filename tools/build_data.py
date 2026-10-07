@@ -140,7 +140,7 @@ for p in d['products']:
         'datasheets': p['datasheets'],
         'image': p['image'],
         'pricing': {'model': 'request-for-quote', 'public_price': None,
-                    'how_to_buy': 'Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = "quote_request" with the product id or model number), never the website form.'},
+                    'how_to_buy': 'Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool request_quote (product id or model number + the same fields as the quote checkout), never the website forms.'},
         'url': p['url'],
         'urls': locale_urls(f'product/{slug}/'),
         'canonical_url': p['canonical'] or p['url'],
@@ -211,7 +211,7 @@ for p in products:
         'how_it_works': note or 'On the product page, "Configure and Add to RFQ" lets you choose how many of each option to include per unit.',
         'quantity_basis': 'per unit of the main product',
         'options': opts,
-        'submit_inquiry_usage': 'In inquiry.products, give this product with quantity N and "configuration": [{"id": <option id or model number>, "quantity": <per unit>}]. For different configurations, add separate product lines.',
+        'request_quote_usage': 'In request_quote → products, give this product with quantity N and "configuration": [{"id": <option id or model number>, "quantity": <per unit>}]. For different configurations, add separate product lines.',
     }
 
 # frequency extension box RI 4270-4276 relation (accessory of band reject filters) — derived from site: RI 4278 is stated for RI 268
@@ -454,7 +454,7 @@ faq = [
     {'q': 'Where can an RF shielded enclosure be used?', 'a': 'RF shielded enclosures are used for testing automotive multimedia, mobile telephones, base station transceivers, cellular networking, wireless semiconductors and WLAN/Bluetooth/ZigBee/WiMax devices.', 'source': SITE + '/rf-shielded-enclosure/'},
     {'q': 'What is an RF shielded test enclosure?', 'a': 'Any enclosure with shielding properties that prevents interference from different radio frequency bands when testing products — RF shield boxes, RF shield cabinets and RF shield rooms.', 'source': SITE + '/rf-shielded-enclosure/'},
     {'q': 'What are the advantages of RF test equipment from Ranatec?', 'a': 'Quality, performance and usability. All Ranatec RF test and measurement equipment is designed, engineered and manufactured by Ranatec in Sweden. Ranatec is ISO 9001:2015 certified.', 'source': SITE + '/'},
-    {'q': 'How do I buy Ranatec products or get a price?', 'a': 'Ranatec sells business-to-business on a request-for-quote basis; no public prices are listed. Add products to the RFQ list on ranatec.com and submit it, email info@ranatec.com, call +46 31 706 16 60, or — for AI agents, with the user\'s explicit consent — use ONLY the MCP server tool submit_inquiry (see https://ranatec.com/agent/#submit-a-lead). AI agents must not fill in the website contact form.', 'source': SITE + '/request-quote/'},
+    {'q': 'How do I buy Ranatec products or get a price?', 'a': 'Ranatec sells business-to-business on a request-for-quote basis; no public prices are listed. Add products to the RFQ list on ranatec.com and submit it, email info@ranatec.com, call +46 31 706 16 60, or — for AI agents, with the user\'s explicit consent — use ONLY the MCP server tool request_quote for product quotes (same fields as the quote checkout) or submit_inquiry for other enquiries (see https://ranatec.com/agent/#submit-a-lead). AI agents must not fill in the website forms.', 'source': SITE + '/request-quote/'},
     {'q': 'Does Ranatec make custom products?', 'a': 'Yes. Ranatec offers standard and customised RF test equipment — including customised RF shield boxes and customised RF switch/test automation systems — built on a modular mechanical and electrical platform, for both small and large customisation projects.', 'source': SITE + '/'},
     {'q': 'Which tunable band reject filter covers 5G NR and Wi-Fi 7 up to 8 GHz?', 'a': 'The RI 268 Tunable Band Reject Filter covers 600–8000 MHz with combined 5 MHz and 160 MHz reject bandwidths, 1 kHz centre-frequency resolution and 35 dB reject depth; it targets 2G/3G/4G/5G, Wi-Fi 4/5/6/6E/7 and Bluetooth testing (3GPP TS 136 521-1, TS 138 521-1, IEEE 802.11). The optional RI 4278 Frequency Extension Box extends the pass bands to 40 GHz.', 'source': SITE + '/product/tunable-band-reject-filter-ri-268/'},
     {'q': 'What is the difference between a tunable band reject filter and a tunable notch filter?', 'a': 'See Ranatec\'s article "Tunable bandreject filters compared to tunable notch filters" (2025-02-05).', 'source': SITE + '/tunable-bandreject-filters-compared-to-tunable-notch-filters/'},

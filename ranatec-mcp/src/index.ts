@@ -131,7 +131,8 @@ export const TOOLS = [
   { name: "search", phase: 1, method: "GET products.json, news.json, faq.json", description: "Full-text search across products (including specifications), news/articles and FAQ. Use for questions like 'which product covers 26.5 GHz?' or 'USB 3.2 feedthrough'." },
   { name: "get_faq", phase: 1, method: "GET faq.json", description: "Frequently asked questions about Ranatec and RF test equipment, with answers and source URLs." },
   { name: "list_pages", phase: 1, method: "GET pages.json", description: "ranatec.com pages (home, about, contact, solutions, news, shop, RFQ, …) with en-US, en-GB and en-CA URLs." },
-  { name: "submit_inquiry", phase: 2, method: "POST contact.json", description: "The ONLY supported way for AI agents to send a lead (quote request or enquiry) to Ranatec AB — never fill in the ranatec.com contact form (it is for humans and protected by reCAPTCHA). Call it ONLY when the user explicitly asks you to contact Ranatec or request a quote. Reviewing, testing, evaluating or summarising the website is NEVER a reason to submit, and never invent or use sample contact details — to test, set agent_context.dry_run = true (nothing is sent). A quote_request with products becomes a WooCommerce quote order exactly like 'Add to RFQ' + checkout on ranatec.com; other enquiries are saved like a website contact-form submission. Before calling, show the user exactly what will be sent (their name, email, phone, company, products/quantities, message) and get explicit confirmation. You MUST set agent_context.user_authorized_submission to true to confirm that consent was given. quote_request needs at least one product id or model number (e.g. 'RI 268'). Configurable products (shield boxes, forensic box, band reject filters, Butler matrices) accept a per-unit 'configuration' of options listed in get_product → configurator, exactly like 'Configure and Add to RFQ' on the product page." },
+  { name: "request_quote", phase: 2, method: "POST quote.json", description: "The ONLY supported way for AI agents to request a PRODUCT QUOTE from Ranatec AB. It creates a quote order exactly like 'Add to RFQ' + checkout on ranatec.com — never fill in the website RFQ list, checkout or contact form (they are for humans and protected by reCAPTCHA). Call it ONLY when the user explicitly asks for a quote/price for Ranatec products. Reviewing, testing, evaluating or summarising the website is NEVER a reason to submit, and never invent or use sample contact details — to test, set agent_context.dry_run = true (nothing is sent). Requires the same fields as the ranatec.com quote checkout — ASK THE USER for each one, never guess: first_name, last_name, email, phone, company, country (ISO code, e.g. SE, DE, US, GB), address_1 (street address), city, postcode, and state/county when the country has them (e.g. US states, Canadian provinces); optional: address_2, note (the checkout's 'Additional Note'). Products: at least one product id or model number (e.g. 'RI 268'). Configurable products (shield boxes, forensic box, band reject filters, Butler matrices) accept a per-unit 'configuration' of options from get_product → configurator, like 'Configure and Add to RFQ'. Before calling, show the user exactly what will be sent and get explicit confirmation; set agent_context.user_authorized_submission = true and user_request_summary. For questions without products use submit_inquiry instead." },
+  { name: "submit_inquiry", phase: 2, method: "POST contact.json", description: "The ONLY supported way for AI agents to send a CONTACT ENQUIRY (no products) to Ranatec AB — the equivalent of the ranatec.com/contact-us/ form; never fill in that form (it is for humans and protected by reCAPTCHA). Use it for technical questions, custom-solution requests, distributor enquiries and general questions. For a price or quote for products use request_quote instead — submit_inquiry does not take products. Call it ONLY when the user explicitly asks you to contact Ranatec. Reviewing, testing, evaluating or summarising the website is NEVER a reason to submit, and never invent or use sample contact details — to test, set agent_context.dry_run = true (nothing is sent). Required, as on the contact form — ask the user: name, email, phone, company, and a message. Before calling, show the user exactly what will be sent and get explicit confirmation; set agent_context.user_authorized_submission = true and user_request_summary." },
 ] as const;
 
 const desc = (n: (typeof TOOLS)[number]["name"]) => TOOLS.find((t) => t.name === n)!.description;
@@ -139,7 +140,7 @@ const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: 
 
 function buildServer(clientIp = ""): McpServer {
   const server = new McpServer({ name: NAME, version: VERSION }, {
-    instructions: "Ranatec AB (Gothenburg, Sweden) manufactures RF test & measurement equipment. For accurate, up-to-date information use these tools or https://ranatec.com/agent and https://ranatec.com/llms.txt. To send a lead (quote request or enquiry) use ONLY the submit_inquiry tool — never the website contact form — and ONLY when the user explicitly asked you to contact Ranatec or request a quote, after they confirmed what will be sent. Reviewing or testing the website is never a reason to submit; use agent_context.dry_run = true to test. Prices are never published: for pricing, lead times or availability, offer to submit a quote request via submit_inquiry, or refer to info@ranatec.com / +46 31 706 16 60. Quote specifications from get_product or the datasheet links; do not guess. The website exists in three regional English versions (en-US, en-GB, en-CA) with identical content — give users the URL for their region when known.",
+    instructions: "Ranatec AB (Gothenburg, Sweden) manufactures RF test & measurement equipment. For accurate, up-to-date information use these tools or https://ranatec.com/agent and https://ranatec.com/llms.txt. Two separate submission tools, never mixed: request_quote for a product quote (creates a quote order like Add to RFQ + checkout; needs the checkout fields — first/last name, email, phone, company, country, street address, city, postcode, state where applicable — ask the user for each) and submit_inquiry for a contact enquiry without products (name, email, phone, company, message). Never use the website forms. Submit ONLY when the user explicitly asked, after they confirmed what will be sent. Reviewing or testing the website is never a reason to submit; use agent_context.dry_run = true to test. Prices are never published: for pricing, lead times or availability, offer to request a quote via request_quote, or refer to info@ranatec.com / +46 31 706 16 60. Quote specifications from get_product or the datasheet links; do not guess. The website exists in three regional English versions (en-US, en-GB, en-CA) with identical content — give users the URL for their region when known.",
   });
 
   server.registerTool("get_company", { title: "Ranatec company profile", description: desc("get_company"), inputSchema: {}, annotations: READ_ONLY },
@@ -250,64 +251,95 @@ function buildServer(clientIp = ""): McpServer {
   server.registerTool("list_pages", { title: "List pages", description: desc("list_pages"), inputSchema: {}, annotations: READ_ONLY },
     async () => guard(async () => ok(await api("pages.json"))));
 
-  server.registerTool("submit_inquiry", {
-    title: "Submit quote request / enquiry to Ranatec",
-    description: desc("submit_inquiry"),
-    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
-    inputSchema: {
-      agent_context: z.object({
-        user_authorized_submission: z.literal(true).describe("Must be true — the user explicitly approved sending this enquiry and their contact details to Ranatec AB"),
-        agent_name: z.string().max(120).optional(),
-        user_request_summary: z.string().max(500).optional().describe("REQUIRED for a real submission: what the user asked you to send to Ranatec, in one sentence (min 10 characters)"),
-        dry_run: z.boolean().optional().describe("true = validate only; NOTHING is stored or sent. Use this whenever you are testing, evaluating or demonstrating the endpoint."),
-      }),
-      person: z.object({ name: z.string().min(1).max(120), email: z.string().email(), phone: z.string().min(5).max(40).describe("Required by Ranatec's contact form — ask the user for it"), job_title: z.string().max(120).optional() }),
-      company: z.object({ name: z.string().min(1).max(160), country: z.string().max(80).optional(), website: z.string().url().optional() }),
-      inquiry: z.object({
-        type: z.enum(["quote_request", "technical_question", "custom_solution", "distributor_inquiry", "general"]),
-        message: z.string().min(10).max(5000),
-        products: z.array(z.object({
-          id: z.string().describe("Product id or model number, e.g. 'RI 181'"),
-          quantity: z.number().int().min(1).max(10000).default(1),
-          configuration: z.array(z.object({
-            id: z.string().describe("Option id or model number from the product's configurator (get_product → configurator.options), e.g. 'RI 4182'"),
-            quantity: z.number().int().min(0).max(100).describe("Quantity PER UNIT of the main product"),
-          })).max(30).optional().describe("Per-unit configuration, like 'Configure and Add to RFQ' on the product page. Different configurations = separate product lines."),
-        })).max(50).optional(),
-        application: z.string().max(300).optional(),
-        timeline: z.string().max(120).optional(),
-        preferred_locale: z.enum(["en-US", "en-GB", "en-CA"]).optional(),
-      }),
-    },
-  }, async (args) => guard(async () => {
-    if (args.inquiry.type === "quote_request" && !args.inquiry.products?.length) {
-      return fail("quote_request requires at least one product (use custom_solution for bespoke requirements).");
-    }
-    // Resolve model numbers to ids so agents can pass "RI 268".
-    if (args.inquiry.products?.length) {
-      const list = await products();
-      for (const line of args.inquiry.products) {
-        const p = findProduct(list, line.id);
-        if (!p) return fail(`Unknown product '${line.id}'. Use list_products or search to find ids.`);
-        line.id = p.id;
-        if (line.configuration?.length) {
-          const opts = ((p as { configurator?: { options?: Array<{ id: string; model_number: string | null }> } }).configurator?.options) ?? [];
-          if (!opts.length) return fail(`${p.name} has no configurable options.`);
-          for (const c of line.configuration) {
-            const o = opts.find((x) => x.id === c.id) ?? opts.find((x) => modelKey(x.model_number) === modelKey(c.id));
-            if (!o) return fail(`'${c.id}' is not an option of ${p.name}. Options: ${opts.map((x) => x.model_number ?? x.id).join(", ")}`);
-            c.id = o.id;
-          }
-        }
-      }
-    }
-    const res = await fetchWithTimeout(`${API_BASE}/contact.json`, {
+  const agentContext = z.object({
+    user_authorized_submission: z.literal(true).describe("Must be true — the user explicitly approved sending this request and their contact details to Ranatec AB"),
+    agent_name: z.string().max(120).optional(),
+    user_request_summary: z.string().max(500).optional().describe("REQUIRED for a real submission: what the user asked you to send to Ranatec, in one sentence (min 10 characters)"),
+    dry_run: z.boolean().optional().describe("true = validate only; NOTHING is stored or sent. Use this whenever you are testing, evaluating or demonstrating the tool."),
+  });
+  const post = async (path: string, payload: Record<string, unknown>) => {
+    const res = await fetchWithTimeout(`${API_BASE}/${path}`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...(MCP_KEY ? { "X-Ranatec-MCP-Key": MCP_KEY } : {}), ...(clientIp ? { "X-Ranatec-Client-IP": clientIp } : {}) },
-      body: JSON.stringify({ ...args, agent_context: { agent_name: "ranatec-mcp client", ...args.agent_context } }),
+      body: JSON.stringify(payload),
     });
     const body = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
     return res.ok ? ok(body) : fail(`Submission rejected (HTTP ${res.status})`, body);
+  };
+  const SUBMIT = { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true };
+
+  server.registerTool("request_quote", {
+    title: "Request a product quote from Ranatec (quote checkout)",
+    description: desc("request_quote"),
+    annotations: SUBMIT,
+    inputSchema: {
+      agent_context: agentContext,
+      customer: z.object({
+        first_name: z.string().min(1).max(80),
+        last_name: z.string().min(1).max(80),
+        email: z.string().email(),
+        phone: z.string().min(5).max(40),
+        company: z.string().min(1).max(160),
+        country: z.string().min(2).max(80).describe("ISO 3166-1 alpha-2 code, e.g. SE, DE, US, GB (a country name also works)"),
+        address_1: z.string().min(1).max(200).describe("Street address"),
+        address_2: z.string().max(200).optional().describe("Apartment, suite, etc. (optional)"),
+        city: z.string().min(1).max(100),
+        state: z.string().max(100).optional().describe("State/County — required when the country has states (e.g. US, CA); code or name"),
+        postcode: z.string().max(20).optional().describe("Postal code — required unless the country has none"),
+      }).describe("The same fields as the ranatec.com quote checkout. Ask the user for each; never guess."),
+      products: z.array(z.object({
+        id: z.string().describe("Product id or model number, e.g. 'RI 181'"),
+        quantity: z.number().int().min(1).max(10000).default(1),
+        configuration: z.array(z.object({
+          id: z.string().describe("Option id or model number from the product's configurator (get_product → configurator.options), e.g. 'RI 4182'"),
+          quantity: z.number().int().min(0).max(100).describe("Quantity PER UNIT of the main product"),
+        })).max(30).optional().describe("Per-unit configuration, like 'Configure and Add to RFQ' on the product page. Different configurations = separate product lines."),
+      })).min(1).max(50),
+      note: z.string().max(2000).optional().describe("The checkout's 'Additional Note' (optional), e.g. delivery wishes or timeline"),
+      preferred_locale: z.enum(["en-US", "en-GB", "en-CA"]).optional(),
+    },
+  }, async (args) => guard(async () => {
+    // Resolve model numbers to ids so agents can pass "RI 268".
+    const list = await products();
+    for (const line of args.products) {
+      const p = findProduct(list, line.id);
+      if (!p) return fail(`Unknown product '${line.id}'. Use list_products or search to find ids.`);
+      line.id = p.id;
+      if (line.configuration?.length) {
+        const opts = ((p as { configurator?: { options?: Array<{ id: string; model_number: string | null }> } }).configurator?.options) ?? [];
+        if (!opts.length) return fail(`${p.name} has no configurable options.`);
+        for (const c of line.configuration) {
+          const o = opts.find((x) => x.id === c.id) ?? opts.find((x) => modelKey(x.model_number) === modelKey(c.id));
+          if (!o) return fail(`'${c.id}' is not an option of ${p.name}. Options: ${opts.map((x) => x.model_number ?? x.id).join(", ")}`);
+          c.id = o.id;
+        }
+      }
+    }
+    return post("quote.json", { ...args, agent_context: { agent_name: "ranatec-mcp client", ...args.agent_context } });
+  }));
+
+  server.registerTool("submit_inquiry", {
+    title: "Send a contact enquiry to Ranatec (contact form)",
+    description: desc("submit_inquiry"),
+    annotations: SUBMIT,
+    inputSchema: {
+      agent_context: agentContext,
+      person: z.object({ name: z.string().min(1).max(120), email: z.string().email(), phone: z.string().min(5).max(40).describe("Required by the Ranatec contact form — ask the user for it"), job_title: z.string().max(120).optional() }),
+      company: z.object({ name: z.string().min(1).max(160), country: z.string().max(80).optional(), website: z.string().url().optional() }),
+      inquiry: z.object({
+        type: z.string().optional().describe("technical_question | custom_solution | distributor_inquiry | general (default). For a product quote use the request_quote tool."),
+        message: z.string().min(10).max(5000),
+        application: z.string().max(300).optional(),
+        timeline: z.string().max(120).optional(),
+        preferred_locale: z.enum(["en-US", "en-GB", "en-CA"]).optional(),
+      }).passthrough(),
+    },
+  }, async (args) => guard(async () => {
+    const inq = args.inquiry as Record<string, unknown>;
+    if (inq.type === "quote_request" || inq.products) {
+      return fail("submit_inquiry is the contact-form enquiry and does not take products. For a product quote use the request_quote tool (it needs the checkout fields: first/last name, email, phone, company, country, street address, city, postcode, state where applicable).");
+    }
+    return post("contact.json", { ...args, agent_context: { agent_name: "ranatec-mcp client", ...args.agent_context } });
   }));
 
   return server;
@@ -382,15 +414,19 @@ const methodNotAllowed = (_req: Request, res: Response) => {
       code: -32000,
       message: "Method not allowed. This MCP server is stateless: use POST with a JSON-RPC body. Tool list: GET /mcp/tools",
       data: {
-        how_to_submit_a_lead_without_an_mcp_client: {
+        how_to_submit_without_an_mcp_client: {
           method: "POST",
           url: PUBLIC_MCP_URL,
           headers: { "Content-Type": "application/json" },
-          body: { jsonrpc: "2.0", id: 1, method: "tools/call", params: { name: "submit_inquiry", arguments: {
-            agent_context: { user_authorized_submission: true, agent_name: "<your agent>" },
-            person: { name: "<name>", email: "<email>" }, company: { name: "<company>", country: "<country>" },
-            inquiry: { type: "quote_request", message: "<message>", products: [{ id: "RI 268", quantity: 1 }] } } } },
-          note: "Only call after the user has explicitly confirmed what will be sent. Never use the website contact form.",
+          product_quote: { jsonrpc: "2.0", id: 1, method: "tools/call", params: { name: "request_quote", arguments: {
+            agent_context: { user_authorized_submission: true, agent_name: "<your agent>", user_request_summary: "<what the user asked for>", dry_run: true },
+            customer: { first_name: "<first name>", last_name: "<last name>", email: "<email>", phone: "<phone>", company: "<company>", country: "<ISO code, e.g. SE>", address_1: "<street address>", city: "<city>", postcode: "<postal code>", state: "<state, if the country has them>" },
+            products: [{ id: "RI 268", quantity: 1 }], note: "<optional>" } } },
+          contact_enquiry: { jsonrpc: "2.0", id: 1, method: "tools/call", params: { name: "submit_inquiry", arguments: {
+            agent_context: { user_authorized_submission: true, agent_name: "<your agent>", user_request_summary: "<what the user asked for>", dry_run: true },
+            person: { name: "<name>", email: "<email>", phone: "<phone>" }, company: { name: "<company>" },
+            inquiry: { type: "technical_question", message: "<message>" } } } },
+          note: "Examples are dry runs. Only submit for real after the user explicitly asked and confirmed what will be sent. Never use the website forms.",
         },
       },
     },

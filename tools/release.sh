@@ -53,7 +53,7 @@ All component versions come from the repo \`VERSION\` file ($V) and are checked 
 
 | File | What it is | How to use |
 |---|---|---|
-| \`release/ranatec-api-$V.zip\` | WordPress plugin: agent page, llms.txt, llms-full.txt, ai.txt, API catalogs, OpenAPI, REST API, contact/RFQ endpoint, daily sync | WordPress → Plugins → Add New → Upload → Activate → Settings → Permalinks → Save |
+| \`release/ranatec-api-$V.zip\` | WordPress plugin: agent page, llms.txt, llms-full.txt, ai.txt, API catalogs, OpenAPI, REST API, product-quote + contact endpoints, daily sync | WordPress → Plugins → Add New → Upload → Activate → Settings → Permalinks → Save |
 | \`release/ranatec-mcp-$V-cpanel.zip\` | MCP server, prebuilt (dist/ + app.cjs + package.json) for cPanel "Setup Node.js App" | Upload to the Node.js app root, Run NPM Install, startup file \`app.cjs\` (see docs/DEPLOYMENT-ODERLAND.md) |
 | \`ranatec-agentic-web-package-$V.zip\` | Complete package: plugin source + **the plugin zip above** (in \`release/\`), MCP server source, web-root copies, robots.txt additions, build tools, tests, docs | Hand-over / archive; see README.md and docs/DEPLOYMENT.md inside |
 
@@ -77,7 +77,7 @@ $( [[ $1 == yes ]] || echo '(The checksum of the complete-package zip cannot be 
 
 ## Checks
 - \`python3 tools/check_versions.py\`: all components at $V
-- \`bash tests/run-all.sh\`: $TESTS (PHP lint, JSON, contact endpoint with and without mbstring, HTTP endpoints, version consistency, MCP end-to-end incl. runtime version)
+- \`bash tests/run-all.sh\`: $TESTS (PHP lint, JSON, contact + quote endpoints with and without mbstring, HTTP endpoints, version consistency, MCP end-to-end incl. runtime version)
 - Crawl coverage: 262/262 sitemap URLs (9 cart/checkout/account pages skipped on purpose), 0 pending; 425 spec rows, 0 mismatches vs Firecrawl
 MD
 }

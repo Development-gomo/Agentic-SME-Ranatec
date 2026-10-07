@@ -29,7 +29,7 @@ bash tests/run-all.sh   # PHP lint, JSON, contact endpoint with and without mbst
 - [ ] Activate **Ranatec Agent API**.
 - [ ] **Settings → Permalinks → Save**, or Tools → Ranatec Agent API → *Flush rewrite rules*. Without this, every endpoint returns 404.
 - [ ] Make sure `wp-content/plugins/ranatec-api/data/` is writable by PHP, so the daily sync can update the files. The admin page shows a *Writable* column.
-- [ ] If a caching or CDN plugin is active (WP Rocket, LiteSpeed, Cloudflare), exclude `/agent/v1/contact.json` from caching. The GET endpoints can be cached; they send `Cache-Control: public, max-age=3600`.
+- [ ] If a caching or CDN plugin is active (WP Rocket, LiteSpeed, Cloudflare), exclude `/agent/v1/contact.json` and `/agent/v1/quote.json` from caching. The GET endpoints can be cached; they send `Cache-Control: public, max-age=3600`.
 - [ ] **Yoast SEO llms.txt feature.** Keep it **off**. If it's enabled it writes its own physical `/llms.txt`, which the web server serves instead of this package's file.
 - [ ] Check the endpoints:
 
@@ -43,15 +43,22 @@ curl -sI https://ranatec.com/.well-known/api-catalog | grep -i content-type  # a
 curl -s  https://ranatec.com/agent/ | grep -c '<article'                     # > 100
 ```
 
-- [ ] Test the contact endpoint. This sends a real email to the recipient, so warn them first:
+- [ ] Test both submission endpoints as **dry runs**. Nothing is stored or sent:
 
 ```bash
+# Contact enquiry (MCP tool submit_inquiry) → Advanced CF7 DB
 curl -s -X POST https://ranatec.com/agent/v1/contact.json -H "Content-Type: application/json" -d '{
-  "agent_context": {"user_authorized_submission": true, "agent_name": "deployment-test"},
-  "person": {"name": "Deployment Test", "email": "you@gomogroup.com"},
-  "company": {"name": "GO MO Group"},
-  "inquiry": {"type": "general", "message": "Deployment test of the Ranatec agent contact endpoint - please ignore."}}'
-# → {"status":"received","lead_id":"ranatec-lead-2026-XXXXXXXX", …}
+  "agent_context":{"user_authorized_submission":true,"agent_name":"deployment-test","dry_run":true},
+  "person":{"name":"Deployment Test","email":"you@gomogroup.com","phone":"+46 31 000 00 00"},
+  "company":{"name":"GO MO Group"},
+  "inquiry":{"type":"general","message":"Deployment test of the Ranatec agent contact endpoint."}}'
+# Product quote (MCP tool request_quote) → WooCommerce quote order; needs the checkout fields
+curl -s -X POST https://ranatec.com/agent/v1/quote.json -H "Content-Type: application/json" -d '{
+  "agent_context":{"user_authorized_submission":true,"agent_name":"deployment-test","dry_run":true},
+  "customer":{"first_name":"Deployment","last_name":"Test","email":"you@gomogroup.com","phone":"+46 31 000 00 00","company":"GO MO Group",
+  "country":"SE","address_1":"Testgatan 1","city":"Göteborg","postcode":"41250"},
+  "products":[{"id":"shield-box-ri-181","quantity":1,"configuration":[{"id":"feedthrough-filter-ri-4182","quantity":2}]}]}'
+# → {"status":"valid","submitted":false, …}
 # Same request with "user_authorized_submission": false → HTTP 403
 ```
 
@@ -77,7 +84,7 @@ PORT=3000 RANATEC_API_BASE=https://ranatec.com/agent/v1 npm start      # or: doc
 
 ```bash
 curl -s https://ranatec.com/mcp/health   # {"status":"ok", … "upstream":"ok"}
-curl -s https://ranatec.com/mcp/tools    # 12 tools
+curl -s https://ranatec.com/mcp/tools    # 13 tools
 MCP_URL=https://ranatec.com/mcp npm test # end-to-end. NOTE: the last check sends a real quote request email
 ```
 

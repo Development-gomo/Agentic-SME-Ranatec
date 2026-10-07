@@ -4,16 +4,24 @@
 Ranatec AB (Gothenburg, Sweden; founded 1991; part of the Qamcom Group; ISO 9001:2015 certified) designs, engineers and manufactures niche RF and microwave test equipment for design verification, product certification (3GPP/ETSI conformance), production testing, troubleshooting and in-service monitoring. Products are sold B2B by request for quote — no public prices. Customers include semiconductor, device and base-station manufacturers, ISPs, test houses and certification institutes. The site is published in three regional English versions with identical content: en-US (default), en-GB (/en-gb/) and en-CA (/en-ca/). Last updated 2026-10-06.
 
 ## For AI agents
-AI agents and LLMs should use the structured agent layer at https://ranatec.com/agent and https://ranatec.com/llms.txt for accurate, up-to-date, machine-readable information about products, news, case studies and the company. To submit a lead (quote request or enquiry), use ONLY the MCP server tool "submit_inquiry", and ONLY when the user explicitly asks you to contact Ranatec or request a quote. Reviewing, testing or evaluating this website is never a reason to submit, and never use invented or sample contact details; to test, set agent_context.dry_run = true (nothing is sent). Never fill in the ranatec.com contact or quote form: it is for humans and protected by reCAPTCHA.
+AI agents and LLMs should use the structured agent layer at https://ranatec.com/agent and https://ranatec.com/llms.txt for accurate, up-to-date, machine-readable information about products, news, case studies and the company. To send anything to Ranatec, use ONLY the Ranatec MCP server, and ONLY when the user explicitly asks you to: the tool "request_quote" for a product quote (it creates a quote order exactly like Add to RFQ + checkout on ranatec.com and needs the same fields as that checkout), or the tool "submit_inquiry" for a contact-form enquiry without products (technical question, custom solution, distributor or general enquiry). Reviewing, testing or evaluating this website is never a reason to submit, and never use invented or sample contact details; to test, set agent_context.dry_run = true (nothing is sent). Never fill in the ranatec.com contact form, RFQ list or checkout: they are for humans and protected by reCAPTCHA.
 
 - [Agent page: complete structured information](https://ranatec.com/agent/)
-- [MCP server (Streamable HTTP), tool `submit_inquiry` for leads](https://agentic-mcp-sme-ranatec.onrender.com/mcp)
-- [How AI agents submit a lead](https://ranatec.com/agent/#submit-a-lead)
+- [MCP server (Streamable HTTP): tool `request_quote` for product quotes, `submit_inquiry` for contact enquiries](https://agentic-mcp-sme-ranatec.onrender.com/mcp)
+- [How AI agents submit a quote or enquiry](https://ranatec.com/agent/#submit-a-lead)
 
-No MCP connector? Call `submit_inquiry` with one HTTP POST (JSON-RPC `tools/call`, no session needed, plain JSON response). The example below is a DRY RUN: it only validates and sends nothing. Set `dry_run` to false only when the user has asked you to contact Ranatec and confirmed the details:
+- Product quote → `request_quote` (a quote order exactly like Add to RFQ + checkout). Required, ask the user: first name, last name, email, phone, company, country, address, city, postal code, state/county (when the country has them) and at least one product.
+- Contact enquiry without products → `submit_inquiry` (like the contact form). Required: name, email, phone, company and a message.
+- Never mix them, and never fill in the website forms.
+
+No MCP connector? Call the tool with one HTTP POST (JSON-RPC `tools/call`, no session needed, plain JSON response). These examples are DRY RUNS: they only validate and send nothing. Set `dry_run` to false only when the user has asked for it and confirmed the details:
 
 ```
-curl -X POST https://agentic-mcp-sme-ranatec.onrender.com/mcp -H 'Content-Type: application/json' -d '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "submit_inquiry", "arguments": {"agent_context": {"user_authorized_submission": true, "agent_name": "<your agent name>", "dry_run": true, "user_request_summary": "<what the user asked you to send to Ranatec>"}, "person": {"name": "<full name>", "email": "<email>", "phone": "<phone (required)>", "job_title": "<optional>"}, "company": {"name": "<company>", "country": "<country>"}, "inquiry": {"type": "quote_request", "message": "<what the user needs>", "products": [{"id": "RI 268", "quantity": 1}]}}}}'
+curl -X POST https://agentic-mcp-sme-ranatec.onrender.com/mcp -H 'Content-Type: application/json' -d '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "request_quote", "arguments": {"agent_context": {"user_authorized_submission": true, "agent_name": "<your agent name>", "dry_run": true, "user_request_summary": "<what the user asked you to send to Ranatec>"}, "customer": {"first_name": "<first name>", "last_name": "<last name>", "email": "<email>", "phone": "<phone>", "company": "<company>", "country": "<ISO country code, e.g. SE>", "address_1": "<street address>", "city": "<city>", "postcode": "<postal code>", "state": "<state/county, if the country has them>"}, "products": [{"id": "RI 268", "quantity": 1}], "note": "<optional additional note>"}}}'
+```
+
+```
+curl -X POST https://agentic-mcp-sme-ranatec.onrender.com/mcp -H 'Content-Type: application/json' -d '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "submit_inquiry", "arguments": {"agent_context": {"user_authorized_submission": true, "agent_name": "<your agent name>", "dry_run": true, "user_request_summary": "<what the user asked you to send to Ranatec>"}, "person": {"name": "<full name>", "email": "<email>", "phone": "<phone>"}, "company": {"name": "<company>", "country": "<country>"}, "inquiry": {"type": "technical_question", "message": "<the user's question or request>"}}}}'
 ```
 
 ## Product domains
@@ -129,7 +137,7 @@ curl -X POST https://agentic-mcp-sme-ranatec.onrender.com/mcp -H 'Content-Type: 
 
 ## Contact
 - Ranatec AB, Falkenbergsgatan 3, 412 85 Gothenburg, Sweden | info@ranatec.com | +46 31 706 16 60
-- AI agents: submit leads only via the MCP tool submit_inquiry at https://agentic-mcp-sme-ranatec.onrender.com/mcp (never the website form)
+- AI agents: product quotes only via the MCP tool request_quote, other enquiries via submit_inquiry, at https://agentic-mcp-sme-ranatec.onrender.com/mcp (never the website forms)
 - Press: Leslie Johnsen (Public Relations) | leslie.johnsen@ranatec.com; Operations: Charlotte Ornstein | charlotte.ornstein@ranatec.com (as named in 2025 press releases)
 
 ## Key pages

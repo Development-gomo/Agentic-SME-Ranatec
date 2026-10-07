@@ -42,3 +42,41 @@ class Fake_WPDB {
 }
 $GLOBALS['wpdb'] = new Fake_WPDB();
 function wp_mail($to, $s, $m, $h) { file_put_contents(sys_get_temp_dir() . '/ranatec-mail.txt', "TO: $to\nSUBJECT: $s\n" . implode("\n", $h) . "\n\n$m"); return getenv('MAIL_FAIL') ? false : true; }
+
+/**
+ * Minimal WooCommerce stand-in for the quote flow (disabled with TEST_WC=0). Orders are appended to
+ * $TMPDIR/ranatec-wc-orders.jsonl. Countries/locale mirror WooCommerce for the countries used in tests.
+ */
+if (getenv('TEST_WC') !== '0') {
+    if (!defined('OBJECT')) define('OBJECT', 'OBJECT');
+    class Fake_WC_Countries {
+        public function get_allowed_countries() { return ['SE' => 'Sweden', 'DE' => 'Germany', 'US' => 'United States (US)', 'GB' => 'United Kingdom (UK)', 'CA' => 'Canada', 'AE' => 'United Arab Emirates']; }
+        public function get_states($cc) { $s = ['US' => ['CA' => 'California', 'NY' => 'New York', 'TX' => 'Texas'], 'CA' => ['ON' => 'Ontario', 'QC' => 'Quebec'], 'SE' => [], 'DE' => ['BY' => 'Bavaria (Bayern)', 'BE' => 'Berlin'], 'GB' => [], 'AE' => []]; return $s[$cc] ?? false; }
+        public function get_country_locale() { return ['SE' => ['state' => ['required' => false, 'hidden' => true]], 'DE' => ['state' => ['required' => false]], 'GB' => ['state' => ['required' => false]], 'AE' => ['postcode' => ['required' => false, 'hidden' => true], 'state' => ['required' => false]]]; }
+    }
+    class Fake_WC_Gateway { public function get_title() { return 'YITH Request a Quote'; } }
+    class Fake_WC_Gateways { public function payment_gateways() { return ['yith-request-a-quote' => new Fake_WC_Gateway()]; } }
+    class Fake_WC { public $countries; public function __construct() { $this->countries = new Fake_WC_Countries(); } public function payment_gateways() { return new Fake_WC_Gateways(); } }
+    function WC() { static $wc; return $wc ?: ($wc = new Fake_WC()); }
+    class Fake_WC_Product { public $slug; public function __construct($s) { $this->slug = $s; } public function get_name() { return 'Product ' . $this->slug; } }
+    function get_page_by_path($slug, $o = null, $t = null) { return in_array($slug, explode(',', (string) getenv('TEST_WC_MISSING')), true) ? null : (object) ['ID' => $slug]; }
+    function wc_get_product($id) { return new Fake_WC_Product($id); }
+    function wc_get_order_statuses() { return ['wc-pending' => 'Pending payment', 'wc-ywraq-new' => 'New Quote Request']; }
+    function is_wp_error($x) { return false; }
+    function wc_add_order_item_meta($id, $k, $v) { $GLOBALS['fake_order']->d['item_meta'][$id][$k] = $v; }
+    class Fake_WC_Order {
+        public $d = ['items' => [], 'meta' => [], 'notes' => []];
+        public function __construct($args) { $this->d['args'] = $args; }
+        public function __call($m, $a) { if (preg_match('/^set_(.+)$/', $m, $x)) { $this->d[$x[1]] = $a[0]; } }
+        public function add_product($p, $q) { $this->d['items'][] = [$p->slug, $q]; return count($this->d['items']); }
+        public function update_meta_data($k, $v) { $this->d['meta'][$k] = $v; }
+        public function add_order_note($n) { $this->d['notes'][] = $n; }
+        public function calculate_totals($t) {}
+        public function get_id() { return 4242; }
+        public function get_order_number() { return '4242'; }
+        public function get_status() { return $this->d['args']['status']; }
+        public function save() { $this->d['saved'] = true; }
+        public function __destruct() { if (!empty($this->d['saved'])) file_put_contents(sys_get_temp_dir() . '/ranatec-wc-orders.jsonl', json_encode($this->d) . "\n", FILE_APPEND); }
+    }
+    function wc_create_order($args) { return $GLOBALS['fake_order'] = new Fake_WC_Order($args); }
+}

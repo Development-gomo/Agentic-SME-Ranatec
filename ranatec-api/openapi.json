@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Ranatec Agent API",
-    "version": "1.0.9",
+    "version": "1.1.0",
     "description": "Read-only JSON API describing Ranatec AB (Gothenburg, Sweden) — RF test & measurement equipment for filtering, shielding, switching and automation — plus one consent-gated POST endpoint for quote requests and enquiries. Content mirrors ranatec.com in three regional English locales (en-US default, en-GB, en-CA); every entity lists all three URLs. Ranatec publishes no prices: all products are sold B2B via request for quote.",
     "contact": {
       "name": "Ranatec AB",
@@ -544,14 +544,157 @@
         }
       }
     },
+    "/quote.json": {
+      "post": {
+        "tags": [
+          "actions"
+        ],
+        "operationId": "requestQuote",
+        "summary": "Product quote request — backend for the MCP tool request_quote (AI agents: use the MCP tool, not this path)",
+        "description": "AI agents must request product quotes ONLY through the MCP server tool request_quote at https://agentic-mcp-sme-ranatec.onrender.com/mcp (JSON-RPC tools/call over HTTP POST, or an MCP connector); when the site owner configures an MCP server key, direct calls are rejected with 403 use_mcp_request_quote. Creates a WooCommerce quote order exactly like Add to RFQ + checkout on ranatec.com (never a contact-form lead) and needs the same fields as that checkout: first name, last name, email, phone, company, country, address, city, postal code, state/county (when the country has them) and at least one product. Optional: address_2, note (the checkout \"Additional Note\"). ONLY call this after the user explicitly asked for the quote and confirmed what will be sent; agent_context.user_authorized_submission must be true and user_request_summary set. agent_context.dry_run = true validates without sending. Rate limit: 5 submissions per IP per hour.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuoteRequest"
+              },
+              "example": {
+                "agent_context": {
+                  "user_authorized_submission": true,
+                  "agent_name": "ExampleAssistant",
+                  "user_request_summary": "User asked for a quote for two RI 268 filters with the RI 4278 extension box",
+                  "dry_run": true
+                },
+                "customer": {
+                  "first_name": "Alex",
+                  "last_name": "Example",
+                  "email": "alex@example.com",
+                  "phone": "+49 89 000000",
+                  "company": "Example Labs GmbH",
+                  "country": "DE",
+                  "address_1": "Beispielstraße 1",
+                  "city": "München",
+                  "postcode": "80331",
+                  "state": "BY"
+                },
+                "products": [
+                  {
+                    "id": "tunable-band-reject-filter-ri-268",
+                    "quantity": 2
+                  },
+                  {
+                    "id": "frequency-extension-box-ri-4278",
+                    "quantity": 1
+                  }
+                ],
+                "note": "Delivery Q1 2027."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Quote order created (or, with dry_run, validated only)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON or validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "user_authorized_submission is not true, or the MCP-only lock is on",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactErrorResponse"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Body larger than 20 KB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "A product is not available in the shop",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactErrorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "The quote order could not be created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Quotes unavailable (WooCommerce inactive)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/contact.json": {
       "post": {
         "tags": [
           "actions"
         ],
         "operationId": "submitInquiry",
-        "summary": "Backend for the MCP tool submit_inquiry (AI agents: use the MCP tool, not this path)",
-        "description": "AI agents must submit leads ONLY through the MCP server tool submit_inquiry at https://agentic-mcp-sme-ranatec.onrender.com/mcp (JSON-RPC tools/call over HTTP POST, or an MCP connector). This path is the backend that tool calls; when the site owner configures an MCP server key, direct calls are rejected with 403 use_mcp_submit_inquiry. Sends the enquiry to Ranatec by email. ONLY call this after the user has explicitly confirmed that the enquiry — including their name, email and company — may be sent to Ranatec AB. agent_context.user_authorized_submission must be the boolean true, otherwise the request is rejected with 403. quote_request requires at least one product id from /products.json. Rate limit: 5 submissions per IP per hour.",
+        "summary": "Contact-form enquiry — backend for the MCP tool submit_inquiry (AI agents: use the MCP tool, not this path)",
+        "description": "AI agents must send enquiries ONLY through the MCP server tool submit_inquiry at https://agentic-mcp-sme-ranatec.onrender.com/mcp; when the site owner configures an MCP server key, direct calls are rejected with 403 use_mcp_submit_inquiry. The equivalent of the ranatec.com/contact-us/ form: stored with the contact-form leads. Required (as on that form): name, email, phone, company and a message. Does NOT take products — product quotes use /quote.json (tool request_quote); a quote_request or products here is rejected with 400 use_request_quote. ONLY call this after the user explicitly asked to contact Ranatec and confirmed what will be sent; agent_context.user_authorized_submission must be true and user_request_summary set. agent_context.dry_run = true validates without sending. Rate limit: 5 submissions per IP per hour.",
         "requestBody": {
           "required": true,
           "content": {
@@ -563,11 +706,13 @@
                 "agent_context": {
                   "user_authorized_submission": true,
                   "agent_name": "ExampleAssistant",
-                  "user_request_summary": "User asked for a quote for two RI 268 filters"
+                  "user_request_summary": "User asked whether the RI 181 can be customised for USB-C feedthrough",
+                  "dry_run": true
                 },
                 "person": {
                   "name": "Alex Example",
                   "email": "alex@example.com",
+                  "phone": "+49 89 000000",
                   "job_title": "Test Engineer"
                 },
                 "company": {
@@ -575,19 +720,8 @@
                   "country": "Germany"
                 },
                 "inquiry": {
-                  "type": "quote_request",
-                  "message": "Please quote 2 × RI 268 incl. RI 4278 extension box, delivery to Munich.",
-                  "products": [
-                    {
-                      "id": "tunable-band-reject-filter-ri-268",
-                      "quantity": 2
-                    },
-                    {
-                      "id": "frequency-extension-box-ri-4278",
-                      "quantity": 1
-                    }
-                  ],
-                  "timeline": "Q1 2027"
+                  "type": "custom_solution",
+                  "message": "Can the RI 181 shield box be delivered with a USB-C feedthrough filter?"
                 }
               }
             }
@@ -595,7 +729,7 @@
         },
         "responses": {
           "200": {
-            "description": "Received",
+            "description": "Received (or, with dry_run, validated only)",
             "content": {
               "application/json": {
                 "schema": {
@@ -615,7 +749,7 @@
             }
           },
           "403": {
-            "description": "user_authorized_submission is not true",
+            "description": "user_authorized_submission is not true, or the MCP-only lock is on",
             "content": {
               "application/json": {
                 "schema": {
@@ -655,7 +789,7 @@
             }
           },
           "502": {
-            "description": "Email delivery failed",
+            "description": "Could not be stored or emailed",
             "content": {
               "application/json": {
                 "schema": {
@@ -881,7 +1015,7 @@
                   }
                 }
               },
-              "submit_inquiry_usage": {
+              "request_quote_usage": {
                 "type": "string"
               }
             },
@@ -1692,7 +1826,7 @@
             "enum": [
               true
             ],
-            "description": "Must be true: the user explicitly approved sending this enquiry and their contact details to Ranatec."
+            "description": "Must be true: the user explicitly approved sending this request and their contact details to Ranatec."
           },
           "agent_name": {
             "type": "string",
@@ -1700,7 +1834,12 @@
           },
           "user_request_summary": {
             "type": "string",
-            "maxLength": 500
+            "maxLength": 500,
+            "description": "Required unless dry_run: what the user asked you to send (min 10 characters)"
+          },
+          "dry_run": {
+            "type": "boolean",
+            "description": "true = validate only, nothing is stored or sent"
           }
         },
         "required": [
@@ -1729,7 +1868,8 @@
         },
         "required": [
           "name",
-          "email"
+          "email",
+          "phone"
         ]
       },
       "ContactCompany": {
@@ -1797,23 +1937,17 @@
           "type": {
             "type": "string",
             "enum": [
-              "quote_request",
               "technical_question",
               "custom_solution",
               "distributor_inquiry",
               "general"
-            ]
+            ],
+            "default": "general"
           },
           "message": {
             "type": "string",
             "minLength": 10,
             "maxLength": 5000
-          },
-          "products": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProductLine"
-            }
           },
           "application": {
             "type": "string",
@@ -1833,7 +1967,6 @@
           }
         },
         "required": [
-          "type",
           "message"
         ]
       },
@@ -1866,14 +1999,173 @@
           "status": {
             "type": "string",
             "enum": [
-              "received"
+              "received",
+              "valid"
+            ]
+          },
+          "flow": {
+            "type": "string",
+            "enum": [
+              "contact_form"
             ]
           },
           "lead_id": {
             "type": "string",
-            "example": "ranatec-rfq-2026-A3F7B2C1"
+            "example": "ranatec-lead-2026-A3F7B2C1"
           },
           "type": {
+            "type": "string"
+          },
+          "stored_in": {
+            "type": "string",
+            "nullable": true
+          },
+          "entry_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "submitted": {
+            "type": "boolean"
+          },
+          "dry_run": {
+            "type": "boolean"
+          },
+          "notification_email": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "next_step": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "QuoteCustomer": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "last_name": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "phone": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "company": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "country": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 code (e.g. SE, DE, US, GB) or country name"
+          },
+          "address_1": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "address_2": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "city": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "state": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "State/County code or name — required when the country has states (e.g. US, CA)"
+          },
+          "postcode": {
+            "type": "string",
+            "maxLength": 20,
+            "description": "Required unless the country has no postal codes"
+          }
+        },
+        "required": [
+          "first_name",
+          "last_name",
+          "email",
+          "phone",
+          "company",
+          "country",
+          "address_1",
+          "city"
+        ]
+      },
+      "QuoteRequest": {
+        "type": "object",
+        "properties": {
+          "agent_context": {
+            "$ref": "#/components/schemas/AgentContext"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/QuoteCustomer"
+          },
+          "products": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 50,
+            "items": {
+              "$ref": "#/components/schemas/ProductLine"
+            }
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 2000,
+            "description": "The checkout \"Additional Note\" (optional)"
+          },
+          "preferred_locale": {
+            "type": "string",
+            "enum": [
+              "en-US",
+              "en-GB",
+              "en-CA"
+            ]
+          }
+        },
+        "required": [
+          "agent_context",
+          "customer",
+          "products"
+        ]
+      },
+      "QuoteResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "received",
+              "valid"
+            ]
+          },
+          "flow": {
+            "type": "string",
+            "enum": [
+              "product_quote"
+            ]
+          },
+          "quote_id": {
+            "type": "string",
+            "example": "ranatec-rfq-2026-A3F7B2C1"
+          },
+          "order_id": {
+            "type": "integer"
+          },
+          "order_number": {
             "type": "string"
           },
           "products": {
@@ -1897,6 +2189,18 @@
               }
             }
           },
+          "stored_in": {
+            "type": "string"
+          },
+          "submitted": {
+            "type": "boolean"
+          },
+          "dry_run": {
+            "type": "boolean"
+          },
+          "notification_email": {
+            "type": "string"
+          },
           "message": {
             "type": "string"
           },
@@ -1905,8 +2209,7 @@
           }
         },
         "required": [
-          "status",
-          "lead_id"
+          "status"
         ]
       },
       "ContactErrorResponse": {

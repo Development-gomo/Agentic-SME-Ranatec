@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       Ranatec Agent API
  * Plugin URI:        https://ranatec.com/agent/
- * Description:       Agentic Web package for ranatec.com — serves the machine-readable agent page (/agent/), clean JSON endpoints (/agent/v1/*.json), the OpenAPI spec (/openapi.json), llms.txt, ai.txt and the API catalog, plus an agent-safe RFQ / contact endpoint.
- * Version:           1.0.9
+ * Description:       Agentic Web package for ranatec.com — serves the machine-readable agent page (/agent/), clean JSON endpoints (/agent/v1/*.json), the OpenAPI spec (/openapi.json), llms.txt, ai.txt and the API catalog, plus agent-safe product-quote and contact endpoints.
+ * Version:           1.1.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            GO MO Group for Ranatec AB
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('RANATEC_API_VERSION', '1.0.9');
+define('RANATEC_API_VERSION', '1.1.0');
 define('RANATEC_API_DIR', plugin_dir_path(__FILE__));
 define('RANATEC_API_DATA', RANATEC_API_DIR . 'data/');
 define('RANATEC_API_PUBLIC', RANATEC_API_DIR . 'public/');
@@ -120,22 +120,25 @@ final class Ranatec_Agent_API
             exit;
         }
 
-        if ($endpoint === 'contact') {
+        // Lead submissions — two separate flows: contact.json = contact-form enquiry (MCP tool submit_inquiry),
+        // quote.json = product quote / WooCommerce RFQ order (MCP tool request_quote).
+        if ($endpoint === 'contact' || $endpoint === 'quote') {
+            $tool = $endpoint === 'contact' ? 'submit_inquiry' : 'request_quote';
             if ($method !== 'POST') {
-                self::respond(['error' => 'method_not_allowed', 'message' => 'Use POST with a JSON body. See https://ranatec.com/openapi.json#/paths/~1contact.json'], 405, ['Allow: POST, OPTIONS']);
+                self::respond(['error' => 'method_not_allowed', 'message' => "Use POST with a JSON body. See https://ranatec.com/openapi.json#/paths/~1{$endpoint}.json"], 405, ['Allow: POST, OPTIONS']);
             }
-            // Optional lock: when an MCP server key is configured, accept leads ONLY from the Ranatec MCP server
-            // (tool submit_inquiry), which sends the key in the X-Ranatec-MCP-Key header.
+            // Optional lock: when an MCP server key is configured, accept submissions ONLY from the Ranatec MCP
+            // server, which sends the key in the X-Ranatec-MCP-Key header.
             $mcp_key = (string) get_option(Ranatec_Agent_Sync::OPTION_MCP_KEY, '');
             if ($mcp_key !== '') {
                 $sent = isset($_SERVER['HTTP_X_RANATEC_MCP_KEY']) ? (string) wp_unslash($_SERVER['HTTP_X_RANATEC_MCP_KEY']) : '';
                 if (!hash_equals($mcp_key, $sent)) {
                     self::respond([
                         'status' => 'error',
-                        'error' => 'use_mcp_submit_inquiry',
-                        'message' => 'Leads are accepted only through the Ranatec MCP server tool submit_inquiry at ' . RANATEC_MCP_URL . ' (POST a JSON-RPC tools/call, or add the server as an MCP connector). Do not use the website contact form.',
+                        'error' => 'use_mcp_' . $tool,
+                        'message' => "Submissions are accepted only through the Ranatec MCP server tool {$tool} at " . RANATEC_MCP_URL . ' (POST a JSON-RPC tools/call, or add the server as an MCP connector). Do not use the website forms.',
                         'mcp_server' => RANATEC_MCP_URL,
-                        'tool' => 'submit_inquiry',
+                        'tool' => $tool,
                     ], 403);
                 }
             }
@@ -148,7 +151,9 @@ final class Ranatec_Agent_API
                 $cand = trim((string) wp_unslash($_SERVER['HTTP_X_RANATEC_CLIENT_IP']));
                 $client_ip = filter_var($cand, FILTER_VALIDATE_IP) ? $cand : null;
             }
-            list($status, $body) = Ranatec_Agent_Contact::handle($raw, self::client_ip(), $client_ip);
+            list($status, $body) = $endpoint === 'contact'
+                ? Ranatec_Agent_Contact::handle($raw, self::client_ip(), $client_ip)
+                : Ranatec_Agent_Contact::handle_quote($raw, self::client_ip(), $client_ip);
             self::respond($body, $status);
         }
 
@@ -202,7 +207,7 @@ final class Ranatec_Agent_API
                 'publisher' => 'Ranatec AB',
             ],
             'name' => 'Ranatec Agent API',
-            'description' => 'Read-only JSON API describing Ranatec AB (Gothenburg, Sweden): RF test and measurement products, categories, solutions, news, pages and FAQ — plus one consent-gated POST endpoint for quote requests and enquiries.',
+            'description' => 'Read-only JSON API describing Ranatec AB (Gothenburg, Sweden): RF test and measurement products, categories, solutions, news, pages and FAQ — plus two consent-gated POST endpoints: product quote requests and contact enquiries.',
             'locales' => ['en-US' => RANATEC_API_SITE . '/', 'en-GB' => RANATEC_API_SITE . '/en-gb/', 'en-CA' => RANATEC_API_SITE . '/en-ca/'],
             'counts' => $counts,
             'endpoints' => [
@@ -218,12 +223,16 @@ final class Ranatec_Agent_API
                 ['method' => 'GET', 'url' => RANATEC_API_BASE . '/news/{id}.json', 'description' => 'One news item by slug'],
                 ['method' => 'GET', 'url' => RANATEC_API_BASE . '/pages.json', 'description' => 'Site pages with en-US / en-GB / en-CA URLs'],
                 ['method' => 'GET', 'url' => RANATEC_API_BASE . '/faq.json', 'description' => 'Frequently asked questions'],
-                ['method' => 'POST', 'url' => RANATEC_API_BASE . '/contact.json', 'description' => 'Backend for the MCP tool submit_inquiry. AI agents: submit leads via the MCP tool, not this path.'],
+                ['method' => 'POST', 'url' => RANATEC_API_BASE . '/contact.json', 'description' => 'Contact-form enquiry (backend for the MCP tool submit_inquiry; saved like a ranatec.com/contact-us/ submission). AI agents: use the MCP tool, not this path.'],
+                ['method' => 'POST', 'url' => RANATEC_API_BASE . '/quote.json', 'description' => 'Product quote request (backend for the MCP tool request_quote; creates a quote order like Add to RFQ + checkout, with the checkout fields). AI agents: use the MCP tool, not this path.'],
             ],
             'lead_submission' => [
-                'policy' => 'AI agents and LLMs should use https://ranatec.com/agent and https://ranatec.com/llms.txt for information. To submit a lead, use ONLY the MCP server tool submit_inquiry. Never fill in the website contact form (reCAPTCHA-protected, for humans).',
+                'policy' => 'AI agents and LLMs should use https://ranatec.com/agent and https://ranatec.com/llms.txt for information. Submit ONLY via the Ranatec MCP server, and only when the user explicitly asks: request_quote for a product quote (same fields as the ranatec.com quote checkout), submit_inquiry for a contact-form enquiry without products. Never fill in the website forms (reCAPTCHA-protected, for humans).',
                 'mcp_server' => RANATEC_MCP_URL,
-                'tool' => 'submit_inquiry',
+                'tools' => [
+                    'request_quote' => 'Product quote → WooCommerce quote order. Required: first_name, last_name, email, phone, company, country, address_1, city, postcode and state (when the country has them), products. Optional: address_2, note.',
+                    'submit_inquiry' => 'Contact-form enquiry (no products) → contact-form leads. Required: name, email, phone, company, message.',
+                ],
                 'how_to' => RANATEC_API_SITE . '/agent/#submit-a-lead',
                 'consent_required' => 'agent_context.user_authorized_submission = true, only after the user explicitly confirmed what will be sent',
             ],

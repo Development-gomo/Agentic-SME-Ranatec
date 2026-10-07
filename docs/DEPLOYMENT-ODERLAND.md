@@ -35,7 +35,7 @@ Expect about 30–45 minutes. Do it in a quiet hour, and keep the **Before you s
    - Set the **contact recipient** (default `info@ranatec.com`) and save.
    - Check that the **Writable** column says *yes* for all data files. It should on Oderland, because PHP runs as the account user.
    - Click **Sync now**. The report should show news ≈ 44 and products ≈ 82, with no errors.
-8. **LiteSpeed Cache:** if the plugin is installed, go to **LiteSpeed Cache → Cache → Excludes → Do Not Cache URIs**, add `/agent/v1/contact.json` and save. Then **Toolbox → Purge All**.
+8. **LiteSpeed Cache:** if the plugin is installed, go to **LiteSpeed Cache → Cache → Excludes → Do Not Cache URIs**, add `/agent/v1/contact.json` and `/agent/v1/quote.json` and save. Then **Toolbox → Purge All**.
 9. **Yoast SEO:** make sure Yoast's *llms.txt* feature is **off** (Yoast → Settings → Site features). Otherwise Yoast writes its own `llms.txt` file, and that file overrides ours.
 10. **Test in a browser.** Each URL should load, not 404:
     - https://ranatec.com/agent/
@@ -46,16 +46,24 @@ Expect about 30–45 minutes. Do it in a quiet hour, and keep the **Before you s
     - https://ranatec.com/.well-known/api-catalog
     - https://ranatec.com/agent/v1/index.json
     - https://ranatec.com/agent/v1/products/ri-268.json
-11. **Test the contact endpoint.** This sends a real email to the recipient from step 7, so tell them first:
+11. **Test both submission endpoints as dry runs.** Nothing is stored or emailed. Run these before you set the MCP key in Part C; afterwards, direct calls get 403.
 
     ```bash
+    # Contact enquiry → would go to Advanced CF7 DB
     curl -s -X POST https://ranatec.com/agent/v1/contact.json -H "Content-Type: application/json" -d '{
-      "agent_context":{"user_authorized_submission":true,"agent_name":"deployment-test"},
-      "person":{"name":"Deployment Test","email":"you@gomogroup.com"},
+      "agent_context":{"user_authorized_submission":true,"agent_name":"deployment-test","dry_run":true},
+      "person":{"name":"Deployment Test","email":"you@gomogroup.com","phone":"+46 31 000 00 00"},
       "company":{"name":"GO MO Group"},
-      "inquiry":{"type":"general","message":"Deployment test of the Ranatec agent contact endpoint - please ignore."}}'
+      "inquiry":{"type":"general","message":"Deployment test of the Ranatec agent contact endpoint."}}'
+
+    # Product quote → would become a WooCommerce quote order (checks the products exist in the shop)
+    curl -s -X POST https://ranatec.com/agent/v1/quote.json -H "Content-Type: application/json" -d '{
+      "agent_context":{"user_authorized_submission":true,"agent_name":"deployment-test","dry_run":true},
+      "customer":{"first_name":"Deployment","last_name":"Test","email":"you@gomogroup.com","phone":"+46 31 000 00 00","company":"GO MO Group",
+                  "country":"SE","address_1":"Testgatan 1","city":"Göteborg","postcode":"41250"},
+      "products":[{"id":"shield-box-ri-181","quantity":1,"configuration":[{"id":"feedthrough-filter-ri-4182","quantity":2}]}]}'
     ```
-    You should get `"status":"received"` back and an email in the inbox. If no email arrives, install an SMTP plugin (e.g. *WP Mail SMTP*) and connect it to a ranatec.com mailbox on Oderland. That also improves SPF/DKIM deliverability.
+    Both should return `"status":"valid"` and `"submitted":false`. Remove a field (e.g. `city`) to see the refusal that lists the missing field. To check email delivery, send one real enquiry from an AI client (Part C). If no email arrives, install an SMTP plugin (e.g. *WP Mail SMTP*) and connect it to a ranatec.com mailbox on Oderland. That also improves SPF/DKIM deliverability.
 12. **WP-Cron.** The plugin syncs news and products daily via WP-Cron. If `wp-config.php` contains `DISABLE_WP_CRON`, add a cPanel **Cron Job**, e.g. every 15 min: `wget -q -O - https://ranatec.com/wp-cron.php?doing_wp_cron >/dev/null 2>&1`.
 
 **If `/.well-known/api-catalog` returns 404** (some cPanel servers reserve `.well-known`): in **File Manager**, open `public_html/.well-known/`, upload `web-root/.well-known/api-catalog` there, and add this to `public_html/.well-known/.htaccess`:
@@ -86,7 +94,7 @@ Expect about 30–45 minutes. Do it in a quiet hour, and keep the **Before you s
 18. Build command: `npm ci --include=dev && npm run build` (plain `npm run build` fails because the dependencies aren't installed). Start command: `npm start`.
 19. If you leave the Root Directory empty, the repo root must contain `package.json`, `package-lock.json`, `tsconfig.json` and `src/`. Otherwise set Root Directory to `ranatec-mcp`.
 20. **Test it:**
-    - `https://agentic-mcp-sme-ranatec.onrender.com/mcp/tools` should list 12 tools.
+    - `https://agentic-mcp-sme-ranatec.onrender.com/mcp/tools` should list 13 tools, including `request_quote` and `submit_inquiry`.
     - `https://agentic-mcp-sme-ranatec.onrender.com/mcp/health` should return `"status":"ok"` and `"upstream":"ok"`. Part A must be live for this.
     - Opening `https://agentic-mcp-sme-ranatec.onrender.com/mcp` in a browser returning **405** is correct; MCP clients use POST.
 21. **End-to-end test** from your machine, using the unzipped package. The last check sends one real quote-request email:
@@ -99,24 +107,24 @@ Expect about 30–45 minutes. Do it in a quiet hour, and keep the **Before you s
 
 | Agent request | Saved as |
 |---|---|
-| `quote_request` with products | A **WooCommerce order**, like "Add to RFQ" + checkout: payment method `yith-request-a-quote`, status **New Quote Request** (or the status set in Tools → Ranatec Agent API), the products as line items, configured options as their own lines ("Addon/Accessory for: <product>"), billing = customer, customer note = full request, plus a private note saying it was created by an AI agent, with the lead ID. |
-| Any other enquiry (technical question, custom solution, distributor, general) | An entry of the contact form (CF7 form **50**) in **Advanced CF7 DB**, next to website leads. |
-| A quote whose product can't be found in WooCommerce | Saved in Advanced CF7 DB instead, so the lead is never lost. |
+| MCP tool `request_quote`: product quote (`POST /agent/v1/quote.json`) | A **WooCommerce order**, like "Add to RFQ" + checkout: payment method `yith-request-a-quote`, status **New Quote Request** (or the status set in Tools → Ranatec Agent API), the products as line items, configured options as their own lines ("Addon/Accessory for: <product>"), billing **and** shipping address = the checkout fields, the checkout's **Additional Note** = the user's note, plus a private order note saying it was created by an AI agent, with the quote ID. **Required, as on the checkout:** first name, last name, email, phone, company, country, address, city, postal code, and state/county when the country has them (e.g. US, Canada). Optional: apartment/suite, note. |
+| MCP tool `submit_inquiry`: contact enquiry, **no products** (`POST /agent/v1/contact.json`) | An entry of the contact form (CF7 form **50**) in **Advanced CF7 DB**, next to website leads. **Required, as on the form:** name, email, phone, company, plus a message. |
+
+The two never mix. `submit_inquiry` refuses products and tells the agent to use `request_quote`. A quote is never saved as a contact-form lead: if the order can't be created (a product missing from the shop, or WooCommerce off), the agent gets an error and is told to email info@ranatec.com.
 
 A notification email also goes to info@ranatec.com; you can switch it off.
 - In **Tools → Ranatec Agent API**, check the following:
   - **Lead storage** says "tables found ✓".
   - **Product quote requests**: set the status to the one your real RFQ orders get (open a recent RFQ order in WooCommerce → Orders and compare).
-- Phone is required, because the contact form and the checkout require it.
 - After deploying, send one agent quote. Then compare the new order side by side with a real RFQ order: status, payment method and line items.
 
-**Lock lead submission to the MCP server (recommended).** This enforces "leads only via `submit_inquiry`":
+**Lock lead submission to the MCP server (recommended).** This enforces "submissions only via the MCP tools":
 1. Generate a long random key, e.g. `openssl rand -hex 24`.
 2. In **Render**, go to **Environment** and add `RANATEC_MCP_KEY` = the key, then **Save** (Render redeploys).
 3. In **WordPress**, go to **Tools → Ranatec Agent API → MCP server key**, paste the same key, and click **Save**.
 4. Test it:
-   - A direct `POST https://ranatec.com/agent/v1/contact.json` now returns **403 `use_mcp_submit_inquiry`**.
-   - `submit_inquiry` through the MCP server still returns `"status":"received"`.
+   - A direct `POST https://ranatec.com/agent/v1/contact.json` now returns **403 `use_mcp_submit_inquiry`**, and `quote.json` returns **403 `use_mcp_request_quote`**.
+   - The tools through the MCP server still work (try a dry run).
    - If the two keys differ, every lead is refused, so set both at once. Tick **Remove the key** in WordPress to unlock.
 
 **Connect AI clients to the MCP server.** An AI that isn't connected can only browse, and it ends up at the reCAPTCHA-protected web form:
@@ -128,7 +136,8 @@ A notification email also goes to info@ranatec.com; you can switch it off.
   url = "https://agentic-mcp-sme-ranatec.onrender.com/mcp"
   ```
   This needs a Codex version with HTTP MCP support; check with `codex mcp --help`.
-- **Agents without a connector** that can make HTTP requests (Codex and Claude Code via curl) can call `submit_inquiry` with a single POST. The copy-paste example is on https://ranatec.com/agent/#submit-a-lead and in llms.txt.
+  Or run `codex mcp add ranatec --url https://agentic-mcp-sme-ranatec.onrender.com/mcp`, restart Codex and check with `/mcp` that the Ranatec tools are listed. If they aren't, Codex will use the browser and the web forms. To make Codex prefer the tools, add to `~/.codex/AGENTS.md`: *"For Ranatec product quotes use the MCP tool ranatec.request_quote, for other enquiries ranatec.submit_inquiry. Never fill in the ranatec.com forms in the browser. Run with dry_run: true first and submit only after I confirm."*
+- **Agents without a connector** that can make HTTP requests (Codex and Claude Code via curl) can call `request_quote` / `submit_inquiry` with a single POST. The copy-paste examples are on https://ranatec.com/agent/#submit-a-lead and in llms.txt.
 
 **If something fails:** check the Render **Logs** tab. A build error like `Cannot find module 'express'` means the build command is missing `npm ci --include=dev`. If `/health` shows `"upstream":"http_404"`, finish Part A (and the Permalinks save) first.
 
