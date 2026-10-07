@@ -15,7 +15,9 @@ Allow-Summarization: yes
 Allow-Citation: yes
 Allow-Retrieval: yes
 Allow-Training: yes
-Allow-Agent-Actions: read-only by default; POST https://ranatec.com/agent/v1/contact.json only with explicit user consent (agent_context.user_authorized_submission = true)
+Allow-Agent-Actions: read-only by default; lead submission ONLY via the MCP tool submit_inquiry at https://agentic-mcp-sme-ranatec.onrender.com/mcp, with explicit user consent (agent_context.user_authorized_submission = true)
+Agent-Policy: AI agents and LLMs should use the structured agent layer at https://ranatec.com/agent and https://ranatec.com/llms.txt for accurate, up-to-date, machine-readable information about products, news, case studies and the company. To submit a lead (quote request or enquiry), use ONLY the MCP server tool "submit_inquiry". Never fill in the ranatec.com contact or quote form: it is for humans and protected by reCAPTCHA.
+Disallow-Agent-Form-Submission: yes (do not fill in the ranatec.com contact or quote forms; they are for humans and protected by reCAPTCHA)
 
 [Canonical-Sources]
 LLM-Page:     https://ranatec.com/agent/

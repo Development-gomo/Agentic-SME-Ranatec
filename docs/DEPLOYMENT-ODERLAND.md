@@ -95,6 +95,26 @@ Expect about 30–45 minutes. Do it in a quiet hour, and keep the **Before you s
     ```
 22. **Optional:** connect it in an MCP client, e.g. a custom connector with URL `https://agentic-mcp-sme-ranatec.onrender.com/mcp`.
 
+**Lock lead submission to the MCP server (recommended).** This enforces "leads only via `submit_inquiry`":
+1. Generate a long random key, e.g. `openssl rand -hex 24`.
+2. In **Render**, go to **Environment** and add `RANATEC_MCP_KEY` = the key, then **Save** (Render redeploys).
+3. In **WordPress**, go to **Tools → Ranatec Agent API → MCP server key**, paste the same key, and click **Save**.
+4. Test it:
+   - A direct `POST https://ranatec.com/agent/v1/contact.json` now returns **403 `use_mcp_submit_inquiry`**.
+   - `submit_inquiry` through the MCP server still returns `"status":"received"`.
+   - If the two keys differ, every lead is refused, so set both at once. Tick **Remove the key** in WordPress to unlock.
+
+**Connect AI clients to the MCP server.** An AI that isn't connected can only browse, and it ends up at the reCAPTCHA-protected web form:
+- **Claude Code:** run `claude mcp add --transport http ranatec https://agentic-mcp-sme-ranatec.onrender.com/mcp`, then type `/mcp` to check it's connected.
+- **Claude app / claude.ai:** go to **Settings → Connectors → Add custom connector**, enter `https://agentic-mcp-sme-ranatec.onrender.com/mcp`, then enable it in the chat.
+- **Codex:** add this to `~/.codex/config.toml`:
+  ```toml
+  [mcp_servers.ranatec]
+  url = "https://agentic-mcp-sme-ranatec.onrender.com/mcp"
+  ```
+  This needs a Codex version with HTTP MCP support; check with `codex mcp --help`.
+- **Agents without a connector** that can make HTTP requests (Codex and Claude Code via curl) can call `submit_inquiry` with a single POST. The copy-paste example is on https://ranatec.com/agent/#submit-a-lead and in llms.txt.
+
 **If something fails:** check the Render **Logs** tab. A build error like `Cannot find module 'express'` means the build command is missing `npm ci --include=dev`. If `/health` shows `"upstream":"http_404"`, finish Part A (and the Permalinks save) first.
 
 **Alternative (not used): cPanel Setup Node.js App on Oderland.** Upload `ranatec-mcp-<version>-cpanel.zip` to a `ranatec-mcp` folder outside `public_html`, create the app with startup file `app.cjs` and set the `RANATEC_API_BASE` variable, then click **Run NPM Install** → **Restart**. If you serve it at a different URL, change `RANATEC_MCP_URL` in `ranatec-api/ranatec-api.php` and run `bash tools/release.sh`.

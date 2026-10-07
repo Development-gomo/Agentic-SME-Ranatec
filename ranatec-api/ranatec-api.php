@@ -3,7 +3,7 @@
  * Plugin Name:       Ranatec Agent API
  * Plugin URI:        https://ranatec.com/agent/
  * Description:       Agentic Web package for ranatec.com — serves the machine-readable agent page (/agent/), clean JSON endpoints (/agent/v1/*.json), the OpenAPI spec (/openapi.json), llms.txt, ai.txt and the API catalog, plus an agent-safe RFQ / contact endpoint.
- * Version:           1.0.4
+ * Version:           1.0.5
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            GO MO Group for Ranatec AB
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('RANATEC_API_VERSION', '1.0.4');
+define('RANATEC_API_VERSION', '1.0.5');
 define('RANATEC_API_DIR', plugin_dir_path(__FILE__));
 define('RANATEC_API_DATA', RANATEC_API_DIR . 'data/');
 define('RANATEC_API_PUBLIC', RANATEC_API_DIR . 'public/');
@@ -124,6 +124,21 @@ final class Ranatec_Agent_API
             if ($method !== 'POST') {
                 self::respond(['error' => 'method_not_allowed', 'message' => 'Use POST with a JSON body. See https://ranatec.com/openapi.json#/paths/~1contact.json'], 405, ['Allow: POST, OPTIONS']);
             }
+            // Optional lock: when an MCP server key is configured, accept leads ONLY from the Ranatec MCP server
+            // (tool submit_inquiry), which sends the key in the X-Ranatec-MCP-Key header.
+            $mcp_key = (string) get_option(Ranatec_Agent_Sync::OPTION_MCP_KEY, '');
+            if ($mcp_key !== '') {
+                $sent = isset($_SERVER['HTTP_X_RANATEC_MCP_KEY']) ? (string) wp_unslash($_SERVER['HTTP_X_RANATEC_MCP_KEY']) : '';
+                if (!hash_equals($mcp_key, $sent)) {
+                    self::respond([
+                        'status' => 'error',
+                        'error' => 'use_mcp_submit_inquiry',
+                        'message' => 'Leads are accepted only through the Ranatec MCP server tool submit_inquiry at ' . RANATEC_MCP_URL . ' (POST a JSON-RPC tools/call, or add the server as an MCP connector). Do not use the website contact form.',
+                        'mcp_server' => RANATEC_MCP_URL,
+                        'tool' => 'submit_inquiry',
+                    ], 403);
+                }
+            }
             // RANATEC_TEST_INPUT is only defined by tests/wp-stub-harness.php (php://input is empty on the CLI).
             $raw = defined('RANATEC_TEST_INPUT') ? RANATEC_TEST_INPUT : file_get_contents('php://input');
             list($status, $body) = Ranatec_Agent_Contact::handle($raw, self::client_ip());
@@ -196,7 +211,14 @@ final class Ranatec_Agent_API
                 ['method' => 'GET', 'url' => RANATEC_API_BASE . '/news/{id}.json', 'description' => 'One news item by slug'],
                 ['method' => 'GET', 'url' => RANATEC_API_BASE . '/pages.json', 'description' => 'Site pages with en-US / en-GB / en-CA URLs'],
                 ['method' => 'GET', 'url' => RANATEC_API_BASE . '/faq.json', 'description' => 'Frequently asked questions'],
-                ['method' => 'POST', 'url' => RANATEC_API_BASE . '/contact.json', 'description' => 'Submit a quote request or enquiry on behalf of a user. Requires agent_context.user_authorized_submission = true.'],
+                ['method' => 'POST', 'url' => RANATEC_API_BASE . '/contact.json', 'description' => 'Backend for the MCP tool submit_inquiry. AI agents: submit leads via the MCP tool, not this path.'],
+            ],
+            'lead_submission' => [
+                'policy' => 'AI agents and LLMs should use https://ranatec.com/agent and https://ranatec.com/llms.txt for information. To submit a lead, use ONLY the MCP server tool submit_inquiry. Never fill in the website contact form (reCAPTCHA-protected, for humans).',
+                'mcp_server' => RANATEC_MCP_URL,
+                'tool' => 'submit_inquiry',
+                'how_to' => RANATEC_API_SITE . '/agent/#submit-a-lead',
+                'consent_required' => 'agent_context.user_authorized_submission = true, only after the user explicitly confirmed what will be sent',
             ],
             'discovery' => [
                 'agent_page' => RANATEC_API_SITE . '/agent/',
@@ -397,7 +419,7 @@ final class Ranatec_Agent_API
         header('Content-Type: application/json; charset=utf-8');
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-        header('Access-Control-Allow-Headers: Content-Type, Accept');
+        header('Access-Control-Allow-Headers: Content-Type, Accept, X-Ranatec-MCP-Key');
         header('X-Content-Type-Options: nosniff');
         header('X-Robots-Tag: noindex, follow');
         header('Link: <' . RANATEC_API_SITE . '/openapi.json>; rel="service-desc", <' . RANATEC_API_SITE . '/agent/>; rel="service-doc"');

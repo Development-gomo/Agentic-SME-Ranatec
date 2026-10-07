@@ -19,6 +19,7 @@ final class Ranatec_Agent_Sync
     const HOOK = 'ranatec_api_daily_sync';
     const OPTION_REPORT = 'ranatec_api_last_sync';
     const OPTION_RECIPIENT = 'ranatec_api_contact_recipient';
+    const OPTION_MCP_KEY = 'ranatec_api_mcp_key';
     const MODEL_RE = '/\b(RI ?\d{3,4}(?:-\d{2})?B?|RF ?\d{4}B?)\b/i';
     const LOCALE_PREFIX_RE = '#^/(en-gb|en-ca)(/|$)#';
 
@@ -388,6 +389,10 @@ final class Ranatec_Agent_Sync
         wp_nonce_field('ranatec_api_settings');
         echo '<input type="hidden" name="action" value="ranatec_api_settings" />';
         echo '<p><label>Deliver submissions from <code>POST /agent/v1/contact.json</code> to: <input type="email" name="recipient" class="regular-text" value="' . esc_attr($recipient) . '" /></label></p>';
+        $key_set = get_option(self::OPTION_MCP_KEY, '') !== '';
+        echo '<p><label>MCP server key: <input type="password" name="mcp_key" class="regular-text" autocomplete="new-password" placeholder="' . ($key_set ? '•••••••• (set — leave empty to keep)' : 'not set — leads accepted from any caller') . '" /></label><br>';
+        echo '<span class="description">When set, <code>contact.json</code> accepts leads <strong>only</strong> from the Ranatec MCP server (tool <code>submit_inquiry</code>). Use the same value as the <code>RANATEC_MCP_KEY</code> environment variable on Render. Long random value, e.g. 40+ characters.</span><br>';
+        echo '<label><input type="checkbox" name="mcp_key_clear" value="1" /> Remove the key (accept leads from any caller again)</label></p>';
         submit_button('Save', 'secondary', 'submit', false);
         echo '</form></div>';
     }
@@ -419,6 +424,20 @@ final class Ranatec_Agent_Sync
             $msg = 'Recipient saved.';
         } else {
             $msg = 'Invalid email — not saved.';
+        }
+        if (!empty($_POST['mcp_key_clear'])) {
+            delete_option(self::OPTION_MCP_KEY);
+            $msg .= ' MCP server key removed.';
+        } else {
+            $key = isset($_POST['mcp_key']) ? trim((string) wp_unslash($_POST['mcp_key'])) : '';
+            if ($key !== '') {
+                if (strlen($key) < 24 || preg_match('/\s/', $key)) {
+                    $msg .= ' MCP server key NOT saved: use at least 24 characters, no spaces.';
+                } else {
+                    update_option(self::OPTION_MCP_KEY, $key, false);
+                    $msg .= ' MCP server key saved — contact.json now accepts leads only from the MCP server.';
+                }
+            }
         }
         wp_safe_redirect(add_query_arg('ranatec_msg', rawurlencode($msg), admin_url('tools.php?page=ranatec-agent-api')));
         exit;

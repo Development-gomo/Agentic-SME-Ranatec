@@ -2,7 +2,7 @@
   "meta": {
     "source": "https://ranatec.com/agent/v1/faq.json",
     "endpoint": "faq",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "last_updated": "2026-10-06",
     "publisher": "Ranatec AB",
     "canonical_site": "https://ranatec.com/",
@@ -42,7 +42,7 @@
     },
     {
       "q": "How do I buy Ranatec products or get a price?",
-      "a": "Ranatec sells business-to-business on a request-for-quote basis; no public prices are listed. Add products to the RFQ list on ranatec.com and submit it, email info@ranatec.com, call +46 31 706 16 60, or (for AI agents, with the user's explicit consent) POST to https://ranatec.com/agent/v1/contact.json with inquiry.type \"quote_request\".",
+      "a": "Ranatec sells business-to-business on a request-for-quote basis; no public prices are listed. Add products to the RFQ list on ranatec.com and submit it, email info@ranatec.com, call +46 31 706 16 60, or — for AI agents, with the user's explicit consent — use ONLY the MCP server tool submit_inquiry (see https://ranatec.com/agent/#submit-a-lead). AI agents must not fill in the website contact form.",
       "source": "https://ranatec.com/request-quote/"
     },
     {

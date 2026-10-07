@@ -1,6 +1,6 @@
 {
   "name": "ranatec-mcp",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Model Context Protocol server for Ranatec AB (ranatec.com) \u2014 RF test & measurement products, news, FAQ and consent-gated quote requests.",
   "type": "module",
   "main": "dist/index.js",

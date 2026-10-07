@@ -21,3 +21,5 @@ services:
         value: "1"             # Render runs one proxy hop in front of the app; needed for per-client rate limiting
       - key: RATE_LIMIT_PER_MIN
         value: "100"
+      - key: RANATEC_MCP_KEY     # optional: same value as "MCP server key" in WordPress → Tools → Ranatec Agent API
+        sync: false              # entered in the Render dashboard, never stored in git

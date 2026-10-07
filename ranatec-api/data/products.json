@@ -2,7 +2,7 @@
   "meta": {
     "source": "https://ranatec.com/agent/v1/products.json",
     "endpoint": "products",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "last_updated": "2026-10-06",
     "publisher": "Ranatec AB",
     "canonical_site": "https://ranatec.com/",
@@ -104,7 +104,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/tunable-band-reject-filter-ri-260/",
       "urls": {
@@ -201,7 +201,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/tunable-band-reject-filter-ri-261/",
       "urls": {
@@ -298,7 +298,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/tunable-band-reject-filter-ri-262/",
       "urls": {
@@ -399,7 +399,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/tunable-band-reject-filter-ri-263/",
       "urls": {
@@ -484,7 +484,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/tunable-band-reject-filter-ri-264/",
       "urls": {
@@ -595,7 +595,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/tunable-band-reject-filter-ri-266/",
       "urls": {
@@ -708,7 +708,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/tunable-band-reject-filter-ri-268/",
       "urls": {
@@ -803,7 +803,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/tunable-band-pass-filter-ri-281/",
       "urls": {
@@ -899,7 +899,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/tunable-band-pass-filter-ri-282/",
       "urls": {
@@ -1003,7 +1003,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/butler-matrix-ri-3041/",
       "urls": {
@@ -1114,7 +1114,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/butler-matrix-ri-3101/",
       "urls": {
@@ -1242,7 +1242,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/digital-attenuator-box-rf2025/",
       "urls": {
@@ -1364,7 +1364,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/digital-attenuator-box-rf2026/",
       "urls": {
@@ -1475,7 +1475,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/digital-attenuator-box-rf2034/",
       "urls": {
@@ -1594,7 +1594,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/digital-attenuator-box-rf2035/",
       "urls": {
@@ -1711,7 +1711,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/digital-attenuator-box-rf2036/",
       "urls": {
@@ -1825,7 +1825,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/digital-attenuator-ri-4410/",
       "urls": {
@@ -1882,7 +1882,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/customized-rf-switch-systems/",
       "urls": {
@@ -2039,7 +2039,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/solid-state-switch-box-rf2018b/",
       "urls": {
@@ -2177,7 +2177,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/switch-box-rf2020b/",
       "urls": {
@@ -2301,7 +2301,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/switch-box-rf2022b/",
       "urls": {
@@ -2433,7 +2433,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/switch-box-rf2037/",
       "urls": {
@@ -2543,7 +2543,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/switch-box-rf2038/",
       "urls": {
@@ -2703,7 +2703,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/solid-state-switch-ri-2441/",
       "urls": {
@@ -2890,7 +2890,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/solid-state-switch-ri-2582/",
       "urls": {
@@ -3077,7 +3077,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/solid-state-switch-ri-2583/",
       "urls": {
@@ -3117,7 +3117,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/customized-rf-shield-box/",
       "urls": {
@@ -3225,7 +3225,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/shield-box-ri-181/",
       "urls": {
@@ -3330,7 +3330,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/shield-box-ri-187/",
       "urls": {
@@ -3436,7 +3436,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/shield-box-ri-188/",
       "urls": {
@@ -3544,7 +3544,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/shield-box-ri-189/",
       "urls": {
@@ -3648,7 +3648,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/forensic-rf-box-ri-198/",
       "urls": {
@@ -3714,7 +3714,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/feedthrough-filter-ri-4170/",
       "urls": {
@@ -3755,7 +3755,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/feedthrough-filter-ri-4171/",
       "urls": {
@@ -3836,7 +3836,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/feedthrough-filter-ri-4182/",
       "urls": {
@@ -3919,7 +3919,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/feedthrough-filter-ri-4184/",
       "urls": {
@@ -4001,7 +4001,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/feedthrough-filter-ri-4185/",
       "urls": {
@@ -4065,7 +4065,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/feedthrough-filter-ri-4188/",
       "urls": {
@@ -4146,7 +4146,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/feedthrough-filter-ri-4192/",
       "urls": {
@@ -4226,7 +4226,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/feedthrough-filter-ri-4193/",
       "urls": {
@@ -4305,7 +4305,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/feedthrough-filter-ri-4194/",
       "urls": {
@@ -4386,7 +4386,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/feedthrough-filter-ri-4199/",
       "urls": {
@@ -4462,7 +4462,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/feedthrough-filter-ri-4201/",
       "urls": {
@@ -4551,7 +4551,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/feedthrough-filter-ri-4205/",
       "urls": {
@@ -4640,7 +4640,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/feedthrough-filter-ri-4206/",
       "urls": {
@@ -4709,7 +4709,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/optical-fiber-feedthru-ri-4196/",
       "urls": {
@@ -4788,7 +4788,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/emi-ventilation-panel-ri-4901/",
       "urls": {
@@ -4867,7 +4867,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/emi-ventilation-panel-ri-4905/",
       "urls": {
@@ -4943,7 +4943,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/emi-ventilation-panel-ri-4910/",
       "urls": {
@@ -4980,7 +4980,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/switch-box-2/",
       "urls": {
@@ -5018,7 +5018,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/110-230-vac-feedthru-filter-ri-4195/",
       "urls": {
@@ -5056,7 +5056,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/dual-usb-2-0-feedthru-filter-ri-4184/",
       "urls": {
@@ -5100,7 +5100,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/feedthrough-filter-ri-4197/",
       "urls": {
@@ -5142,7 +5142,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/filtered-terminal-block-ri-4198/",
       "urls": {
@@ -5182,7 +5182,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/hdmi-feedthru-filter-ri-4193/",
       "urls": {
@@ -5222,7 +5222,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/lan-1-gbps-feedthru-filter-ri-4182/",
       "urls": {
@@ -5262,7 +5262,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/lan-10-gbps-feedthru-filter-ri-4194/",
       "urls": {
@@ -5337,7 +5337,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/optical-fiber-feedthrough-ri-4196/",
       "urls": {
@@ -5377,7 +5377,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/ri-4170/",
       "urls": {
@@ -5417,7 +5417,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/ri-4205-110-230-vac-feedthru-filter/",
       "urls": {
@@ -5457,7 +5457,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/usb-3-0-feedthru-filter-ri-4192/",
       "urls": {
@@ -5497,7 +5497,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/usb-3-2-c-20-gbps-feedthru-filter-ri-4199/",
       "urls": {
@@ -5537,7 +5537,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/frequency-extension-box-ri-4270/",
       "urls": {
@@ -5575,7 +5575,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/frequency-extension-box-ri-4271/",
       "urls": {
@@ -5613,7 +5613,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/frequency-extension-box-ri-4272/",
       "urls": {
@@ -5651,7 +5651,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/frequency-extension-box-ri-4273/",
       "urls": {
@@ -5689,7 +5689,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/frequency-extension-box-ri-4274/",
       "urls": {
@@ -5727,7 +5727,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/frequency-extension-box-ri-4276/",
       "urls": {
@@ -5772,7 +5772,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/frequency-extension-box-ri-4278/",
       "urls": {
@@ -5812,7 +5812,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/mounting-brackets-ri-3041-07/",
       "urls": {
@@ -5852,7 +5852,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/mounting-brackets-ri-3101-16/",
       "urls": {
@@ -5890,7 +5890,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/option-rf-absorption-foam-inside-box/",
       "urls": {
@@ -5928,7 +5928,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/rf-absorption-foam-inside-box/",
       "urls": {
@@ -5966,7 +5966,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/ri-181-11-internal-shielding-wall/",
       "urls": {
@@ -6004,7 +6004,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/ri-4197/",
       "urls": {
@@ -6044,7 +6044,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/ri-4198/",
       "urls": {
@@ -6084,7 +6084,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/ri181-13-dc-feedthru-emi-filter/",
       "urls": {
@@ -6122,7 +6122,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/ri181-14-smaf-smaf-bulkhead-connector/",
       "urls": {
@@ -6162,7 +6162,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/ri181-15-rf-absorption-foam-inside-box-2u/",
       "urls": {
@@ -6200,7 +6200,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/ri187-15-rf-absorption-foam-inside-box-4u/",
       "urls": {
@@ -6238,7 +6238,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/ri188-15-rf-absorption-foam-inside-box-6u/",
       "urls": {
@@ -6276,7 +6276,7 @@
       "pricing": {
         "model": "request-for-quote",
         "public_price": null,
-        "how_to_buy": "Add to the RFQ list on the product page and submit, or use POST /agent/v1/contact.json with inquiry.type = \"quote_request\" and the product id(s)."
+        "how_to_buy": "Humans: add to the RFQ list on the product page and submit. AI agents: use ONLY the MCP tool submit_inquiry (inquiry.type = \"quote_request\" with the product id or model number), never the website form."
       },
       "url": "https://ranatec.com/product/smaf-bulkhead-connector-ri-181-14/",
       "urls": {

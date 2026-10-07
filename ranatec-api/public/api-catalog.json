@@ -6,7 +6,7 @@
   "created": "2026-10-06",
   "modified": "2026-10-06",
   "specificationVersion": "0.16",
-  "X-package-version": "1.0.4",
+  "X-package-version": "1.0.5",
   "tags": [
     "RF test equipment",
     "test and measurement",
@@ -181,7 +181,7 @@
           "type": "X-endpoint",
           "route": "/agent/v1/contact.json",
           "method": "POST",
-          "description": "Submit a quote request or enquiry on behalf of a user — requires agent_context.user_authorized_submission: true"
+          "description": "Backend for the MCP tool submit_inquiry (AI agents: use the MCP tool, not this path) — requires agent_context.user_authorized_submission: true"
         }
       ],
       "tags": [
@@ -258,7 +258,7 @@
         {
           "type": "X-mcp-tool",
           "name": "submit_inquiry",
-          "description": "Send a quote request or enquiry to Ranatec on behalf of the user — requires explicit user consent (user_authorized_submission: true)."
+          "description": "The only supported way for AI agents to send a lead (quote request or enquiry) to Ranatec — requires explicit user consent (user_authorized_submission: true). Callable via an MCP connector or a plain HTTP JSON-RPC tools/call."
         },
         {
           "type": "X-health",

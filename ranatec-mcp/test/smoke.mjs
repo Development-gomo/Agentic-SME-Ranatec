@@ -17,6 +17,15 @@ const health = await (await fetch(new URL("/mcp/health", url))).json();
 check("health reports package version", health.version === PKG_VERSION, `${health.version} (package.json ${PKG_VERSION})`);
 check("server info reports package version", client.getServerVersion()?.version === PKG_VERSION, client.getServerVersion()?.version);
 
+// Plain HTTP (agents without an MCP connector): no handshake, Accept: application/json or none, plain JSON back.
+for (const accept of ["application/json", null]) {
+  const headers = { "Content-Type": "application/json" };
+  if (accept) headers.Accept = accept;
+  const r = await fetch(url, { method: "POST", headers, body: JSON.stringify({ jsonrpc: "2.0", id: 9, method: "tools/call", params: { name: "get_product", arguments: { id: "RI 268" } } }) });
+  const body = await r.json().catch(() => null);
+  check(`plain HTTP tools/call (Accept: ${accept ?? "none"})`, r.status === 200 && JSON.parse(body?.result?.content?.[0]?.text ?? "{}").model_number === "RI 268", `HTTP ${r.status} ${r.headers.get("content-type")}`);
+}
+
 const { tools } = await client.listTools();
 check("listTools returns 12 tools", tools.length === 12, tools.map((t) => t.name).join(", "));
 
@@ -57,6 +66,9 @@ const noConsent = await client.callTool({ name: "submit_inquiry", arguments: {
   agent_context: { user_authorized_submission: false }, person: { name: "T", email: "t@example.com" }, company: { name: "X" },
   inquiry: { type: "general", message: "Hello there, a question." } } }).catch((e) => ({ isError: true, content: [{ text: String(e) }] }));
 check("submit_inquiry rejects missing consent (Zod layer)", noConsent.isError === true, noConsent.content[0].text.slice(0, 90));
+
+const desc = tools.find((t) => t.name === "submit_inquiry")?.description ?? "";
+check("submit_inquiry description states lead policy", /ONLY supported way/.test(desc) && /never fill in/i.test(desc));
 
 const sub = await client.callTool({ name: "submit_inquiry", arguments: {
   agent_context: { user_authorized_submission: true, agent_name: "smoke-test" },

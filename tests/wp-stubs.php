@@ -21,5 +21,5 @@ function get_transient($k) { $f = sys_get_temp_dir() . "/rl-$k"; return is_file(
 function set_transient($k, $v, $t) { file_put_contents(sys_get_temp_dir() . "/rl-$k", $v); }
 function apply_filters($h, $v) { return $v; }
 function do_action(...$a) {}
-function get_option($k, $d = false) { return $d; }
+function get_option($k, $d = false) { $e = getenv('WP_OPTION_' . $k); return $e !== false ? $e : $d; }
 function wp_mail($to, $s, $m, $h) { file_put_contents(sys_get_temp_dir() . '/ranatec-mail.txt', "TO: $to\nSUBJECT: $s\n" . implode("\n", $h) . "\n\n$m"); return getenv('MAIL_FAIL') ? false : true; }

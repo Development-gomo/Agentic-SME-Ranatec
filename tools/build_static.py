@@ -34,6 +34,21 @@ LOCALES = [('en-US', 'United States (default)', SITE + '/'), ('en-GB', 'United K
 
 PACKAGE_VERSION = open(os.path.join(ROOT, 'VERSION')).read().strip()
 
+# Lead-submission policy (set by Ranatec): information from /agent and /llms.txt; leads ONLY via the MCP tool submit_inquiry.
+AGENT_POLICY = ('AI agents and LLMs should use the structured agent layer at https://ranatec.com/agent and https://ranatec.com/llms.txt '
+                'for accurate, up-to-date, machine-readable information about products, news, case studies and the company. '
+                'To submit a lead (quote request or enquiry), use ONLY the MCP server tool "submit_inquiry". '
+                'Never fill in the ranatec.com contact or quote form: it is for humans and protected by reCAPTCHA.')
+LEAD_EXAMPLE_ARGS = {
+    'agent_context': {'user_authorized_submission': True, 'agent_name': '<your agent name>'},
+    'person': {'name': '<full name>', 'email': '<email>', 'phone': '<optional>', 'job_title': '<optional>'},
+    'company': {'name': '<company>', 'country': '<country>'},
+    'inquiry': {'type': 'quote_request', 'message': '<what the user needs>', 'products': [{'id': 'RI 268', 'quantity': 1}]},
+}
+def lead_curl(mcp_url):
+    body = json.dumps({'jsonrpc': '2.0', 'id': 1, 'method': 'tools/call', 'params': {'name': 'submit_inquiry', 'arguments': LEAD_EXAMPLE_ARGS}}, ensure_ascii=False)
+    return f"curl -X POST {mcp_url} -H 'Content-Type: application/json' -d '{body}'"
+
 def load(n):
     return json.load(open(os.path.join(DATA, n + '.json'), encoding='utf-8'))
 
@@ -126,8 +141,8 @@ def build_openapi():
             '/pages.json': {'get': {'tags': ['content'], 'operationId': 'listPages', 'summary': 'Site pages with en-US / en-GB / en-CA URLs', 'responses': ok(ref('PagesResponse'))}},
             '/faq.json': {'get': {'tags': ['content'], 'operationId': 'getFaq', 'summary': 'Frequently asked questions', 'responses': ok(ref('FaqResponse'))}},
             '/contact.json': {'post': {'tags': ['actions'], 'operationId': 'submitInquiry',
-                'summary': 'Submit a quote request or enquiry on behalf of a user',
-                'description': 'Sends the enquiry to Ranatec by email. ONLY call this after the user has explicitly confirmed that the enquiry — including their name, email and company — may be sent to Ranatec AB. agent_context.user_authorized_submission must be the boolean true, otherwise the request is rejected with 403. quote_request requires at least one product id from /products.json. Rate limit: 5 submissions per IP per hour.',
+                'summary': 'Backend for the MCP tool submit_inquiry (AI agents: use the MCP tool, not this path)',
+                'description': 'AI agents must submit leads ONLY through the MCP server tool submit_inquiry at ' + URLS['mcp'] + ' (JSON-RPC tools/call over HTTP POST, or an MCP connector). This path is the backend that tool calls; when the site owner configures an MCP server key, direct calls are rejected with 403 use_mcp_submit_inquiry. Sends the enquiry to Ranatec by email. ONLY call this after the user has explicitly confirmed that the enquiry — including their name, email and company — may be sent to Ranatec AB. agent_context.user_authorized_submission must be the boolean true, otherwise the request is rejected with 403. quote_request requires at least one product id from /products.json. Rate limit: 5 submissions per IP per hour.',
                 'requestBody': {'required': True, 'content': {'application/json': {'schema': ref('ContactRequest'), 'example': {
                     'agent_context': {'user_authorized_submission': True, 'agent_name': 'ExampleAssistant', 'user_request_summary': 'User asked for a quote for two RI 268 filters'},
                     'person': {'name': 'Alex Example', 'email': 'alex@example.com', 'job_title': 'Test Engineer'},
@@ -310,7 +325,8 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
     for li in [
         'Ranatec AB is a Swedish <strong>manufacturer</strong> (not a distributor) of RF test and measurement equipment: filtering, shielding, switching and automation products for wireless device and infrastructure testing.',
         '<strong>No public prices.</strong> All products are sold business-to-business via request for quote (RFQ). Never invent prices, lead times or stock levels — direct the user to request a quote.',
-        'To request a quote for a user: (a) collect name, email, company and the products/quantities; (b) show the user exactly what will be sent; (c) only after explicit confirmation, POST to <code>' + API + '/contact.json</code> with <code>agent_context.user_authorized_submission: true</code> (or use the MCP tool <code>submit_inquiry</code>). Otherwise point the user to ' + link(SITE + '/request-quote/', 'the RFQ page') + ', <a href="mailto:info@ranatec.com">info@ranatec.com</a> or +46 31 706 16 60.',
+        '<strong>Information:</strong> use this agent page and ' + link(URLS['llms'], 'llms.txt') + ' (and the REST API / MCP tools) for accurate, up-to-date, machine-readable information about products, news, case studies and the company.',
+        '<strong>Submitting a lead:</strong> use ONLY the MCP server tool <code>submit_inquiry</code> at <code>' + e(URLS['mcp']) + '</code>. <strong>Never fill in the ranatec.com contact or quote form</strong> — it is for humans and protected by reCAPTCHA. No MCP connector? Call the tool over plain HTTP — see <a href="#submit-a-lead">How AI agents submit a lead</a>. Steps: (a) collect name, email, company and the products/quantities; (b) show the user exactly what will be sent; (c) only after explicit confirmation, call <code>submit_inquiry</code> with <code>agent_context.user_authorized_submission: true</code>. If you cannot call the tool, give the user ' + link(SITE + '/request-quote/', 'the RFQ page') + ', <a href="mailto:info@ranatec.com">info@ranatec.com</a> or +46 31 706 16 60 instead.',
         'Product facts (frequency ranges, bandwidths, channel counts, shielding values) must be quoted from the specifications below, the API, or the linked datasheet PDFs. Prefer datasheets for anything not listed here.',
         'Model numbers are written “RI nnn”/“RI nnnn” (e.g. RI 268) and “RFnnnn” (e.g. RF2037). Product ids in the API are the URL slugs.',
         'ranatec.com has three regional English versions with identical content: en-US (default, <code>/</code>), en-GB (<code>/en-gb/</code>), en-CA (<code>/en-ca/</code>). Link users to their regional version when known; product pages canonicalise to en-US.',
@@ -320,6 +336,19 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
         a(f'<li>{li}</li>')
     a('</ol></section>')
 
+    # 3b how agents submit a lead
+    a('<section id="submit-a-lead"><h2>How AI agents submit a lead</h2>')
+    a(f'<p><strong>{e(AGENT_POLICY)}</strong></p>')
+    a('<ol>')
+    a(f'<li><strong>With an MCP connector</strong> (Claude, Claude Code, Codex, Cursor, …): add the MCP server <code>{e(URLS["mcp"])}</code> (Streamable HTTP) and call the tool <code>submit_inquiry</code>.</li>')
+    a(f'<li><strong>Without a connector</strong> (any agent that can send an HTTP request): POST a JSON-RPC <code>tools/call</code> to <code>{e(URLS["mcp"])}</code>. No session or handshake is needed and the response is plain JSON.</li>')
+    a('</ol>')
+    a(f'<pre>{e(lead_curl(URLS["mcp"]))}</pre>')
+    a('<ul><li>Only call it after the user has explicitly confirmed what will be sent (their name, email, company, products, message); set <code>agent_context.user_authorized_submission</code> to <code>true</code>.</li>'
+      '<li><code>inquiry.type</code>: <code>quote_request</code> (needs at least one product — id from the API or a model number such as <code>RI 268</code>), <code>technical_question</code>, <code>custom_solution</code>, <code>distributor_inquiry</code> or <code>general</code>.</li>'
+      '<li>Success returns <code>"status": "received"</code> and a <code>lead_id</code> (e.g. <code>ranatec-rfq-2026-A3F7B2C1</code>); tell the user the lead ID. Ranatec replies by email.</li>'
+      f'<li>Tool list: {link(URLS["mcp_tools"])}</li></ul></section>')
+
     # 4 quick answer
     a('<section id="quick-answer"><h2>Quick answer</h2><ul>')
     for li in [
@@ -327,7 +356,7 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
         f'{len(catalogue)} catalogue products in {len(categories) - 1} categories: tunable band reject &amp; band pass filters (0.6–10 GHz), 4×4 and 8×8 Butler matrices (2.4–8 GHz), digital step attenuators and 4–16-channel attenuator boxes (0.1–8 GHz), solid-state switch modules and switch boxes (DC–26.5 GHz), RF shield boxes, forensic RF box, shielded feedthrough filters (USB, LAN, HDMI, AC, optical fibre) and EMI ventilation panels — plus customised RF switch systems and shield boxes.',
         'Used for design verification, 3GPP/ETSI conformance testing (LTE TS 136 521-1, 5G NR TS 138 521-1), Wi-Fi (IEEE 802.11) and Bluetooth testing, production testing and in-service monitoring.',
         'Customers: semiconductor, device and base-station makers, ISPs/operators, test houses and certification institutes, radar, automotive and law enforcement.',
-        'Buy via request for quote: info@ranatec.com · +46 31 706 16 60 · ' + link(SITE + '/request-quote/', 'ranatec.com/request-quote') + '.',
+        'Buy via request for quote: info@ranatec.com · +46 31 706 16 60 · ' + link(SITE + '/request-quote/', 'ranatec.com/request-quote') + '. AI agents: submit leads only via the MCP tool <code>submit_inquiry</code> (<a href="#submit-a-lead">how</a>).',
     ]:
         a(f'<li>{li}</li>')
     a('</ul></section>')
@@ -462,7 +491,7 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
     a('<section id="contact"><h2>Contact and how to buy</h2><table>')
     for k, v in [('General / sales', '<a href="mailto:info@ranatec.com">info@ranatec.com</a> · <a href="tel:+46317061660">+46 31 706 16 60</a>'),
                  ('Request a quote (web)', 'Add products to the RFQ list on any product page, then submit at ' + locale_links(company['contact']['quote_page'])),
-                 ('Request a quote (agents)', f'<code>POST {API}/contact.json</code> (consent required) · MCP tool <code>submit_inquiry</code>'),
+                 ('Request a quote (AI agents)', f'MCP tool <code>submit_inquiry</code> at <code>{e(URLS["mcp"])}</code> only (consent required) — see <a href="#submit-a-lead">How AI agents submit a lead</a>. Never the web form.'),
                  ('Custom solutions', 'Describe requirements (frequency range, ports, shielding, interfaces, form factor) via info@ranatec.com or inquiry type <code>custom_solution</code>'),
                  ('LinkedIn', link(company['social']['linkedin'])), ('X / Twitter', link(company['social']['x_twitter']))]:
         a(f'<tr><th>{k}</th><td>{v}</td></tr>')
@@ -522,7 +551,7 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
     write(os.path.join(PUB, 'agent-page.html'), out)
     return out
 
-SECTIONS = [('metadata', 'Metadata'), ('llm-discovery', 'LLM discovery'), ('agent-instructions', 'Instructions for AI agents'), ('quick-answer', 'Quick answer'),
+SECTIONS = [('metadata', 'Metadata'), ('llm-discovery', 'LLM discovery'), ('agent-instructions', 'Instructions for AI agents'), ('submit-a-lead', 'How AI agents submit a lead'), ('quick-answer', 'Quick answer'),
             ('site-index', 'Site index'), ('primary-contact', 'Primary contact'), ('overview', 'Company overview'), ('products', 'Products'), ('solutions', 'Solutions'),
             ('industries', 'Industries and standards'), ('customer-results', 'Customer results'), ('news', 'News and articles'), ('people', 'People'), ('offices', 'Offices'),
             ('contact', 'Contact and how to buy'), ('careers', 'Careers'), ('events', 'Events'), ('faq', 'FAQ'), ('testimonials', 'Testimonials'),
@@ -536,6 +565,19 @@ def build_llms():
     a('> Swedish manufacturer of RF test and measurement equipment — tunable filters, Butler matrices, digital attenuators, RF switch boxes, RF shield boxes and shielded feedthrough filters for wireless (5G, LTE, Wi-Fi, Bluetooth) device and infrastructure testing.')
     a('')
     a(f'Ranatec AB (Gothenburg, Sweden; founded 1991; part of the Qamcom Group; ISO 9001:2015 certified) designs, engineers and manufactures niche RF and microwave test equipment for design verification, product certification (3GPP/ETSI conformance), production testing, troubleshooting and in-service monitoring. Products are sold B2B by request for quote — no public prices. Customers include semiconductor, device and base-station manufacturers, ISPs, test houses and certification institutes. The site is published in three regional English versions with identical content: en-US (default), en-GB (/en-gb/) and en-CA (/en-ca/). Last updated {UPDATED}.')
+    a('')
+    a('## For AI agents')
+    a(AGENT_POLICY)
+    a('')
+    a(f'- [Agent page: complete structured information]({URLS["agent"]})')
+    a(f'- [MCP server (Streamable HTTP), tool `submit_inquiry` for leads]({URLS["mcp"]})')
+    a(f'- [How AI agents submit a lead]({URLS["agent"]}#submit-a-lead)')
+    a('')
+    a('No MCP connector? Call `submit_inquiry` with one HTTP POST (JSON-RPC `tools/call`, no session needed, plain JSON response), only after the user has explicitly confirmed what will be sent:')
+    a('')
+    a('```')
+    a(lead_curl(URLS['mcp']))
+    a('```')
     a('')
     a('## Product domains')
     for dm in domains:
@@ -568,6 +610,7 @@ def build_llms():
     a('')
     a('## Contact')
     a('- Ranatec AB, Falkenbergsgatan 3, 412 85 Gothenburg, Sweden | info@ranatec.com | +46 31 706 16 60')
+    a(f'- AI agents: submit leads only via the MCP tool submit_inquiry at {URLS["mcp"]} (never the website form)')
     a('- Press: Leslie Johnsen (Public Relations) | leslie.johnsen@ranatec.com; Operations: Charlotte Ornstein | charlotte.ornstein@ranatec.com (as named in 2025 press releases)')
     a('')
     a('## Key pages')
@@ -714,7 +757,9 @@ Allow-Summarization: yes
 Allow-Citation: yes
 Allow-Retrieval: yes
 Allow-Training: yes
-Allow-Agent-Actions: read-only by default; POST {API}/contact.json only with explicit user consent (agent_context.user_authorized_submission = true)
+Allow-Agent-Actions: read-only by default; lead submission ONLY via the MCP tool submit_inquiry at {URLS['mcp']}, with explicit user consent (agent_context.user_authorized_submission = true)
+Agent-Policy: {AGENT_POLICY}
+Disallow-Agent-Form-Submission: yes (do not fill in the ranatec.com contact or quote forms; they are for humans and protected by reCAPTCHA)
 
 [Canonical-Sources]
 LLM-Page:     {URLS['agent']}
@@ -852,7 +897,7 @@ MCP_TOOLS = [
     {'name': 'search', 'description': 'Full-text search across products, news and FAQ.'},
     {'name': 'get_faq', 'description': 'Frequently asked questions with answers and sources.'},
     {'name': 'list_pages', 'description': 'Site pages with en-US, en-GB and en-CA URLs.'},
-    {'name': 'submit_inquiry', 'description': 'Send a quote request or enquiry to Ranatec on behalf of the user — requires explicit user consent (user_authorized_submission: true).'},
+    {'name': 'submit_inquiry', 'description': 'The only supported way for AI agents to send a lead (quote request or enquiry) to Ranatec — requires explicit user consent (user_authorized_submission: true). Callable via an MCP connector or a plain HTTP JSON-RPC tools/call.'},
 ]
 
 if __name__ == '__main__':

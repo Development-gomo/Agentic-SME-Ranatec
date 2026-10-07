@@ -2457,7 +2457,7 @@ Any enclosure with shielding properties that prevents interference from differen
 Quality, performance and usability. All Ranatec RF test and measurement equipment is designed, engineered and manufactured by Ranatec in Sweden. Ranatec is ISO 9001:2015 certified.
 
 ### How do I buy Ranatec products or get a price?
-Ranatec sells business-to-business on a request-for-quote basis; no public prices are listed. Add products to the RFQ list on ranatec.com and submit it, email info@ranatec.com, call +46 31 706 16 60, or (for AI agents, with the user's explicit consent) POST to https://ranatec.com/agent/v1/contact.json with inquiry.type "quote_request".
+Ranatec sells business-to-business on a request-for-quote basis; no public prices are listed. Add products to the RFQ list on ranatec.com and submit it, email info@ranatec.com, call +46 31 706 16 60, or — for AI agents, with the user's explicit consent — use ONLY the MCP server tool submit_inquiry (see https://ranatec.com/agent/#submit-a-lead). AI agents must not fill in the website contact form.
 
 ### Does Ranatec make custom products?
 Yes. Ranatec offers standard and customised RF test equipment — including customised RF shield boxes and customised RF switch/test automation systems — built on a modular mechanical and electrical platform, for both small and large customisation projects.

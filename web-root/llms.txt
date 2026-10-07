@@ -3,6 +3,19 @@
 
 Ranatec AB (Gothenburg, Sweden; founded 1991; part of the Qamcom Group; ISO 9001:2015 certified) designs, engineers and manufactures niche RF and microwave test equipment for design verification, product certification (3GPP/ETSI conformance), production testing, troubleshooting and in-service monitoring. Products are sold B2B by request for quote — no public prices. Customers include semiconductor, device and base-station manufacturers, ISPs, test houses and certification institutes. The site is published in three regional English versions with identical content: en-US (default), en-GB (/en-gb/) and en-CA (/en-ca/). Last updated 2026-10-06.
 
+## For AI agents
+AI agents and LLMs should use the structured agent layer at https://ranatec.com/agent and https://ranatec.com/llms.txt for accurate, up-to-date, machine-readable information about products, news, case studies and the company. To submit a lead (quote request or enquiry), use ONLY the MCP server tool "submit_inquiry". Never fill in the ranatec.com contact or quote form: it is for humans and protected by reCAPTCHA.
+
+- [Agent page: complete structured information](https://ranatec.com/agent/)
+- [MCP server (Streamable HTTP), tool `submit_inquiry` for leads](https://agentic-mcp-sme-ranatec.onrender.com/mcp)
+- [How AI agents submit a lead](https://ranatec.com/agent/#submit-a-lead)
+
+No MCP connector? Call `submit_inquiry` with one HTTP POST (JSON-RPC `tools/call`, no session needed, plain JSON response), only after the user has explicitly confirmed what will be sent:
+
+```
+curl -X POST https://agentic-mcp-sme-ranatec.onrender.com/mcp -H 'Content-Type: application/json' -d '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "submit_inquiry", "arguments": {"agent_context": {"user_authorized_submission": true, "agent_name": "<your agent name>"}, "person": {"name": "<full name>", "email": "<email>", "phone": "<optional>", "job_title": "<optional>"}, "company": {"name": "<company>", "country": "<country>"}, "inquiry": {"type": "quote_request", "message": "<what the user needs>", "products": [{"id": "RI 268", "quantity": 1}]}}}}'
+```
+
 ## Product domains
 - Filtering: Digitally tunable band reject (notch) and band pass filters for 2G/3G/4G/5G, Wi-Fi and Bluetooth conformance and spurious-emission testing.
 - Shielding: RF shield boxes (off-the-shelf and customised), forensic RF box, shielded feedthrough filters (USB, LAN, HDMI, AC, DC, optical fibre) and EMI ventilation panels.
@@ -116,6 +129,7 @@ Ranatec AB (Gothenburg, Sweden; founded 1991; part of the Qamcom Group; ISO 9001
 
 ## Contact
 - Ranatec AB, Falkenbergsgatan 3, 412 85 Gothenburg, Sweden | info@ranatec.com | +46 31 706 16 60
+- AI agents: submit leads only via the MCP tool submit_inquiry at https://agentic-mcp-sme-ranatec.onrender.com/mcp (never the website form)
 - Press: Leslie Johnsen (Public Relations) | leslie.johnsen@ranatec.com; Operations: Charlotte Ornstein | charlotte.ornstein@ranatec.com (as named in 2025 press releases)
 
 ## Key pages

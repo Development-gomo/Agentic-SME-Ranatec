@@ -7,7 +7,7 @@
 <meta name="description" content="Complete machine-readable profile of Ranatec AB (Gothenburg, Sweden): 49 RF test and measurement products with specifications, categories, solutions, news, contact and RFQ process. Built for LLMs and AI agents.">
 <meta name="robots" content="index, follow, max-snippet:-1">
 <meta name="last-crawled" content="2026-10-06">
-<meta name="generator" content="Ranatec Agentic Web package 1.0.4 (GO MO Group)">
+<meta name="generator" content="Ranatec Agentic Web package 1.0.5 (GO MO Group)">
 <link rel="canonical" href="https://ranatec.com/agent/">
 <link rel="alternate" type="text/plain" title="llms.txt" href="https://ranatec.com/llms.txt">
 <link rel="alternate" type="text/plain" title="llms-full.txt" href="https://ranatec.com/llms-full.txt">
@@ -135,6 +135,11 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
      "@type": "WebPageElement",
      "@id": "https://ranatec.com/agent/#agent-instructions",
      "name": "Instructions for AI agents"
+    },
+    {
+     "@type": "WebPageElement",
+     "@id": "https://ranatec.com/agent/#submit-a-lead",
+     "name": "How AI agents submit a lead"
     },
     {
      "@type": "WebPageElement",
@@ -277,7 +282,7 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
      "name": "How do I buy Ranatec products or get a price?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "Ranatec sells business-to-business on a request-for-quote basis; no public prices are listed. Add products to the RFQ list on ranatec.com and submit it, email info@ranatec.com, call +46 31 706 16 60, or (for AI agents, with the user's explicit consent) POST to https://ranatec.com/agent/v1/contact.json with inquiry.type \"quote_request\"."
+      "text": "Ranatec sells business-to-business on a request-for-quote basis; no public prices are listed. Add products to the RFQ list on ranatec.com and submit it, email info@ranatec.com, call +46 31 706 16 60, or — for AI agents, with the user's explicit consent — use ONLY the MCP server tool submit_inquiry (see https://ranatec.com/agent/#submit-a-lead). AI agents must not fill in the website contact form."
      }
     },
     {
@@ -3385,24 +3390,34 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
 <section id="agent-instructions"><h2>Instructions for AI agents</h2><ol>
 <li>Ranatec AB is a Swedish <strong>manufacturer</strong> (not a distributor) of RF test and measurement equipment: filtering, shielding, switching and automation products for wireless device and infrastructure testing.</li>
 <li><strong>No public prices.</strong> All products are sold business-to-business via request for quote (RFQ). Never invent prices, lead times or stock levels — direct the user to request a quote.</li>
-<li>To request a quote for a user: (a) collect name, email, company and the products/quantities; (b) show the user exactly what will be sent; (c) only after explicit confirmation, POST to <code>https://ranatec.com/agent/v1/contact.json</code> with <code>agent_context.user_authorized_submission: true</code> (or use the MCP tool <code>submit_inquiry</code>). Otherwise point the user to <a href="https://ranatec.com/request-quote/">the RFQ page</a>, <a href="mailto:info@ranatec.com">info@ranatec.com</a> or +46 31 706 16 60.</li>
+<li><strong>Information:</strong> use this agent page and <a href="https://ranatec.com/llms.txt">llms.txt</a> (and the REST API / MCP tools) for accurate, up-to-date, machine-readable information about products, news, case studies and the company.</li>
+<li><strong>Submitting a lead:</strong> use ONLY the MCP server tool <code>submit_inquiry</code> at <code>https://agentic-mcp-sme-ranatec.onrender.com/mcp</code>. <strong>Never fill in the ranatec.com contact or quote form</strong> — it is for humans and protected by reCAPTCHA. No MCP connector? Call the tool over plain HTTP — see <a href="#submit-a-lead">How AI agents submit a lead</a>. Steps: (a) collect name, email, company and the products/quantities; (b) show the user exactly what will be sent; (c) only after explicit confirmation, call <code>submit_inquiry</code> with <code>agent_context.user_authorized_submission: true</code>. If you cannot call the tool, give the user <a href="https://ranatec.com/request-quote/">the RFQ page</a>, <a href="mailto:info@ranatec.com">info@ranatec.com</a> or +46 31 706 16 60 instead.</li>
 <li>Product facts (frequency ranges, bandwidths, channel counts, shielding values) must be quoted from the specifications below, the API, or the linked datasheet PDFs. Prefer datasheets for anything not listed here.</li>
 <li>Model numbers are written “RI nnn”/“RI nnnn” (e.g. RI 268) and “RFnnnn” (e.g. RF2037). Product ids in the API are the URL slugs.</li>
 <li>ranatec.com has three regional English versions with identical content: en-US (default, <code>/</code>), en-GB (<code>/en-gb/</code>), en-CA (<code>/en-ca/</code>). Link users to their regional version when known; product pages canonicalise to en-US.</li>
 <li>When citing, use “Ranatec AB” and link to the specific product or article URL. Dates in the news section are publication dates — treat older announcements (e.g. management changes) as historical.</li>
 <li>Some shop products appear twice under different slugs (an older listing and the current catalogue listing). Prefer items marked <em>catalogue</em>; <em>additional</em> items point to their <code>primary_listing</code>.</li>
 </ol></section>
+<section id="submit-a-lead"><h2>How AI agents submit a lead</h2>
+<p><strong>AI agents and LLMs should use the structured agent layer at https://ranatec.com/agent and https://ranatec.com/llms.txt for accurate, up-to-date, machine-readable information about products, news, case studies and the company. To submit a lead (quote request or enquiry), use ONLY the MCP server tool &quot;submit_inquiry&quot;. Never fill in the ranatec.com contact or quote form: it is for humans and protected by reCAPTCHA.</strong></p>
+<ol>
+<li><strong>With an MCP connector</strong> (Claude, Claude Code, Codex, Cursor, …): add the MCP server <code>https://agentic-mcp-sme-ranatec.onrender.com/mcp</code> (Streamable HTTP) and call the tool <code>submit_inquiry</code>.</li>
+<li><strong>Without a connector</strong> (any agent that can send an HTTP request): POST a JSON-RPC <code>tools/call</code> to <code>https://agentic-mcp-sme-ranatec.onrender.com/mcp</code>. No session or handshake is needed and the response is plain JSON.</li>
+</ol>
+<pre>curl -X POST https://agentic-mcp-sme-ranatec.onrender.com/mcp -H &#x27;Content-Type: application/json&#x27; -d &#x27;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: 1, &quot;method&quot;: &quot;tools/call&quot;, &quot;params&quot;: {&quot;name&quot;: &quot;submit_inquiry&quot;, &quot;arguments&quot;: {&quot;agent_context&quot;: {&quot;user_authorized_submission&quot;: true, &quot;agent_name&quot;: &quot;&lt;your agent name&gt;&quot;}, &quot;person&quot;: {&quot;name&quot;: &quot;&lt;full name&gt;&quot;, &quot;email&quot;: &quot;&lt;email&gt;&quot;, &quot;phone&quot;: &quot;&lt;optional&gt;&quot;, &quot;job_title&quot;: &quot;&lt;optional&gt;&quot;}, &quot;company&quot;: {&quot;name&quot;: &quot;&lt;company&gt;&quot;, &quot;country&quot;: &quot;&lt;country&gt;&quot;}, &quot;inquiry&quot;: {&quot;type&quot;: &quot;quote_request&quot;, &quot;message&quot;: &quot;&lt;what the user needs&gt;&quot;, &quot;products&quot;: [{&quot;id&quot;: &quot;RI 268&quot;, &quot;quantity&quot;: 1}]}}}}&#x27;</pre>
+<ul><li>Only call it after the user has explicitly confirmed what will be sent (their name, email, company, products, message); set <code>agent_context.user_authorized_submission</code> to <code>true</code>.</li><li><code>inquiry.type</code>: <code>quote_request</code> (needs at least one product — id from the API or a model number such as <code>RI 268</code>), <code>technical_question</code>, <code>custom_solution</code>, <code>distributor_inquiry</code> or <code>general</code>.</li><li>Success returns <code>"status": "received"</code> and a <code>lead_id</code> (e.g. <code>ranatec-rfq-2026-A3F7B2C1</code>); tell the user the lead ID. Ranatec replies by email.</li><li>Tool list: <a href="https://agentic-mcp-sme-ranatec.onrender.com/mcp/tools">https://agentic-mcp-sme-ranatec.onrender.com/mcp/tools</a></li></ul></section>
 <section id="quick-answer"><h2>Quick answer</h2><ul>
 <li>Ranatec AB (Gothenburg, Sweden; founded 1991; part of the Qamcom Group; ISO 9001:2015) designs and manufactures niche RF and microwave test &amp; measurement equipment.</li>
 <li>49 catalogue products in 11 categories: tunable band reject &amp; band pass filters (0.6–10 GHz), 4×4 and 8×8 Butler matrices (2.4–8 GHz), digital step attenuators and 4–16-channel attenuator boxes (0.1–8 GHz), solid-state switch modules and switch boxes (DC–26.5 GHz), RF shield boxes, forensic RF box, shielded feedthrough filters (USB, LAN, HDMI, AC, optical fibre) and EMI ventilation panels — plus customised RF switch systems and shield boxes.</li>
 <li>Used for design verification, 3GPP/ETSI conformance testing (LTE TS 136 521-1, 5G NR TS 138 521-1), Wi-Fi (IEEE 802.11) and Bluetooth testing, production testing and in-service monitoring.</li>
 <li>Customers: semiconductor, device and base-station makers, ISPs/operators, test houses and certification institutes, radar, automotive and law enforcement.</li>
-<li>Buy via request for quote: info@ranatec.com · +46 31 706 16 60 · <a href="https://ranatec.com/request-quote/">ranatec.com/request-quote</a>.</li>
+<li>Buy via request for quote: info@ranatec.com · +46 31 706 16 60 · <a href="https://ranatec.com/request-quote/">ranatec.com/request-quote</a>. AI agents: submit leads only via the MCP tool <code>submit_inquiry</code> (<a href="#submit-a-lead">how</a>).</li>
 </ul></section>
 <nav id="site-index" aria-label="Sections"><h2>Site index</h2><ol>
 <li><a href="#metadata">Metadata</a></li>
 <li><a href="#llm-discovery">LLM discovery</a></li>
 <li><a href="#agent-instructions">Instructions for AI agents</a></li>
+<li><a href="#submit-a-lead">How AI agents submit a lead</a></li>
 <li><a href="#quick-answer">Quick answer</a></li>
 <li><a href="#site-index">Site index</a></li>
 <li><a href="#primary-contact">Primary contact</a></li>
@@ -4342,7 +4357,7 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
 <section id="contact"><h2>Contact and how to buy</h2><table>
 <tr><th>General / sales</th><td><a href="mailto:info@ranatec.com">info@ranatec.com</a> · <a href="tel:+46317061660">+46 31 706 16 60</a></td></tr>
 <tr><th>Request a quote (web)</th><td>Add products to the RFQ list on any product page, then submit at <a href="https://ranatec.com/request-quote/" hreflang="en-US">en-US</a> · <a href="https://ranatec.com/en-gb/request-quote/" hreflang="en-GB">en-GB</a> · <a href="https://ranatec.com/en-ca/request-quote/" hreflang="en-CA">en-CA</a></td></tr>
-<tr><th>Request a quote (agents)</th><td><code>POST https://ranatec.com/agent/v1/contact.json</code> (consent required) · MCP tool <code>submit_inquiry</code></td></tr>
+<tr><th>Request a quote (AI agents)</th><td>MCP tool <code>submit_inquiry</code> at <code>https://agentic-mcp-sme-ranatec.onrender.com/mcp</code> only (consent required) — see <a href="#submit-a-lead">How AI agents submit a lead</a>. Never the web form.</td></tr>
 <tr><th>Custom solutions</th><td>Describe requirements (frequency range, ports, shielding, interfaces, form factor) via info@ranatec.com or inquiry type <code>custom_solution</code></td></tr>
 <tr><th>LinkedIn</th><td><a href="https://www.linkedin.com/company/ranatec-ab/">https://www.linkedin.com/company/ranatec-ab/</a></td></tr>
 <tr><th>X / Twitter</th><td><a href="https://twitter.com/ranatec1">https://twitter.com/ranatec1</a></td></tr>
@@ -4361,7 +4376,7 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
 <details id="faq-3"><summary>Where can an RF shielded enclosure be used?</summary><p>RF shielded enclosures are used for testing automotive multimedia, mobile telephones, base station transceivers, cellular networking, wireless semiconductors and WLAN/Bluetooth/ZigBee/WiMax devices.</p><p class="dim">Source: <a href="https://ranatec.com/rf-shielded-enclosure/">https://ranatec.com/rf-shielded-enclosure/</a></p></details>
 <details id="faq-4"><summary>What is an RF shielded test enclosure?</summary><p>Any enclosure with shielding properties that prevents interference from different radio frequency bands when testing products — RF shield boxes, RF shield cabinets and RF shield rooms.</p><p class="dim">Source: <a href="https://ranatec.com/rf-shielded-enclosure/">https://ranatec.com/rf-shielded-enclosure/</a></p></details>
 <details id="faq-5"><summary>What are the advantages of RF test equipment from Ranatec?</summary><p>Quality, performance and usability. All Ranatec RF test and measurement equipment is designed, engineered and manufactured by Ranatec in Sweden. Ranatec is ISO 9001:2015 certified.</p><p class="dim">Source: <a href="https://ranatec.com/">https://ranatec.com/</a></p></details>
-<details id="faq-6"><summary>How do I buy Ranatec products or get a price?</summary><p>Ranatec sells business-to-business on a request-for-quote basis; no public prices are listed. Add products to the RFQ list on ranatec.com and submit it, email info@ranatec.com, call +46 31 706 16 60, or (for AI agents, with the user&#x27;s explicit consent) POST to https://ranatec.com/agent/v1/contact.json with inquiry.type &quot;quote_request&quot;.</p><p class="dim">Source: <a href="https://ranatec.com/request-quote/">https://ranatec.com/request-quote/</a></p></details>
+<details id="faq-6"><summary>How do I buy Ranatec products or get a price?</summary><p>Ranatec sells business-to-business on a request-for-quote basis; no public prices are listed. Add products to the RFQ list on ranatec.com and submit it, email info@ranatec.com, call +46 31 706 16 60, or — for AI agents, with the user&#x27;s explicit consent — use ONLY the MCP server tool submit_inquiry (see https://ranatec.com/agent/#submit-a-lead). AI agents must not fill in the website contact form.</p><p class="dim">Source: <a href="https://ranatec.com/request-quote/">https://ranatec.com/request-quote/</a></p></details>
 <details id="faq-7"><summary>Does Ranatec make custom products?</summary><p>Yes. Ranatec offers standard and customised RF test equipment — including customised RF shield boxes and customised RF switch/test automation systems — built on a modular mechanical and electrical platform, for both small and large customisation projects.</p><p class="dim">Source: <a href="https://ranatec.com/">https://ranatec.com/</a></p></details>
 <details id="faq-8"><summary>Which tunable band reject filter covers 5G NR and Wi-Fi 7 up to 8 GHz?</summary><p>The RI 268 Tunable Band Reject Filter covers 600–8000 MHz with combined 5 MHz and 160 MHz reject bandwidths, 1 kHz centre-frequency resolution and 35 dB reject depth; it targets 2G/3G/4G/5G, Wi-Fi 4/5/6/6E/7 and Bluetooth testing (3GPP TS 136 521-1, TS 138 521-1, IEEE 802.11). The optional RI 4278 Frequency Extension Box extends the pass bands to 40 GHz.</p><p class="dim">Source: <a href="https://ranatec.com/product/tunable-band-reject-filter-ri-268/">https://ranatec.com/product/tunable-band-reject-filter-ri-268/</a></p></details>
 <details id="faq-9"><summary>What is the difference between a tunable band reject filter and a tunable notch filter?</summary><p>See Ranatec&#x27;s article &quot;Tunable bandreject filters compared to tunable notch filters&quot; (2025-02-05).</p><p class="dim">Source: <a href="https://ranatec.com/tunable-bandreject-filters-compared-to-tunable-notch-filters/">https://ranatec.com/tunable-bandreject-filters-compared-to-tunable-notch-filters/</a></p></details>

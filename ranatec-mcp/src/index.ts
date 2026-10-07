@@ -19,6 +19,10 @@ const NAME = "ranatec-mcp";
 // Single source of truth: package.json (stamped from the repo VERSION file by tools/release.sh).
 const VERSION: string = (createRequire(import.meta.url)("../package.json") as { version: string }).version;
 const API_BASE = (process.env.RANATEC_API_BASE ?? "https://ranatec.com/agent/v1").replace(/\/$/, "");
+// Optional shared key: when set (same value as "MCP server key" in WordPress → Tools → Ranatec Agent API),
+// the plugin accepts lead submissions ONLY from this MCP server.
+const MCP_KEY = process.env.RANATEC_MCP_KEY ?? "";
+const PUBLIC_MCP_URL = process.env.PUBLIC_MCP_URL ?? "https://agentic-mcp-sme-ranatec.onrender.com/mcp";
 const PORT = parseInt(process.env.PORT ?? "3000", 10);
 const API_TIMEOUT = parseInt(process.env.API_TIMEOUT_MS ?? "10000", 10);
 const CACHE_TTL = parseInt(process.env.CACHE_TTL_MS ?? "300000", 10);
@@ -127,7 +131,7 @@ export const TOOLS = [
   { name: "search", phase: 1, method: "GET products.json, news.json, faq.json", description: "Full-text search across products (including specifications), news/articles and FAQ. Use for questions like 'which product covers 26.5 GHz?' or 'USB 3.2 feedthrough'." },
   { name: "get_faq", phase: 1, method: "GET faq.json", description: "Frequently asked questions about Ranatec and RF test equipment, with answers and source URLs." },
   { name: "list_pages", phase: 1, method: "GET pages.json", description: "ranatec.com pages (home, about, contact, solutions, news, shop, RFQ, …) with en-US, en-GB and en-CA URLs." },
-  { name: "submit_inquiry", phase: 2, method: "POST contact.json", description: "Send a quote request or enquiry to Ranatec AB on behalf of the user. Before calling, show the user exactly what will be sent (their name, email, company, products/quantities, message) and get explicit confirmation. You MUST set agent_context.user_authorized_submission to true to confirm that consent was given. quote_request needs at least one product id." },
+  { name: "submit_inquiry", phase: 2, method: "POST contact.json", description: "The ONLY supported way for AI agents to send a lead (quote request or enquiry) to Ranatec AB — never fill in the ranatec.com contact form (it is for humans and protected by reCAPTCHA). Before calling, show the user exactly what will be sent (their name, email, company, products/quantities, message) and get explicit confirmation. You MUST set agent_context.user_authorized_submission to true to confirm that consent was given. quote_request needs at least one product id or model number (e.g. 'RI 268')." },
 ] as const;
 
 const desc = (n: (typeof TOOLS)[number]["name"]) => TOOLS.find((t) => t.name === n)!.description;
@@ -135,7 +139,7 @@ const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: 
 
 function buildServer(): McpServer {
   const server = new McpServer({ name: NAME, version: VERSION }, {
-    instructions: "Ranatec AB (Gothenburg, Sweden) manufactures RF test & measurement equipment. Prices are never published: for pricing, lead times or availability, offer to submit a quote request (submit_inquiry, only with explicit user consent) or refer to info@ranatec.com / +46 31 706 16 60. Quote specifications from get_product or the datasheet links; do not guess. The website exists in three regional English versions (en-US, en-GB, en-CA) with identical content — give users the URL for their region when known.",
+    instructions: "Ranatec AB (Gothenburg, Sweden) manufactures RF test & measurement equipment. For accurate, up-to-date information use these tools or https://ranatec.com/agent and https://ranatec.com/llms.txt. To send a lead (quote request or enquiry) use ONLY the submit_inquiry tool — never the website contact form — and only after the user has explicitly confirmed what will be sent. Prices are never published: for pricing, lead times or availability, offer to submit a quote request via submit_inquiry, or refer to info@ranatec.com / +46 31 706 16 60. Quote specifications from get_product or the datasheet links; do not guess. The website exists in three regional English versions (en-US, en-GB, en-CA) with identical content — give users the URL for their region when known.",
   });
 
   server.registerTool("get_company", { title: "Ranatec company profile", description: desc("get_company"), inputSchema: {}, annotations: READ_ONLY },
@@ -282,7 +286,7 @@ function buildServer(): McpServer {
     }
     const res = await fetchWithTimeout(`${API_BASE}/contact.json`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...(MCP_KEY ? { "X-Ranatec-MCP-Key": MCP_KEY } : {}) },
       body: JSON.stringify({ ...args, agent_context: { agent_name: "ranatec-mcp client", ...args.agent_context } }),
     });
     const body = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
@@ -322,8 +326,23 @@ const MCP_PATHS = ["/mcp", "/"];
 app.use(MCP_PATHS, limiter);
 app.use(MCP_PATHS, express.json({ limit: "100kb" }));
 
+// Plain-HTTP compatibility: AI agents without an MCP connector call this endpoint with curl/fetch and usually send
+// "Accept: application/json" (or nothing). The MCP transport rejects that with 406 unless both JSON and SSE are
+// accepted, so normalise the header. Responses are plain JSON (enableJsonResponse), which every client can read.
+app.post(MCP_PATHS, (req: Request, _res: Response, next: () => void) => {
+  const accept = String(req.headers.accept ?? "");
+  if (!accept.includes("application/json") || !accept.includes("text/event-stream")) {
+    const value = "application/json, text/event-stream";
+    req.headers.accept = value;
+    const raw = req.rawHeaders;
+    const i = raw.findIndex((h, idx) => idx % 2 === 0 && h.toLowerCase() === "accept");
+    if (i >= 0) raw[i + 1] = value; else raw.push("Accept", value);
+  }
+  next();
+});
+
 app.post(MCP_PATHS, async (req: Request, res: Response) => {
-  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
+  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
   const server = buildServer();
   res.on("close", () => {
     transport.close().catch(() => {});
@@ -340,7 +359,26 @@ app.post(MCP_PATHS, async (req: Request, res: Response) => {
 
 // Stateless server: no server-initiated SSE stream and no sessions to delete.
 const methodNotAllowed = (_req: Request, res: Response) => {
-  res.status(405).set("Allow", "POST").json({ jsonrpc: "2.0", error: { code: -32000, message: "Method not allowed. This MCP server is stateless: use POST /mcp. Tool list: GET /mcp/tools" }, id: null });
+  res.status(405).set("Allow", "POST").json({
+    jsonrpc: "2.0",
+    error: {
+      code: -32000,
+      message: "Method not allowed. This MCP server is stateless: use POST with a JSON-RPC body. Tool list: GET /mcp/tools",
+      data: {
+        how_to_submit_a_lead_without_an_mcp_client: {
+          method: "POST",
+          url: PUBLIC_MCP_URL,
+          headers: { "Content-Type": "application/json" },
+          body: { jsonrpc: "2.0", id: 1, method: "tools/call", params: { name: "submit_inquiry", arguments: {
+            agent_context: { user_authorized_submission: true, agent_name: "<your agent>" },
+            person: { name: "<name>", email: "<email>" }, company: { name: "<company>", country: "<country>" },
+            inquiry: { type: "quote_request", message: "<message>", products: [{ id: "RI 268", quantity: 1 }] } } } },
+          note: "Only call after the user has explicitly confirmed what will be sent. Never use the website contact form.",
+        },
+      },
+    },
+    id: null,
+  });
 };
 app.get(MCP_PATHS, methodNotAllowed);
 app.delete(MCP_PATHS, methodNotAllowed);
