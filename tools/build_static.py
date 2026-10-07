@@ -169,7 +169,8 @@ def build_openapi():
     S['Pricing'] = obj({'model': s(enum=['request-for-quote']), 'public_price': nullable(s()), 'how_to_buy': s()})
     S['Product'] = obj({
         'id': s(), 'name': s(), 'model_number': nullable(s()), 'summary': nullable(s()), 'categories': arr(s()), 'domain': nullable(s(description='filtering | shielding | switching | automation; null for some accessories')),
-        'listing': s(enum=['catalogue', 'additional']), 'custom': {'type': 'boolean'}, 'description': arr(s()), 'applications': arr(s()), 'features': arr(s()),
+        'listing': s(enum=['catalogue', 'additional']), 'custom': {'type': 'boolean'},
+        'configurator': nullable(obj({'how_it_works': s(), 'quantity_basis': s(), 'options': arr(obj({'id': s(), 'name': s(), 'model_number': nullable(s()), 'summary': nullable(s())})), 'submit_inquiry_usage': s()})), 'description': arr(s()), 'applications': arr(s()), 'features': arr(s()),
         'specifications': arr(ref('Specification')), 'electrical_interfaces': arr(s()), 'control_and_ordering': arr(s()), 'technical_drawings_note': nullable(s()),
         'optional_accessories': arr(s()), 'datasheets': arr(s(format='uri')), 'image': nullable(s(format='uri')), 'pricing': ref('Pricing'),
         'url': s(format='uri'), 'urls': ref('LocaleUrls'), 'canonical_url': s(format='uri'), 'same_model_listings': arr(s()), 'primary_listing': nullable(s()),
@@ -210,7 +211,8 @@ def build_openapi():
                              'agent_name': s(maxLength=120), 'user_request_summary': s(maxLength=500)}, ['user_authorized_submission'])
     S['ContactPerson'] = obj({'name': s(maxLength=120), 'email': s(format='email'), 'phone': s(maxLength=40), 'job_title': s(maxLength=120)}, ['name', 'email'])
     S['ContactCompany'] = obj({'name': s(maxLength=160), 'country': s(maxLength=80), 'website': s(format='uri')}, ['name'])
-    S['ProductLine'] = obj({'id': s(description='Product id from /products.json'), 'quantity': {'type': 'integer', 'minimum': 1, 'maximum': 10000, 'default': 1}}, ['id'])
+    S['ProductLine'] = obj({'id': s(description='Product id from /products.json'), 'quantity': {'type': 'integer', 'minimum': 1, 'maximum': 10000, 'default': 1},
+                            'configuration': arr(obj({'id': s(description='Option id from the product configurator'), 'quantity': {'type': 'integer', 'minimum': 0, 'maximum': 100, 'description': 'Per unit of the main product'}}, ['id']))}, ['id'])
     S['ContactInquiry'] = obj({'type': s(enum=['quote_request', 'technical_question', 'custom_solution', 'distributor_inquiry', 'general']), 'message': s(minLength=10, maxLength=5000),
                                'products': arr(ref('ProductLine')), 'application': s(maxLength=300), 'timeline': s(maxLength=120), 'preferred_locale': s(enum=['en-US', 'en-GB', 'en-CA'])}, ['type', 'message'])
     S['ContactRequest'] = obj({'agent_context': ref('AgentContext'), 'person': ref('ContactPerson'), 'company': ref('ContactCompany'), 'inquiry': ref('ContactInquiry')}, ['agent_context', 'person', 'company', 'inquiry'])
@@ -347,6 +349,7 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
     a('<ul><li>Only call it after the user has explicitly confirmed what will be sent (their name, email, company, products, message); set <code>agent_context.user_authorized_submission</code> to <code>true</code>.</li>'
       '<li><code>inquiry.type</code>: <code>quote_request</code> (needs at least one product — id from the API or a model number such as <code>RI 268</code>), <code>technical_question</code>, <code>custom_solution</code>, <code>distributor_inquiry</code> or <code>general</code>.</li>'
       '<li>The lead is saved in Ranatec\'s lead database exactly like a ranatec.com contact-form submission. Required: name, email, <strong>phone</strong>, company, message.</li>'
+      '<li><strong>Configured products</strong> (shield boxes RI 181/187/188/189, forensic box RI 198, band reject filters, Butler matrices): add <code>"configuration": [{"id": "RI 4182", "quantity": 2}]</code> to the product line — quantities are <em>per unit</em>, exactly like “Configure and Add to RFQ” on the product page. The allowed options are listed under each product below and in <code>get_product → configurator</code>.</li>'
       '<li>Success returns <code>"status": "received"</code> and a <code>lead_id</code> (e.g. <code>ranatec-rfq-2026-A3F7B2C1</code>); tell the user the lead ID. Ranatec replies by email.</li>'
       f'<li>Tool list: {link(URLS["mcp_tools"])}</li></ul></section>')
 
@@ -419,8 +422,10 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
                 a('<p class="dim">Electrical interfaces</p><ul>' + ''.join(f'<li>{e(x)}</li>' for x in p['electrical_interfaces'][:10]) + '</ul>')
             if p['control_and_ordering']:
                 a('<p class="dim">Control &amp; ordering</p><ul>' + ''.join(f'<li>{e(x)}</li>' for x in p['control_and_ordering'][:10]) + '</ul>')
-            if p['optional_accessories']:
-                a('<p>Optional accessories: ' + e(', '.join(p['optional_accessories'])) + '</p>')
+            if p.get('configurator'):
+                cf = p['configurator']
+                a('<p class="dim">Configurator (“Configure and Add to RFQ”, quantities per unit)</p><p>' + e(cf['how_it_works']) + '</p><ul>' +
+                  ''.join(f'<li><code>{e(o["id"])}</code> — {e(o["name"])}' + (f' ({e(o["summary"])})' if o['summary'] else '') + '</li>' for o in cf['options']) + '</ul>')
             extra = ' · '.join(link(d_, 'Datasheet (PDF)') for d_ in p['datasheets'])
             a(f'<p>Product page: {locale_links(p["urls"])}' + (f' · {extra}' if extra else '') + '</p></article>')
         a('</section>')
@@ -705,9 +710,9 @@ def build_llms_full():
                 a('|---|---|')
                 for s in p['specifications']:
                     a(f'| {s["parameter"]} | {spec_value(s["value"]).replace("|", "/")} |')
-            if p['optional_accessories']:
+            if p.get('configurator'):
                 a('')
-                a('Optional accessories: ' + ', '.join(p['optional_accessories']))
+                a('Configurator (per-unit options for a quote; submit_inquiry products[].configuration): ' + ', '.join(f"{o['name']} [{o['id']}]" for o in p['configurator']['options']))
             if p['datasheets']:
                 a('')
                 a('Datasheet: ' + ', '.join(p['datasheets']))

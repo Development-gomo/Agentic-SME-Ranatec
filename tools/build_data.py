@@ -136,6 +136,7 @@ for p in d['products']:
         'control_and_ordering': ordering,
         'technical_drawings_note': ' '.join(clean_list('technical-drawings')) or None,
         'optional_accessories': p['optional_accessories'],
+        '_config_note': p.get('config_note'),
         'datasheets': p['datasheets'],
         'image': p['image'],
         'pricing': {'model': 'request-for-quote', 'public_price': None,
@@ -190,6 +191,28 @@ for p in products:
             p['categories'] = ['accessories']
     if p['listing'] == 'additional' and 'primary_listing' not in p:
         p['primary_listing'] = None
+
+# Configurator ("Configure and Add to RFQ" on the product page): options resolved to product ids, quantities per unit.
+by_name = {}
+for p in products:
+    by_name.setdefault(p['name'], []).append(p)
+for p in products:
+    note = p.pop('_config_note', None)
+    if not p['optional_accessories']:
+        p['configurator'] = None
+        continue
+    opts = []
+    for a in p['optional_accessories']:
+        cand = sorted(by_name.get(a, []), key=lambda x: x['listing'] != 'catalogue')
+        if cand:
+            o = cand[0]
+            opts.append({'id': o['id'], 'name': o['name'], 'model_number': o['model_number'], 'summary': o['summary']})
+    p['configurator'] = {
+        'how_it_works': note or 'On the product page, "Configure and Add to RFQ" lets you choose how many of each option to include per unit.',
+        'quantity_basis': 'per unit of the main product',
+        'options': opts,
+        'submit_inquiry_usage': 'In inquiry.products, give this product with quantity N and "configuration": [{"id": <option id or model number>, "quantity": <per unit>}]. For different configurations, add separate product lines.',
+    }
 
 # frequency extension box RI 4270-4276 relation (accessory of band reject filters) — derived from site: RI 4278 is stated for RI 268
 order = {c: i for i, c in enumerate(CAT_ORDER + ['accessories'])}

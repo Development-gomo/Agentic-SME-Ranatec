@@ -2,7 +2,7 @@
   "meta": {
     "source": "https://ranatec.com/agent/v1/products.json",
     "endpoint": "products",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "last_updated": "2026-10-06",
     "publisher": "Ranatec AB",
     "canonical_site": "https://ranatec.com/",
@@ -115,7 +115,20 @@
       "canonical_url": "https://ranatec.com/product/tunable-band-reject-filter-ri-260/",
       "date_published": "2026-07-08T11:20:42+00:00",
       "date_modified": "2026-09-11T06:02:53+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": {
+        "how_it_works": "On the product page, \"Configure and Add to RFQ\" lets you choose how many of each option to include per unit.",
+        "quantity_basis": "per unit of the main product",
+        "options": [
+          {
+            "id": "frequency-extension-box-ri-4270",
+            "name": "Frequency Extension Box RI 4270",
+            "model_number": "RI 4270",
+            "summary": null
+          }
+        ],
+        "submit_inquiry_usage": "In inquiry.products, give this product with quantity N and \"configuration\": [{\"id\": <option id or model number>, \"quantity\": <per unit>}]. For different configurations, add separate product lines."
+      }
     },
     {
       "id": "tunable-band-reject-filter-ri-261",
@@ -212,7 +225,20 @@
       "canonical_url": "https://ranatec.com/product/tunable-band-reject-filter-ri-261/",
       "date_published": "2026-07-08T11:21:42+00:00",
       "date_modified": "2026-09-11T06:03:04+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": {
+        "how_it_works": "On the product page, \"Configure and Add to RFQ\" lets you choose how many of each option to include per unit.",
+        "quantity_basis": "per unit of the main product",
+        "options": [
+          {
+            "id": "frequency-extension-box-ri-4271",
+            "name": "Frequency Extension Box RI 4271",
+            "model_number": "RI 4271",
+            "summary": null
+          }
+        ],
+        "submit_inquiry_usage": "In inquiry.products, give this product with quantity N and \"configuration\": [{\"id\": <option id or model number>, \"quantity\": <per unit>}]. For different configurations, add separate product lines."
+      }
     },
     {
       "id": "tunable-band-reject-filter-ri-262",
@@ -309,7 +335,20 @@
       "canonical_url": "https://ranatec.com/product/tunable-band-reject-filter-ri-262/",
       "date_published": "2026-07-08T11:22:42+00:00",
       "date_modified": "2026-09-11T06:03:08+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": {
+        "how_it_works": "On the product page, \"Configure and Add to RFQ\" lets you choose how many of each option to include per unit.",
+        "quantity_basis": "per unit of the main product",
+        "options": [
+          {
+            "id": "frequency-extension-box-ri-4272",
+            "name": "Frequency Extension Box RI 4272",
+            "model_number": "RI 4272",
+            "summary": null
+          }
+        ],
+        "submit_inquiry_usage": "In inquiry.products, give this product with quantity N and \"configuration\": [{\"id\": <option id or model number>, \"quantity\": <per unit>}]. For different configurations, add separate product lines."
+      }
     },
     {
       "id": "tunable-band-reject-filter-ri-263",
@@ -410,7 +449,20 @@
       "canonical_url": "https://ranatec.com/product/tunable-band-reject-filter-ri-263/",
       "date_published": "2026-07-08T11:23:42+00:00",
       "date_modified": "2026-09-11T06:03:29+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": {
+        "how_it_works": "On the product page, \"Configure and Add to RFQ\" lets you choose how many of each option to include per unit.",
+        "quantity_basis": "per unit of the main product",
+        "options": [
+          {
+            "id": "frequency-extension-box-ri-4273",
+            "name": "Frequency Extension Box RI 4273",
+            "model_number": "RI 4273",
+            "summary": null
+          }
+        ],
+        "submit_inquiry_usage": "In inquiry.products, give this product with quantity N and \"configuration\": [{\"id\": <option id or model number>, \"quantity\": <per unit>}]. For different configurations, add separate product lines."
+      }
     },
     {
       "id": "tunable-band-reject-filter-ri-264",
@@ -495,7 +547,20 @@
       "canonical_url": "https://ranatec.com/product/tunable-band-reject-filter-ri-264/",
       "date_published": "2026-07-08T11:24:42+00:00",
       "date_modified": "2026-09-11T06:03:44+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": {
+        "how_it_works": "On the product page, \"Configure and Add to RFQ\" lets you choose how many of each option to include per unit.",
+        "quantity_basis": "per unit of the main product",
+        "options": [
+          {
+            "id": "frequency-extension-box-ri-4274",
+            "name": "Frequency Extension Box RI 4274",
+            "model_number": "RI 4274",
+            "summary": null
+          }
+        ],
+        "submit_inquiry_usage": "In inquiry.products, give this product with quantity N and \"configuration\": [{\"id\": <option id or model number>, \"quantity\": <per unit>}]. For different configurations, add separate product lines."
+      }
     },
     {
       "id": "tunable-band-reject-filter-ri-266",
@@ -606,7 +671,20 @@
       "canonical_url": "https://ranatec.com/product/tunable-band-reject-filter-ri-266/",
       "date_published": "2026-07-08T11:25:42+00:00",
       "date_modified": "2026-09-11T06:03:47+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": {
+        "how_it_works": "On the product page, \"Configure and Add to RFQ\" lets you choose how many of each option to include per unit.",
+        "quantity_basis": "per unit of the main product",
+        "options": [
+          {
+            "id": "frequency-extension-box-ri-4276",
+            "name": "Frequency Extension Box RI 4276",
+            "model_number": "RI 4276",
+            "summary": null
+          }
+        ],
+        "submit_inquiry_usage": "In inquiry.products, give this product with quantity N and \"configuration\": [{\"id\": <option id or model number>, \"quantity\": <per unit>}]. For different configurations, add separate product lines."
+      }
     },
     {
       "id": "tunable-band-reject-filter-ri-268",
@@ -719,7 +797,20 @@
       "canonical_url": "https://ranatec.com/product/tunable-band-reject-filter-ri-268/",
       "date_published": "2026-07-08T11:26:42+00:00",
       "date_modified": "2026-09-11T06:04:13+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": {
+        "how_it_works": "On the product page, \"Configure and Add to RFQ\" lets you choose how many of each option to include per unit.",
+        "quantity_basis": "per unit of the main product",
+        "options": [
+          {
+            "id": "frequency-extension-box-ri-4278",
+            "name": "Frequency Extension Box RI 4278",
+            "model_number": "RI 4278",
+            "summary": null
+          }
+        ],
+        "submit_inquiry_usage": "In inquiry.products, give this product with quantity N and \"configuration\": [{\"id\": <option id or model number>, \"quantity\": <per unit>}]. For different configurations, add separate product lines."
+      }
     },
     {
       "id": "tunable-band-pass-filter-ri-281",
@@ -814,7 +905,8 @@
       "canonical_url": "https://ranatec.com/product/tunable-band-pass-filter-ri-281/",
       "date_published": "2026-07-08T11:31:11+00:00",
       "date_modified": "2026-09-11T06:02:10+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "tunable-band-pass-filter-ri-282",
@@ -910,7 +1002,8 @@
       "canonical_url": "https://ranatec.com/product/tunable-band-pass-filter-ri-282/",
       "date_published": "2026-07-08T11:31:38+00:00",
       "date_modified": "2026-09-11T06:02:22+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "butler-matrix-ri-3041",
@@ -1014,7 +1107,20 @@
       "canonical_url": "https://ranatec.com/product/butler-matrix-ri-3041/",
       "date_published": "2026-07-08T11:31:11+00:00",
       "date_modified": "2026-09-11T05:34:54+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": {
+        "how_it_works": "On the product page, \"Configure and Add to RFQ\" lets you choose how many of each option to include per unit.",
+        "quantity_basis": "per unit of the main product",
+        "options": [
+          {
+            "id": "mounting-brackets-ri-3041-07",
+            "name": "Mounting brackets RI 3041-07",
+            "model_number": "RI 3041-07",
+            "summary": "1 pc = set of 2 brackets (please see the technical drawing)"
+          }
+        ],
+        "submit_inquiry_usage": "In inquiry.products, give this product with quantity N and \"configuration\": [{\"id\": <option id or model number>, \"quantity\": <per unit>}]. For different configurations, add separate product lines."
+      }
     },
     {
       "id": "butler-matrix-ri-3101",
@@ -1125,7 +1231,20 @@
       "canonical_url": "https://ranatec.com/product/butler-matrix-ri-3101/",
       "date_published": "2026-07-08T11:31:11+00:00",
       "date_modified": "2026-09-11T05:34:55+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": {
+        "how_it_works": "On the product page, \"Configure and Add to RFQ\" lets you choose how many of each option to include per unit.",
+        "quantity_basis": "per unit of the main product",
+        "options": [
+          {
+            "id": "mounting-brackets-ri-3101-16",
+            "name": "Mounting brackets RI 3101-16",
+            "model_number": "RI 3101-16",
+            "summary": "1 pc = set of 2 brackets (please see the technical drawing)"
+          }
+        ],
+        "submit_inquiry_usage": "In inquiry.products, give this product with quantity N and \"configuration\": [{\"id\": <option id or model number>, \"quantity\": <per unit>}]. For different configurations, add separate product lines."
+      }
     },
     {
       "id": "digital-attenuator-box-rf2025",
@@ -1253,7 +1372,8 @@
       "canonical_url": "https://ranatec.com/product/digital-attenuator-box-rf2025/",
       "date_published": "2026-07-08T11:29:44+00:00",
       "date_modified": "2026-09-11T05:37:08+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "digital-attenuator-box-rf2026",
@@ -1375,7 +1495,8 @@
       "canonical_url": "https://ranatec.com/product/digital-attenuator-box-rf2026/",
       "date_published": "2026-07-08T11:29:44+00:00",
       "date_modified": "2026-09-11T05:37:17+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "digital-attenuator-box-rf2034",
@@ -1486,7 +1607,8 @@
       "canonical_url": "https://ranatec.com/product/digital-attenuator-box-rf2034/",
       "date_published": "2026-07-08T11:32:45+00:00",
       "date_modified": "2026-09-11T05:37:58+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "digital-attenuator-box-rf2035",
@@ -1605,7 +1727,8 @@
       "canonical_url": "https://ranatec.com/product/digital-attenuator-box-rf2035/",
       "date_published": "2026-07-08T11:57:12+00:00",
       "date_modified": "2026-09-11T05:38:26+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "digital-attenuator-box-rf2036",
@@ -1722,7 +1845,8 @@
       "canonical_url": "https://ranatec.com/product/digital-attenuator-box-rf2036/",
       "date_published": "2026-07-08T11:57:37+00:00",
       "date_modified": "2026-09-11T05:38:28+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "digital-attenuator-ri-4410",
@@ -1836,7 +1960,8 @@
       "canonical_url": "https://ranatec.com/product/digital-attenuator-ri-4410/",
       "date_published": "2026-07-08T11:29:44+00:00",
       "date_modified": "2026-09-11T05:38:52+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "customized-rf-switch-systems",
@@ -1893,7 +2018,8 @@
       "canonical_url": "https://ranatec.com/product/customized-rf-switch-systems/",
       "date_published": "2026-07-08T11:33:11+00:00",
       "date_modified": "2026-09-11T05:27:04+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "solid-state-switch-box-rf2018b",
@@ -2050,7 +2176,8 @@
       "canonical_url": "https://ranatec.com/product/solid-state-switch-box-rf2018b/",
       "date_published": "2026-07-08T11:29:44+00:00",
       "date_modified": "2026-09-11T05:57:25+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "switch-box-rf2020b",
@@ -2188,7 +2315,8 @@
       "canonical_url": "https://ranatec.com/product/switch-box-rf2020b/",
       "date_published": "2026-07-08T11:30:08+00:00",
       "date_modified": "2026-09-11T05:59:05+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "switch-box-rf2022b",
@@ -2312,7 +2440,8 @@
       "canonical_url": "https://ranatec.com/product/switch-box-rf2022b/",
       "date_published": "2026-07-08T11:30:38+00:00",
       "date_modified": "2026-09-11T05:59:20+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "switch-box-rf2037",
@@ -2444,7 +2573,8 @@
       "canonical_url": "https://ranatec.com/product/switch-box-rf2037/",
       "date_published": "2026-07-08T11:31:38+00:00",
       "date_modified": "2026-09-11T05:59:45+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "switch-box-rf2038",
@@ -2554,7 +2684,8 @@
       "canonical_url": "https://ranatec.com/product/switch-box-rf2038/",
       "date_published": "2026-07-08T11:32:02+00:00",
       "date_modified": "2026-09-11T06:00:01+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "solid-state-switch-ri-2441",
@@ -2714,7 +2845,8 @@
       "canonical_url": "https://ranatec.com/product/solid-state-switch-ri-2441/",
       "date_published": "2026-07-08T11:31:11+00:00",
       "date_modified": "2026-09-11T05:57:58+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "solid-state-switch-ri-2582",
@@ -2901,7 +3033,8 @@
       "canonical_url": "https://ranatec.com/product/solid-state-switch-ri-2582/",
       "date_published": "2026-07-08T11:32:11+00:00",
       "date_modified": "2026-09-11T05:58:12+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "solid-state-switch-ri-2583",
@@ -3088,7 +3221,8 @@
       "canonical_url": "https://ranatec.com/product/solid-state-switch-ri-2583/",
       "date_published": "2026-07-08T11:33:11+00:00",
       "date_modified": "2026-09-11T05:58:48+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "customized-rf-shield-box",
@@ -3128,7 +3262,8 @@
       "canonical_url": "https://ranatec.com/product/customized-rf-shield-box/",
       "date_published": "2026-07-08T11:33:42+00:00",
       "date_modified": "2026-09-11T05:24:41+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "shield-box-ri-181",
@@ -3236,7 +3371,92 @@
       "canonical_url": "https://ranatec.com/product/shield-box-ri-181/",
       "date_published": "2026-07-08T11:29:43+00:00",
       "date_modified": "2026-09-11T05:51:05+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": {
+        "how_it_works": "To configure your Shield Box(es), please choose the number of communication interfaces & accessories you want for each unit Shield Box added above. If you want different configurations, please repeat these step for each configuration. The below is our standard offering, but we are used to making other configurations or customizations. If you need another interface, quantity, specification, or have questions, please write us a message in the RFQ check-out and we will be happy to help you.",
+        "quantity_basis": "per unit of the main product",
+        "options": [
+          {
+            "id": "feedthrough-filter-ri-4182",
+            "name": "Feedthrough Filter RI 4182",
+            "model_number": "RI 4182",
+            "summary": "LAN 1 Gbps, RJ45 connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4184",
+            "name": "Feedthrough Filter RI 4184",
+            "model_number": "RI 4184",
+            "summary": "USB 2.0, A-A connectors, dual port, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4185",
+            "name": "Feedthrough Filter RI 4185",
+            "model_number": "RI 4185",
+            "summary": "USB 2.0, A-A connectors, single port, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4192",
+            "name": "Feedthrough Filter RI 4192",
+            "model_number": "RI 4192",
+            "summary": "USB 3.0, B-A connectors, switchable on/off power (active), panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4193",
+            "name": "Feedthrough Filter RI 4193",
+            "model_number": "RI 4193",
+            "summary": "HDMI 1.4b, A-A connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4194",
+            "name": "Feedthrough Filter RI 4194",
+            "model_number": "RI 4194",
+            "summary": "LAN 10 Gbps, RJ45 connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4199",
+            "name": "Feedthrough Filter RI 4199",
+            "model_number": "RI 4199",
+            "summary": "USB 3.2, C-C connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4201",
+            "name": "Feedthrough Filter RI 4201",
+            "model_number": "RI 4201",
+            "summary": "USB 3.0, A-A connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4205",
+            "name": "Feedthrough Filter RI 4205",
+            "model_number": "RI 4205",
+            "summary": "110/230 VAC, 10 Amp, C14(m)-C13(f) connectors, outside shielded enclosure, panel mount"
+          },
+          {
+            "id": "optical-fiber-feedthrough-ri-4196",
+            "name": "Optical Fiber Feedthrough RI 4196",
+            "model_number": "RI 4196",
+            "summary": "0.1-15 GHz, 120 dB attenuation, 6 channel, MIL-STD-285 and 461"
+          },
+          {
+            "id": "ri181-13-dc-feedthru-emi-filter",
+            "name": "RI181-13 DC Feedthru EMI Filter",
+            "model_number": "RI 181-13",
+            "summary": null
+          },
+          {
+            "id": "ri181-14-smaf-smaf-bulkhead-connector",
+            "name": "RI181-14 SMA(f)-SMA(f) Bulkhead Connector",
+            "model_number": "RI 181-14",
+            "summary": null
+          },
+          {
+            "id": "ri181-15-rf-absorption-foam-inside-box-2u",
+            "name": "RI181-15 RF Absorption foam inside box (2U)",
+            "model_number": "RI 181-15",
+            "summary": null
+          }
+        ],
+        "submit_inquiry_usage": "In inquiry.products, give this product with quantity N and \"configuration\": [{\"id\": <option id or model number>, \"quantity\": <per unit>}]. For different configurations, add separate product lines."
+      }
     },
     {
       "id": "shield-box-ri-187",
@@ -3341,7 +3561,92 @@
       "canonical_url": "https://ranatec.com/product/shield-box-ri-187/",
       "date_published": "2026-07-08T11:30:43+00:00",
       "date_modified": "2026-09-11T05:51:31+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": {
+        "how_it_works": "To configure your Shield Box(es), please choose the number of communication interfaces & accessories you want for each unit Shield Box added above. If you want different configurations, please repeat these step for each configuration. The below is our standard offering, but we are used to making other configurations or customizations. If you need another interface, quantity, specification, or have questions, please write us a message in the RFQ check-out and we will be happy to help you.",
+        "quantity_basis": "per unit of the main product",
+        "options": [
+          {
+            "id": "feedthrough-filter-ri-4182",
+            "name": "Feedthrough Filter RI 4182",
+            "model_number": "RI 4182",
+            "summary": "LAN 1 Gbps, RJ45 connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4184",
+            "name": "Feedthrough Filter RI 4184",
+            "model_number": "RI 4184",
+            "summary": "USB 2.0, A-A connectors, dual port, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4185",
+            "name": "Feedthrough Filter RI 4185",
+            "model_number": "RI 4185",
+            "summary": "USB 2.0, A-A connectors, single port, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4192",
+            "name": "Feedthrough Filter RI 4192",
+            "model_number": "RI 4192",
+            "summary": "USB 3.0, B-A connectors, switchable on/off power (active), panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4193",
+            "name": "Feedthrough Filter RI 4193",
+            "model_number": "RI 4193",
+            "summary": "HDMI 1.4b, A-A connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4194",
+            "name": "Feedthrough Filter RI 4194",
+            "model_number": "RI 4194",
+            "summary": "LAN 10 Gbps, RJ45 connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4199",
+            "name": "Feedthrough Filter RI 4199",
+            "model_number": "RI 4199",
+            "summary": "USB 3.2, C-C connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4201",
+            "name": "Feedthrough Filter RI 4201",
+            "model_number": "RI 4201",
+            "summary": "USB 3.0, A-A connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4205",
+            "name": "Feedthrough Filter RI 4205",
+            "model_number": "RI 4205",
+            "summary": "110/230 VAC, 10 Amp, C14(m)-C13(f) connectors, outside shielded enclosure, panel mount"
+          },
+          {
+            "id": "optical-fiber-feedthrough-ri-4196",
+            "name": "Optical Fiber Feedthrough RI 4196",
+            "model_number": "RI 4196",
+            "summary": "0.1-15 GHz, 120 dB attenuation, 6 channel, MIL-STD-285 and 461"
+          },
+          {
+            "id": "ri181-13-dc-feedthru-emi-filter",
+            "name": "RI181-13 DC Feedthru EMI Filter",
+            "model_number": "RI 181-13",
+            "summary": null
+          },
+          {
+            "id": "ri181-14-smaf-smaf-bulkhead-connector",
+            "name": "RI181-14 SMA(f)-SMA(f) Bulkhead Connector",
+            "model_number": "RI 181-14",
+            "summary": null
+          },
+          {
+            "id": "ri187-15-rf-absorption-foam-inside-box-4u",
+            "name": "RI187-15 RF Absorption foam inside box (4U)",
+            "model_number": "RI 187-15",
+            "summary": null
+          }
+        ],
+        "submit_inquiry_usage": "In inquiry.products, give this product with quantity N and \"configuration\": [{\"id\": <option id or model number>, \"quantity\": <per unit>}]. For different configurations, add separate product lines."
+      }
     },
     {
       "id": "shield-box-ri-188",
@@ -3447,7 +3752,92 @@
       "canonical_url": "https://ranatec.com/product/shield-box-ri-188/",
       "date_published": "2026-07-08T11:31:43+00:00",
       "date_modified": "2026-09-11T05:56:13+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": {
+        "how_it_works": "To configure your Shield Box(es), please choose the number of communication interfaces & accessories you want for each unit Shield Box added above. If you want different configurations, please repeat these step for each configuration. The below is our standard offering, but we are used to making other configurations or customizations. If you need another interface, quantity, specification, or have questions, please write us a message in the RFQ check-out and we will be happy to help you.",
+        "quantity_basis": "per unit of the main product",
+        "options": [
+          {
+            "id": "feedthrough-filter-ri-4182",
+            "name": "Feedthrough Filter RI 4182",
+            "model_number": "RI 4182",
+            "summary": "LAN 1 Gbps, RJ45 connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4184",
+            "name": "Feedthrough Filter RI 4184",
+            "model_number": "RI 4184",
+            "summary": "USB 2.0, A-A connectors, dual port, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4185",
+            "name": "Feedthrough Filter RI 4185",
+            "model_number": "RI 4185",
+            "summary": "USB 2.0, A-A connectors, single port, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4192",
+            "name": "Feedthrough Filter RI 4192",
+            "model_number": "RI 4192",
+            "summary": "USB 3.0, B-A connectors, switchable on/off power (active), panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4193",
+            "name": "Feedthrough Filter RI 4193",
+            "model_number": "RI 4193",
+            "summary": "HDMI 1.4b, A-A connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4194",
+            "name": "Feedthrough Filter RI 4194",
+            "model_number": "RI 4194",
+            "summary": "LAN 10 Gbps, RJ45 connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4199",
+            "name": "Feedthrough Filter RI 4199",
+            "model_number": "RI 4199",
+            "summary": "USB 3.2, C-C connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4201",
+            "name": "Feedthrough Filter RI 4201",
+            "model_number": "RI 4201",
+            "summary": "USB 3.0, A-A connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4205",
+            "name": "Feedthrough Filter RI 4205",
+            "model_number": "RI 4205",
+            "summary": "110/230 VAC, 10 Amp, C14(m)-C13(f) connectors, outside shielded enclosure, panel mount"
+          },
+          {
+            "id": "optical-fiber-feedthrough-ri-4196",
+            "name": "Optical Fiber Feedthrough RI 4196",
+            "model_number": "RI 4196",
+            "summary": "0.1-15 GHz, 120 dB attenuation, 6 channel, MIL-STD-285 and 461"
+          },
+          {
+            "id": "ri181-13-dc-feedthru-emi-filter",
+            "name": "RI181-13 DC Feedthru EMI Filter",
+            "model_number": "RI 181-13",
+            "summary": null
+          },
+          {
+            "id": "ri181-14-smaf-smaf-bulkhead-connector",
+            "name": "RI181-14 SMA(f)-SMA(f) Bulkhead Connector",
+            "model_number": "RI 181-14",
+            "summary": null
+          },
+          {
+            "id": "ri188-15-rf-absorption-foam-inside-box-6u",
+            "name": "RI188-15 RF Absorption foam inside box (6U)",
+            "model_number": "RI 188-15",
+            "summary": null
+          }
+        ],
+        "submit_inquiry_usage": "In inquiry.products, give this product with quantity N and \"configuration\": [{\"id\": <option id or model number>, \"quantity\": <per unit>}]. For different configurations, add separate product lines."
+      }
     },
     {
       "id": "shield-box-ri-189",
@@ -3555,7 +3945,98 @@
       "canonical_url": "https://ranatec.com/product/shield-box-ri-189/",
       "date_published": "2026-07-08T11:32:44+00:00",
       "date_modified": "2026-09-11T05:56:28+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": {
+        "how_it_works": "To configure your Shield Box(es), please choose the number of communication interfaces & accessories you want for each unit Shield Box added above. If you want different configurations, please repeat these step for each configuration. The below is our standard offering, but we are used to making other configurations or customizations. If you need another interface, quantity, specification, or have questions, please write us a message in the RFQ check-out and we will be happy to help you.",
+        "quantity_basis": "per unit of the main product",
+        "options": [
+          {
+            "id": "feedthrough-filter-ri-4182",
+            "name": "Feedthrough Filter RI 4182",
+            "model_number": "RI 4182",
+            "summary": "LAN 1 Gbps, RJ45 connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4184",
+            "name": "Feedthrough Filter RI 4184",
+            "model_number": "RI 4184",
+            "summary": "USB 2.0, A-A connectors, dual port, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4192",
+            "name": "Feedthrough Filter RI 4192",
+            "model_number": "RI 4192",
+            "summary": "USB 3.0, B-A connectors, switchable on/off power (active), panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4193",
+            "name": "Feedthrough Filter RI 4193",
+            "model_number": "RI 4193",
+            "summary": "HDMI 1.4b, A-A connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4194",
+            "name": "Feedthrough Filter RI 4194",
+            "model_number": "RI 4194",
+            "summary": "LAN 10 Gbps, RJ45 connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4197",
+            "name": "Feedthrough Filter RI 4197",
+            "model_number": "RI 4197",
+            "summary": "Enables AC power transmission through shielded enclosures, with 70 dB suppression at 10 GHz."
+          },
+          {
+            "id": "feedthrough-filter-ri-4199",
+            "name": "Feedthrough Filter RI 4199",
+            "model_number": "RI 4199",
+            "summary": "USB 3.2, C-C connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4201",
+            "name": "Feedthrough Filter RI 4201",
+            "model_number": "RI 4201",
+            "summary": "USB 3.0, A-A connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4205",
+            "name": "Feedthrough Filter RI 4205",
+            "model_number": "RI 4205",
+            "summary": "110/230 VAC, 10 Amp, C14(m)-C13(f) connectors, outside shielded enclosure, panel mount"
+          },
+          {
+            "id": "filtered-terminal-block-ri-4198",
+            "name": "Filtered Terminal Block RI 4198",
+            "model_number": "RI 4198",
+            "summary": "Enables AC power transmission through shielded enclosures, with 60 dB suppression 1-10 GHz."
+          },
+          {
+            "id": "optical-fiber-feedthrough-ri-4196",
+            "name": "Optical Fiber Feedthrough RI 4196",
+            "model_number": "RI 4196",
+            "summary": "0.1-15 GHz, 120 dB attenuation, 6 channel, MIL-STD-285 and 461"
+          },
+          {
+            "id": "rf-absorption-foam-inside-box",
+            "name": "RF Absorption foam inside box",
+            "model_number": null,
+            "summary": null
+          },
+          {
+            "id": "ri181-13-dc-feedthru-emi-filter",
+            "name": "RI181-13 DC Feedthru EMI Filter",
+            "model_number": "RI 181-13",
+            "summary": null
+          },
+          {
+            "id": "ri181-14-smaf-smaf-bulkhead-connector",
+            "name": "RI181-14 SMA(f)-SMA(f) Bulkhead Connector",
+            "model_number": "RI 181-14",
+            "summary": null
+          }
+        ],
+        "submit_inquiry_usage": "In inquiry.products, give this product with quantity N and \"configuration\": [{\"id\": <option id or model number>, \"quantity\": <per unit>}]. For different configurations, add separate product lines."
+      }
     },
     {
       "id": "forensic-rf-box-ri-198",
@@ -3659,7 +4140,92 @@
       "canonical_url": "https://ranatec.com/product/forensic-rf-box-ri-198/",
       "date_published": "2026-07-08T11:29:44+00:00",
       "date_modified": "2026-09-11T05:49:26+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": {
+        "how_it_works": "To configure your Shield Box(es), please choose the number of communication interfaces & accessories you want for each unit Shield Box added above. If you want different configurations, please repeat these step for each configuration. The below is our standard offering, but we are used to making other configurations or customizations. If you need another interface, quantity, specification, or have questions, please write us a message in the RFQ check-out and we will be happy to help you.",
+        "quantity_basis": "per unit of the main product",
+        "options": [
+          {
+            "id": "feedthrough-filter-ri-4182",
+            "name": "Feedthrough Filter RI 4182",
+            "model_number": "RI 4182",
+            "summary": "LAN 1 Gbps, RJ45 connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4184",
+            "name": "Feedthrough Filter RI 4184",
+            "model_number": "RI 4184",
+            "summary": "USB 2.0, A-A connectors, dual port, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4185",
+            "name": "Feedthrough Filter RI 4185",
+            "model_number": "RI 4185",
+            "summary": "USB 2.0, A-A connectors, single port, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4192",
+            "name": "Feedthrough Filter RI 4192",
+            "model_number": "RI 4192",
+            "summary": "USB 3.0, B-A connectors, switchable on/off power (active), panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4193",
+            "name": "Feedthrough Filter RI 4193",
+            "model_number": "RI 4193",
+            "summary": "HDMI 1.4b, A-A connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4194",
+            "name": "Feedthrough Filter RI 4194",
+            "model_number": "RI 4194",
+            "summary": "LAN 10 Gbps, RJ45 connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4199",
+            "name": "Feedthrough Filter RI 4199",
+            "model_number": "RI 4199",
+            "summary": "USB 3.2, C-C connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4201",
+            "name": "Feedthrough Filter RI 4201",
+            "model_number": "RI 4201",
+            "summary": "USB 3.0, A-A connectors, panel mount"
+          },
+          {
+            "id": "feedthrough-filter-ri-4205",
+            "name": "Feedthrough Filter RI 4205",
+            "model_number": "RI 4205",
+            "summary": "110/230 VAC, 10 Amp, C14(m)-C13(f) connectors, outside shielded enclosure, panel mount"
+          },
+          {
+            "id": "optical-fiber-feedthrough-ri-4196",
+            "name": "Optical Fiber Feedthrough RI 4196",
+            "model_number": "RI 4196",
+            "summary": "0.1-15 GHz, 120 dB attenuation, 6 channel, MIL-STD-285 and 461"
+          },
+          {
+            "id": "ri181-13-dc-feedthru-emi-filter",
+            "name": "RI181-13 DC Feedthru EMI Filter",
+            "model_number": "RI 181-13",
+            "summary": null
+          },
+          {
+            "id": "ri181-14-smaf-smaf-bulkhead-connector",
+            "name": "RI181-14 SMA(f)-SMA(f) Bulkhead Connector",
+            "model_number": "RI 181-14",
+            "summary": null
+          },
+          {
+            "id": "ri188-15-rf-absorption-foam-inside-box-6u",
+            "name": "RI188-15 RF Absorption foam inside box (6U)",
+            "model_number": "RI 188-15",
+            "summary": null
+          }
+        ],
+        "submit_inquiry_usage": "In inquiry.products, give this product with quantity N and \"configuration\": [{\"id\": <option id or model number>, \"quantity\": <per unit>}]. For different configurations, add separate product lines."
+      }
     },
     {
       "id": "feedthrough-filter-ri-4170",
@@ -3727,7 +4293,8 @@
       "date_modified": "2026-09-11T05:43:36+00:00",
       "same_model_listings": [
         "ri-4170"
-      ]
+      ],
+      "configurator": null
     },
     {
       "id": "feedthrough-filter-ri-4171",
@@ -3766,7 +4333,8 @@
       "canonical_url": "https://ranatec.com/product/feedthrough-filter-ri-4171/",
       "date_published": "2026-07-08T11:57:29+00:00",
       "date_modified": "2026-09-11T05:43:47+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "feedthrough-filter-ri-4182",
@@ -3849,7 +4417,8 @@
       "date_modified": "2026-09-11T05:44:05+00:00",
       "same_model_listings": [
         "lan-1-gbps-feedthru-filter-ri-4182"
-      ]
+      ],
+      "configurator": null
     },
     {
       "id": "feedthrough-filter-ri-4184",
@@ -3932,7 +4501,8 @@
       "date_modified": "2026-09-11T05:44:19+00:00",
       "same_model_listings": [
         "dual-usb-2-0-feedthru-filter-ri-4184"
-      ]
+      ],
+      "configurator": null
     },
     {
       "id": "feedthrough-filter-ri-4185",
@@ -4012,7 +4582,8 @@
       "canonical_url": "https://ranatec.com/product/feedthrough-filter-ri-4185/",
       "date_published": "2026-07-08T12:00:01+00:00",
       "date_modified": "2026-09-11T05:44:38+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "feedthrough-filter-ri-4188",
@@ -4076,7 +4647,8 @@
       "canonical_url": "https://ranatec.com/product/feedthrough-filter-ri-4188/",
       "date_published": "2026-07-08T12:01:43+00:00",
       "date_modified": "2026-09-11T05:44:52+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "feedthrough-filter-ri-4192",
@@ -4159,7 +4731,8 @@
       "date_modified": "2026-09-11T05:45:18+00:00",
       "same_model_listings": [
         "usb-3-0-feedthru-filter-ri-4192"
-      ]
+      ],
+      "configurator": null
     },
     {
       "id": "feedthrough-filter-ri-4193",
@@ -4239,7 +4812,8 @@
       "date_modified": "2026-09-11T05:45:42+00:00",
       "same_model_listings": [
         "hdmi-feedthru-filter-ri-4193"
-      ]
+      ],
+      "configurator": null
     },
     {
       "id": "feedthrough-filter-ri-4194",
@@ -4318,7 +4892,8 @@
       "date_modified": "2026-09-11T05:45:46+00:00",
       "same_model_listings": [
         "lan-10-gbps-feedthru-filter-ri-4194"
-      ]
+      ],
+      "configurator": null
     },
     {
       "id": "feedthrough-filter-ri-4199",
@@ -4399,7 +4974,8 @@
       "date_modified": "2026-09-11T05:45:51+00:00",
       "same_model_listings": [
         "usb-3-2-c-20-gbps-feedthru-filter-ri-4199"
-      ]
+      ],
+      "configurator": null
     },
     {
       "id": "feedthrough-filter-ri-4201",
@@ -4473,7 +5049,8 @@
       "canonical_url": "https://ranatec.com/product/feedthrough-filter-ri-4201/",
       "date_published": "2026-07-08T12:08:43+00:00",
       "date_modified": "2026-09-11T05:46:18+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "feedthrough-filter-ri-4205",
@@ -4564,7 +5141,8 @@
       "date_modified": "2026-09-11T05:48:51+00:00",
       "same_model_listings": [
         "ri-4205-110-230-vac-feedthru-filter"
-      ]
+      ],
+      "configurator": null
     },
     {
       "id": "feedthrough-filter-ri-4206",
@@ -4651,7 +5229,8 @@
       "canonical_url": "https://ranatec.com/product/feedthrough-filter-ri-4206/",
       "date_published": "2026-07-08T12:10:28+00:00",
       "date_modified": "2026-09-11T05:49:21+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "optical-fiber-feedthru-ri-4196",
@@ -4722,7 +5301,8 @@
       "date_modified": "2026-09-11T05:50:01+00:00",
       "same_model_listings": [
         "optical-fiber-feedthrough-ri-4196"
-      ]
+      ],
+      "configurator": null
     },
     {
       "id": "emi-ventilation-panel-ri-4901",
@@ -4799,7 +5379,8 @@
       "canonical_url": "https://ranatec.com/product/emi-ventilation-panel-ri-4901/",
       "date_published": "2026-07-08T11:29:44+00:00",
       "date_modified": "2026-09-11T05:40:22+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "emi-ventilation-panel-ri-4905",
@@ -4878,7 +5459,8 @@
       "canonical_url": "https://ranatec.com/product/emi-ventilation-panel-ri-4905/",
       "date_published": "2026-07-08T11:29:44+00:00",
       "date_modified": "2026-09-11T05:40:30+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "emi-ventilation-panel-ri-4910",
@@ -4954,7 +5536,8 @@
       "canonical_url": "https://ranatec.com/product/emi-ventilation-panel-ri-4910/",
       "date_published": "2026-07-08T11:29:44+00:00",
       "date_modified": "2026-09-11T05:40:31+00:00",
-      "same_model_listings": []
+      "same_model_listings": [],
+      "configurator": null
     },
     {
       "id": "switch-box-2",
@@ -4992,7 +5575,8 @@
       "date_published": "2026-07-08T11:56:29+00:00",
       "date_modified": "2026-07-08T11:58:35+00:00",
       "same_model_listings": [],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "110-230-vac-feedthru-filter-ri-4195",
@@ -5030,7 +5614,8 @@
       "date_published": "2026-07-08T11:38:50+00:00",
       "date_modified": "2026-07-08T11:53:17+00:00",
       "same_model_listings": [],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "dual-usb-2-0-feedthru-filter-ri-4184",
@@ -5070,7 +5655,8 @@
       "same_model_listings": [
         "feedthrough-filter-ri-4184"
       ],
-      "primary_listing": "feedthrough-filter-ri-4184"
+      "primary_listing": "feedthrough-filter-ri-4184",
+      "configurator": null
     },
     {
       "id": "feedthrough-filter-ri-4197",
@@ -5114,7 +5700,8 @@
       "same_model_listings": [
         "ri-4197"
       ],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "filtered-terminal-block-ri-4198",
@@ -5156,7 +5743,8 @@
       "same_model_listings": [
         "ri-4198"
       ],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "hdmi-feedthru-filter-ri-4193",
@@ -5196,7 +5784,8 @@
       "same_model_listings": [
         "feedthrough-filter-ri-4193"
       ],
-      "primary_listing": "feedthrough-filter-ri-4193"
+      "primary_listing": "feedthrough-filter-ri-4193",
+      "configurator": null
     },
     {
       "id": "lan-1-gbps-feedthru-filter-ri-4182",
@@ -5236,7 +5825,8 @@
       "same_model_listings": [
         "feedthrough-filter-ri-4182"
       ],
-      "primary_listing": "feedthrough-filter-ri-4182"
+      "primary_listing": "feedthrough-filter-ri-4182",
+      "configurator": null
     },
     {
       "id": "lan-10-gbps-feedthru-filter-ri-4194",
@@ -5276,7 +5866,8 @@
       "same_model_listings": [
         "feedthrough-filter-ri-4194"
       ],
-      "primary_listing": "feedthrough-filter-ri-4194"
+      "primary_listing": "feedthrough-filter-ri-4194",
+      "configurator": null
     },
     {
       "id": "optical-fiber-feedthrough-ri-4196",
@@ -5351,7 +5942,8 @@
       "same_model_listings": [
         "optical-fiber-feedthru-ri-4196"
       ],
-      "primary_listing": "optical-fiber-feedthru-ri-4196"
+      "primary_listing": "optical-fiber-feedthru-ri-4196",
+      "configurator": null
     },
     {
       "id": "ri-4170",
@@ -5391,7 +5983,8 @@
       "same_model_listings": [
         "feedthrough-filter-ri-4170"
       ],
-      "primary_listing": "feedthrough-filter-ri-4170"
+      "primary_listing": "feedthrough-filter-ri-4170",
+      "configurator": null
     },
     {
       "id": "ri-4205-110-230-vac-feedthru-filter",
@@ -5431,7 +6024,8 @@
       "same_model_listings": [
         "feedthrough-filter-ri-4205"
       ],
-      "primary_listing": "feedthrough-filter-ri-4205"
+      "primary_listing": "feedthrough-filter-ri-4205",
+      "configurator": null
     },
     {
       "id": "usb-3-0-feedthru-filter-ri-4192",
@@ -5471,7 +6065,8 @@
       "same_model_listings": [
         "feedthrough-filter-ri-4192"
       ],
-      "primary_listing": "feedthrough-filter-ri-4192"
+      "primary_listing": "feedthrough-filter-ri-4192",
+      "configurator": null
     },
     {
       "id": "usb-3-2-c-20-gbps-feedthru-filter-ri-4199",
@@ -5511,7 +6106,8 @@
       "same_model_listings": [
         "feedthrough-filter-ri-4199"
       ],
-      "primary_listing": "feedthrough-filter-ri-4199"
+      "primary_listing": "feedthrough-filter-ri-4199",
+      "configurator": null
     },
     {
       "id": "frequency-extension-box-ri-4270",
@@ -5549,7 +6145,8 @@
       "date_published": "2026-07-08T11:56:28+00:00",
       "date_modified": "2026-07-08T11:58:07+00:00",
       "same_model_listings": [],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "frequency-extension-box-ri-4271",
@@ -5587,7 +6184,8 @@
       "date_published": "2026-07-08T11:56:28+00:00",
       "date_modified": "2026-07-08T11:58:07+00:00",
       "same_model_listings": [],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "frequency-extension-box-ri-4272",
@@ -5625,7 +6223,8 @@
       "date_published": "2026-07-08T11:56:28+00:00",
       "date_modified": "2026-07-08T11:58:07+00:00",
       "same_model_listings": [],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "frequency-extension-box-ri-4273",
@@ -5663,7 +6262,8 @@
       "date_published": "2026-07-08T11:56:28+00:00",
       "date_modified": "2026-07-08T11:58:08+00:00",
       "same_model_listings": [],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "frequency-extension-box-ri-4274",
@@ -5701,7 +6301,8 @@
       "date_published": "2026-07-08T11:56:28+00:00",
       "date_modified": "2026-07-08T11:58:08+00:00",
       "same_model_listings": [],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "frequency-extension-box-ri-4276",
@@ -5739,7 +6340,8 @@
       "date_published": "2026-07-08T11:56:28+00:00",
       "date_modified": "2026-07-08T11:58:09+00:00",
       "same_model_listings": [],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "frequency-extension-box-ri-4278",
@@ -5784,7 +6386,8 @@
       "date_published": "2026-07-08T11:56:28+00:00",
       "date_modified": "2026-07-09T10:09:07+00:00",
       "same_model_listings": [],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "mounting-brackets-ri-3041-07",
@@ -5824,7 +6427,8 @@
       "date_published": "2026-07-08T11:55:58+00:00",
       "date_modified": "2026-07-08T11:58:02+00:00",
       "same_model_listings": [],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "mounting-brackets-ri-3101-16",
@@ -5864,7 +6468,8 @@
       "date_published": "2026-07-08T11:55:58+00:00",
       "date_modified": "2026-07-08T11:58:02+00:00",
       "same_model_listings": [],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "option-rf-absorption-foam-inside-box",
@@ -5902,7 +6507,8 @@
       "date_published": "2026-07-08T11:55:58+00:00",
       "date_modified": "2026-07-08T11:57:38+00:00",
       "same_model_listings": [],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "rf-absorption-foam-inside-box",
@@ -5940,7 +6546,8 @@
       "date_published": "2026-07-08T11:56:27+00:00",
       "date_modified": "2026-07-08T11:58:04+00:00",
       "same_model_listings": [],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "ri-181-11-internal-shielding-wall",
@@ -5978,7 +6585,8 @@
       "date_published": "2026-07-08T11:56:28+00:00",
       "date_modified": "2026-08-11T06:37:28+00:00",
       "same_model_listings": [],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "ri-4197",
@@ -6018,7 +6626,8 @@
       "same_model_listings": [
         "feedthrough-filter-ri-4197"
       ],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "ri-4198",
@@ -6058,7 +6667,8 @@
       "same_model_listings": [
         "filtered-terminal-block-ri-4198"
       ],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "ri181-13-dc-feedthru-emi-filter",
@@ -6096,7 +6706,8 @@
       "date_published": "2026-07-08T11:55:58+00:00",
       "date_modified": "2026-08-11T06:35:54+00:00",
       "same_model_listings": [],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "ri181-14-smaf-smaf-bulkhead-connector",
@@ -6136,7 +6747,8 @@
       "same_model_listings": [
         "smaf-bulkhead-connector-ri-181-14"
       ],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "ri181-15-rf-absorption-foam-inside-box-2u",
@@ -6174,7 +6786,8 @@
       "date_published": "2026-07-08T11:56:27+00:00",
       "date_modified": "2026-09-11T05:50:16+00:00",
       "same_model_listings": [],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "ri187-15-rf-absorption-foam-inside-box-4u",
@@ -6212,7 +6825,8 @@
       "date_published": "2026-07-08T11:56:27+00:00",
       "date_modified": "2026-09-11T05:50:52+00:00",
       "same_model_listings": [],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "ri188-15-rf-absorption-foam-inside-box-6u",
@@ -6250,7 +6864,8 @@
       "date_published": "2026-07-08T11:56:27+00:00",
       "date_modified": "2026-09-11T05:51:01+00:00",
       "same_model_listings": [],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     },
     {
       "id": "smaf-bulkhead-connector-ri-181-14",
@@ -6290,7 +6905,8 @@
       "same_model_listings": [
         "ri181-14-smaf-smaf-bulkhead-connector"
       ],
-      "primary_listing": null
+      "primary_listing": null,
+      "configurator": null
     }
   ]
 }

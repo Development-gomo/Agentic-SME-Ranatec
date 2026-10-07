@@ -103,6 +103,10 @@ for u in urls:
     pdfs = sorted({a['href'] for a in s.find_all('a', href=True) if a['href'].lower().endswith('.pdf')})
     graph = ldgraph(s)
     wp = next((g for g in graph if g.get('@type') == 'WebPage'), {})
+    config_note = None
+    mn = s.select_one('form.grouped-quote-form .product-item.main_prod .subproduct-note')
+    if mn:
+        config_note = clean(mn.get_text(' ')) or None
     accessories = []
     for it in s.select('.product-item.sub_prod'):
         t = it.select_one('.product-title')
@@ -126,6 +130,7 @@ for u in urls:
         'date_published': wp.get('datePublished'),
         'date_modified': wp.get('dateModified') or meta(s, 'article:modified_time'),
         'optional_accessories': sorted(set(accessories)),
+        'config_note': config_note,
         'hreflang': hreflangs(s),
         'noindex': bool(s.find('meta', attrs={'name': 'robots', 'content': re.compile('noindex')})),
     })

@@ -131,7 +131,7 @@ export const TOOLS = [
   { name: "search", phase: 1, method: "GET products.json, news.json, faq.json", description: "Full-text search across products (including specifications), news/articles and FAQ. Use for questions like 'which product covers 26.5 GHz?' or 'USB 3.2 feedthrough'." },
   { name: "get_faq", phase: 1, method: "GET faq.json", description: "Frequently asked questions about Ranatec and RF test equipment, with answers and source URLs." },
   { name: "list_pages", phase: 1, method: "GET pages.json", description: "ranatec.com pages (home, about, contact, solutions, news, shop, RFQ, …) with en-US, en-GB and en-CA URLs." },
-  { name: "submit_inquiry", phase: 2, method: "POST contact.json", description: "The ONLY supported way for AI agents to send a lead (quote request or enquiry) to Ranatec AB — never fill in the ranatec.com contact form (it is for humans and protected by reCAPTCHA). The lead is saved in Ranatec's lead database exactly like a website contact-form submission. Before calling, show the user exactly what will be sent (their name, email, phone, company, products/quantities, message) and get explicit confirmation. You MUST set agent_context.user_authorized_submission to true to confirm that consent was given. quote_request needs at least one product id or model number (e.g. 'RI 268')." },
+  { name: "submit_inquiry", phase: 2, method: "POST contact.json", description: "The ONLY supported way for AI agents to send a lead (quote request or enquiry) to Ranatec AB — never fill in the ranatec.com contact form (it is for humans and protected by reCAPTCHA). The lead is saved in Ranatec's lead database exactly like a website contact-form submission. Before calling, show the user exactly what will be sent (their name, email, phone, company, products/quantities, message) and get explicit confirmation. You MUST set agent_context.user_authorized_submission to true to confirm that consent was given. quote_request needs at least one product id or model number (e.g. 'RI 268'). Configurable products (shield boxes, forensic box, band reject filters, Butler matrices) accept a per-unit 'configuration' of options listed in get_product → configurator, exactly like 'Configure and Add to RFQ' on the product page." },
 ] as const;
 
 const desc = (n: (typeof TOOLS)[number]["name"]) => TOOLS.find((t) => t.name === n)!.description;
@@ -265,7 +265,14 @@ function buildServer(clientIp = ""): McpServer {
       inquiry: z.object({
         type: z.enum(["quote_request", "technical_question", "custom_solution", "distributor_inquiry", "general"]),
         message: z.string().min(10).max(5000),
-        products: z.array(z.object({ id: z.string().describe("Product id from list_products/get_product"), quantity: z.number().int().min(1).max(10000).default(1) })).max(50).optional(),
+        products: z.array(z.object({
+          id: z.string().describe("Product id or model number, e.g. 'RI 181'"),
+          quantity: z.number().int().min(1).max(10000).default(1),
+          configuration: z.array(z.object({
+            id: z.string().describe("Option id or model number from the product's configurator (get_product → configurator.options), e.g. 'RI 4182'"),
+            quantity: z.number().int().min(0).max(100).describe("Quantity PER UNIT of the main product"),
+          })).max(30).optional().describe("Per-unit configuration, like 'Configure and Add to RFQ' on the product page. Different configurations = separate product lines."),
+        })).max(50).optional(),
         application: z.string().max(300).optional(),
         timeline: z.string().max(120).optional(),
         preferred_locale: z.enum(["en-US", "en-GB", "en-CA"]).optional(),
@@ -282,6 +289,15 @@ function buildServer(clientIp = ""): McpServer {
         const p = findProduct(list, line.id);
         if (!p) return fail(`Unknown product '${line.id}'. Use list_products or search to find ids.`);
         line.id = p.id;
+        if (line.configuration?.length) {
+          const opts = ((p as { configurator?: { options?: Array<{ id: string; model_number: string | null }> } }).configurator?.options) ?? [];
+          if (!opts.length) return fail(`${p.name} has no configurable options.`);
+          for (const c of line.configuration) {
+            const o = opts.find((x) => x.id === c.id) ?? opts.find((x) => modelKey(x.model_number) === modelKey(c.id));
+            if (!o) return fail(`'${c.id}' is not an option of ${p.name}. Options: ${opts.map((x) => x.model_number ?? x.id).join(", ")}`);
+            c.id = o.id;
+          }
+        }
       }
     }
     const res = await fetchWithTimeout(`${API_BASE}/contact.json`, {

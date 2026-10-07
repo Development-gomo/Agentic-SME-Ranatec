@@ -83,7 +83,7 @@ Specifications:
 | Filter bandwidth [MHz] | 20 |
 | Filter slopes [MHz] | 10 |
 
-Optional accessories: Frequency Extension Box RI 4270
+Configurator (per-unit options for a quote; submit_inquiry products[].configuration): Frequency Extension Box RI 4270 [frequency-extension-box-ri-4270]
 
 Datasheet: https://ranatec.com/wp-content/uploads/2026/07/RI-260-Datasheet-rev.-M.pdf
 
@@ -127,7 +127,7 @@ Specifications:
 | Filter bandwidth [MHz] | 20 |
 | Filter slopes [MHz] | 10 |
 
-Optional accessories: Frequency Extension Box RI 4271
+Configurator (per-unit options for a quote; submit_inquiry products[].configuration): Frequency Extension Box RI 4271 [frequency-extension-box-ri-4271]
 
 Datasheet: https://ranatec.com/wp-content/uploads/2026/07/RI-261-Datasheet-rev.-D-1.pdf
 
@@ -163,7 +163,7 @@ Specifications:
 | Filter bandwidth [MHz] | 100 |
 | Filter slopes [MHz] | 10 |
 
-Optional accessories: Frequency Extension Box RI 4272
+Configurator (per-unit options for a quote; submit_inquiry products[].configuration): Frequency Extension Box RI 4272 [frequency-extension-box-ri-4272]
 
 Datasheet: https://ranatec.com/wp-content/uploads/2026/07/RI-262-Product-Description-rev.-C.pdf
 
@@ -207,7 +207,7 @@ Specifications:
 | Filter bandwidth [MHz] | 100 |
 | Filter slopes [MHz] | 10 |
 
-Optional accessories: Frequency Extension Box RI 4273
+Configurator (per-unit options for a quote; submit_inquiry products[].configuration): Frequency Extension Box RI 4273 [frequency-extension-box-ri-4273]
 
 Datasheet: https://ranatec.com/wp-content/uploads/2026/07/RI-263-Datasheet-rev.-D-1.pdf
 
@@ -241,7 +241,7 @@ Specifications:
 | filter bandwidth [MHz] | 5 |
 | filter slopes [MHz] | 1.4 |
 
-Optional accessories: Frequency Extension Box RI 4274
+Configurator (per-unit options for a quote; submit_inquiry products[].configuration): Frequency Extension Box RI 4274 [frequency-extension-box-ri-4274]
 
 #### Tunable Band Reject Filter RI 266
 URL: https://ranatec.com/product/tunable-band-reject-filter-ri-266/ (en-GB: https://ranatec.com/en-gb/product/tunable-band-reject-filter-ri-266/, en-CA: https://ranatec.com/en-ca/product/tunable-band-reject-filter-ri-266/)
@@ -283,7 +283,7 @@ Specifications:
 | Filter bandwidth [MHz] | 5, 100 |
 | Filter slopes [MHz] | 10 |
 
-Optional accessories: Frequency Extension Box RI 4276
+Configurator (per-unit options for a quote; submit_inquiry products[].configuration): Frequency Extension Box RI 4276 [frequency-extension-box-ri-4276]
 
 Datasheet: https://ranatec.com/wp-content/uploads/2026/07/RI-266-Datasheet-rev.-B.pdf, https://ranatec.com/wp-content/uploads/2026/07/RI-266-Product-Description-rev.-J.pdf
 
@@ -327,7 +327,7 @@ Specifications:
 | Filter bandwidth [MHz] | 5 / 160 |
 | Filter slopes [MHz] | 3 / 10 |
 
-Optional accessories: Frequency Extension Box RI 4278
+Configurator (per-unit options for a quote; submit_inquiry products[].configuration): Frequency Extension Box RI 4278 [frequency-extension-box-ri-4278]
 
 Datasheet: https://ranatec.com/wp-content/uploads/2026/07/RI-268-Datasheet-rev.-A.pdf
 
@@ -489,7 +489,7 @@ Specifications:
 | Dimensions (WxLxT) | 138x131x19 mm |
 | Mass | 0.25 kg |
 
-Optional accessories: Mounting brackets RI 3041-07
+Configurator (per-unit options for a quote; submit_inquiry products[].configuration): Mounting brackets RI 3041-07 [mounting-brackets-ri-3041-07]
 
 Datasheet: https://ranatec.com/wp-content/uploads/2026/07/Datasheet-RI-3041-rev.-A.pdf
 
@@ -540,7 +540,7 @@ Specifications:
 | Dimensions (WxLxT) | 138x131x19 mm |
 | Mass | 0.78 kg |
 
-Optional accessories: Mounting brackets RI 3101-16
+Configurator (per-unit options for a quote; submit_inquiry products[].configuration): Mounting brackets RI 3101-16 [mounting-brackets-ri-3101-16]
 
 Datasheet: https://ranatec.com/wp-content/uploads/2026/07/Datasheet-RI-3101-rev.-E.pdf
 
@@ -1448,7 +1448,7 @@ Specifications:
 | Outer dimensions | 490 x 490 x 88 mm |
 | Weight (standard config) | 8.5 kg |
 
-Optional accessories: Feedthrough Filter RI 4182, Feedthrough Filter RI 4184, Feedthrough Filter RI 4185, Feedthrough Filter RI 4192, Feedthrough Filter RI 4193, Feedthrough Filter RI 4194, Feedthrough Filter RI 4199, Feedthrough Filter RI 4201, Feedthrough Filter RI 4205, Optical Fiber Feedthrough RI 4196, RI181-13 DC Feedthru EMI Filter, RI181-14 SMA(f)-SMA(f) Bulkhead Connector, RI181-15 RF Absorption foam inside box (2U)
+Configurator (per-unit options for a quote; submit_inquiry products[].configuration): Feedthrough Filter RI 4182 [feedthrough-filter-ri-4182], Feedthrough Filter RI 4184 [feedthrough-filter-ri-4184], Feedthrough Filter RI 4185 [feedthrough-filter-ri-4185], Feedthrough Filter RI 4192 [feedthrough-filter-ri-4192], Feedthrough Filter RI 4193 [feedthrough-filter-ri-4193], Feedthrough Filter RI 4194 [feedthrough-filter-ri-4194], Feedthrough Filter RI 4199 [feedthrough-filter-ri-4199], Feedthrough Filter RI 4201 [feedthrough-filter-ri-4201], Feedthrough Filter RI 4205 [feedthrough-filter-ri-4205], Optical Fiber Feedthrough RI 4196 [optical-fiber-feedthrough-ri-4196], RI181-13 DC Feedthru EMI Filter [ri181-13-dc-feedthru-emi-filter], RI181-14 SMA(f)-SMA(f) Bulkhead Connector [ri181-14-smaf-smaf-bulkhead-connector], RI181-15 RF Absorption foam inside box (2U) [ri181-15-rf-absorption-foam-inside-box-2u]
 
 Datasheet: https://ranatec.com/wp-content/uploads/2026/07/Datasheet-RI-181-rev.-K.pdf
 
@@ -1501,7 +1501,7 @@ Specifications:
 | Weight (standard) | 12 kg |
 | Material | Stainless steel/Al |
 
-Optional accessories: Feedthrough Filter RI 4182, Feedthrough Filter RI 4184, Feedthrough Filter RI 4185, Feedthrough Filter RI 4192, Feedthrough Filter RI 4193, Feedthrough Filter RI 4194, Feedthrough Filter RI 4199, Feedthrough Filter RI 4201, Feedthrough Filter RI 4205, Optical Fiber Feedthrough RI 4196, RI181-13 DC Feedthru EMI Filter, RI181-14 SMA(f)-SMA(f) Bulkhead Connector, RI187-15 RF Absorption foam inside box (4U)
+Configurator (per-unit options for a quote; submit_inquiry products[].configuration): Feedthrough Filter RI 4182 [feedthrough-filter-ri-4182], Feedthrough Filter RI 4184 [feedthrough-filter-ri-4184], Feedthrough Filter RI 4185 [feedthrough-filter-ri-4185], Feedthrough Filter RI 4192 [feedthrough-filter-ri-4192], Feedthrough Filter RI 4193 [feedthrough-filter-ri-4193], Feedthrough Filter RI 4194 [feedthrough-filter-ri-4194], Feedthrough Filter RI 4199 [feedthrough-filter-ri-4199], Feedthrough Filter RI 4201 [feedthrough-filter-ri-4201], Feedthrough Filter RI 4205 [feedthrough-filter-ri-4205], Optical Fiber Feedthrough RI 4196 [optical-fiber-feedthrough-ri-4196], RI181-13 DC Feedthru EMI Filter [ri181-13-dc-feedthru-emi-filter], RI181-14 SMA(f)-SMA(f) Bulkhead Connector [ri181-14-smaf-smaf-bulkhead-connector], RI187-15 RF Absorption foam inside box (4U) [ri187-15-rf-absorption-foam-inside-box-4u]
 
 Datasheet: https://ranatec.com/wp-content/uploads/2026/07/Datasheet-RI-187-rev.-H.pdf
 
@@ -1555,7 +1555,7 @@ Specifications:
 | Weight (standard) | 13.2 kg |
 | Material | Stainless steel/Al |
 
-Optional accessories: Feedthrough Filter RI 4182, Feedthrough Filter RI 4184, Feedthrough Filter RI 4185, Feedthrough Filter RI 4192, Feedthrough Filter RI 4193, Feedthrough Filter RI 4194, Feedthrough Filter RI 4199, Feedthrough Filter RI 4201, Feedthrough Filter RI 4205, Optical Fiber Feedthrough RI 4196, RI181-13 DC Feedthru EMI Filter, RI181-14 SMA(f)-SMA(f) Bulkhead Connector, RI188-15 RF Absorption foam inside box (6U)
+Configurator (per-unit options for a quote; submit_inquiry products[].configuration): Feedthrough Filter RI 4182 [feedthrough-filter-ri-4182], Feedthrough Filter RI 4184 [feedthrough-filter-ri-4184], Feedthrough Filter RI 4185 [feedthrough-filter-ri-4185], Feedthrough Filter RI 4192 [feedthrough-filter-ri-4192], Feedthrough Filter RI 4193 [feedthrough-filter-ri-4193], Feedthrough Filter RI 4194 [feedthrough-filter-ri-4194], Feedthrough Filter RI 4199 [feedthrough-filter-ri-4199], Feedthrough Filter RI 4201 [feedthrough-filter-ri-4201], Feedthrough Filter RI 4205 [feedthrough-filter-ri-4205], Optical Fiber Feedthrough RI 4196 [optical-fiber-feedthrough-ri-4196], RI181-13 DC Feedthru EMI Filter [ri181-13-dc-feedthru-emi-filter], RI181-14 SMA(f)-SMA(f) Bulkhead Connector [ri181-14-smaf-smaf-bulkhead-connector], RI188-15 RF Absorption foam inside box (6U) [ri188-15-rf-absorption-foam-inside-box-6u]
 
 Datasheet: https://ranatec.com/wp-content/uploads/2026/07/Datasheet-RI-188-rev.-G.pdf
 
@@ -1612,7 +1612,7 @@ Specifications:
 | Weight (standard) | 32.2 kg |
 | Material | Aluminum |
 
-Optional accessories: Feedthrough Filter RI 4182, Feedthrough Filter RI 4184, Feedthrough Filter RI 4192, Feedthrough Filter RI 4193, Feedthrough Filter RI 4194, Feedthrough Filter RI 4197, Feedthrough Filter RI 4199, Feedthrough Filter RI 4201, Feedthrough Filter RI 4205, Filtered Terminal Block RI 4198, Optical Fiber Feedthrough RI 4196, RF Absorption foam inside box, RI181-13 DC Feedthru EMI Filter, RI181-14 SMA(f)-SMA(f) Bulkhead Connector
+Configurator (per-unit options for a quote; submit_inquiry products[].configuration): Feedthrough Filter RI 4182 [feedthrough-filter-ri-4182], Feedthrough Filter RI 4184 [feedthrough-filter-ri-4184], Feedthrough Filter RI 4192 [feedthrough-filter-ri-4192], Feedthrough Filter RI 4193 [feedthrough-filter-ri-4193], Feedthrough Filter RI 4194 [feedthrough-filter-ri-4194], Feedthrough Filter RI 4197 [feedthrough-filter-ri-4197], Feedthrough Filter RI 4199 [feedthrough-filter-ri-4199], Feedthrough Filter RI 4201 [feedthrough-filter-ri-4201], Feedthrough Filter RI 4205 [feedthrough-filter-ri-4205], Filtered Terminal Block RI 4198 [filtered-terminal-block-ri-4198], Optical Fiber Feedthrough RI 4196 [optical-fiber-feedthrough-ri-4196], RF Absorption foam inside box [rf-absorption-foam-inside-box], RI181-13 DC Feedthru EMI Filter [ri181-13-dc-feedthru-emi-filter], RI181-14 SMA(f)-SMA(f) Bulkhead Connector [ri181-14-smaf-smaf-bulkhead-connector]
 
 Datasheet: https://ranatec.com/wp-content/uploads/2026/07/Datasheet-RI-189-rev.-C.pdf
 
@@ -1679,7 +1679,7 @@ Specifications:
 | Weight (standard) | 9,3 kg |
 | Material | Stainless steel/Al |
 
-Optional accessories: Feedthrough Filter RI 4182, Feedthrough Filter RI 4184, Feedthrough Filter RI 4185, Feedthrough Filter RI 4192, Feedthrough Filter RI 4193, Feedthrough Filter RI 4194, Feedthrough Filter RI 4199, Feedthrough Filter RI 4201, Feedthrough Filter RI 4205, Optical Fiber Feedthrough RI 4196, RI181-13 DC Feedthru EMI Filter, RI181-14 SMA(f)-SMA(f) Bulkhead Connector, RI188-15 RF Absorption foam inside box (6U)
+Configurator (per-unit options for a quote; submit_inquiry products[].configuration): Feedthrough Filter RI 4182 [feedthrough-filter-ri-4182], Feedthrough Filter RI 4184 [feedthrough-filter-ri-4184], Feedthrough Filter RI 4185 [feedthrough-filter-ri-4185], Feedthrough Filter RI 4192 [feedthrough-filter-ri-4192], Feedthrough Filter RI 4193 [feedthrough-filter-ri-4193], Feedthrough Filter RI 4194 [feedthrough-filter-ri-4194], Feedthrough Filter RI 4199 [feedthrough-filter-ri-4199], Feedthrough Filter RI 4201 [feedthrough-filter-ri-4201], Feedthrough Filter RI 4205 [feedthrough-filter-ri-4205], Optical Fiber Feedthrough RI 4196 [optical-fiber-feedthrough-ri-4196], RI181-13 DC Feedthru EMI Filter [ri181-13-dc-feedthru-emi-filter], RI181-14 SMA(f)-SMA(f) Bulkhead Connector [ri181-14-smaf-smaf-bulkhead-connector], RI188-15 RF Absorption foam inside box (6U) [ri188-15-rf-absorption-foam-inside-box-6u]
 
 Datasheet: https://ranatec.com/wp-content/uploads/2026/07/Datasheet-RI-198-rev.-D.pdf
 

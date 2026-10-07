@@ -77,6 +77,17 @@ const sub = await client.callTool({ name: "submit_inquiry", arguments: {
 const subBody = parse(sub);
 check("submit_inquiry with consent (resolves model number)", !sub.isError && subBody.status === "received", subBody.lead_id);
 
+const cfg = await client.callTool({ name: "submit_inquiry", arguments: {
+  agent_context: { user_authorized_submission: true, agent_name: "smoke-test" },
+  person: { name: "Smoke Test", email: "smoke@example.com", phone: "+46 31 000 00 00" }, company: { name: "Example Labs" },
+  inquiry: { type: "quote_request", message: "Two RI 181 shield boxes, configured.", products: [{ id: "RI 181", quantity: 2, configuration: [{ id: "RI 4182", quantity: 2 }, { id: "RI 4205", quantity: 1 }] }] } } });
+const cfgBody = parse(cfg);
+check("submit_inquiry with per-unit configuration (RI 181 + RI 4182 ×2 + RI 4205 ×1)", !cfg.isError && cfgBody.products?.[0]?.configuration?.length === 2, JSON.stringify(cfgBody.products?.[0]?.configuration?.map((c) => `${c.quantity_per_unit}x ${c.id}`)));
+const badCfg = await client.callTool({ name: "submit_inquiry", arguments: {
+  agent_context: { user_authorized_submission: true }, person: { name: "T", email: "t@example.com", phone: "+46 31 000 00 00" }, company: { name: "X" },
+  inquiry: { type: "quote_request", message: "Invalid option test.", products: [{ id: "RI 181", quantity: 1, configuration: [{ id: "RI 3101", quantity: 1 }] }] } } });
+check("configuration rejects an option that is not on the product", badCfg.isError === true, badCfg.content[0].text.slice(0, 90).replace(/\n/g, " "));
+
 await client.close();
 console.log(failures ? `\n${failures} FAILED` : "\nALL PASSED");
 process.exit(failures ? 1 : 0);

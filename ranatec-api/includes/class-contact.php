@@ -97,7 +97,32 @@ final class Ranatec_Agent_Contact
                 $errors["inquiry.products[$i].quantity"] = 'integer 1–10000';
                 continue;
             }
-            $lines[] = ['id' => $pid, 'name' => $known[$pid]['name'], 'quantity' => $qty, 'url' => $known[$pid]['url']];
+            $line = ['id' => $pid, 'name' => $known[$pid]['name'], 'quantity' => $qty, 'url' => $known[$pid]['url']];
+            // Optional per-unit configuration, as with "Configure and Add to RFQ" on the product page.
+            if (!empty($rp['configuration']) && is_array($rp['configuration'])) {
+                $cfg = isset($known[$pid]['configurator']['options']) ? $known[$pid]['configurator']['options'] : [];
+                $allowed = [];
+                foreach ($cfg as $o) {
+                    $allowed[$o['id']] = $o['name'];
+                }
+                if (!$allowed) {
+                    $errors["inquiry.products[$i].configuration"] = "{$known[$pid]['name']} has no configurable options";
+                } else {
+                    $line['configuration'] = [];
+                    foreach (array_slice($rp['configuration'], 0, 30) as $j => $opt) {
+                        $oid = is_array($opt) && isset($opt['id']) ? sanitize_title($opt['id']) : '';
+                        $oq = is_array($opt) && isset($opt['quantity']) ? (int) $opt['quantity'] : 1;
+                        if (!isset($allowed[$oid])) {
+                            $errors["inquiry.products[$i].configuration[$j].id"] = "'{$oid}' is not an option of {$known[$pid]['name']}; allowed: " . implode(', ', array_keys($allowed));
+                        } elseif ($oq < 0 || $oq > 100) {
+                            $errors["inquiry.products[$i].configuration[$j].quantity"] = 'integer 0–100 per unit';
+                        } elseif ($oq > 0) {
+                            $line['configuration'][] = ['id' => $oid, 'name' => $allowed[$oid], 'quantity_per_unit' => $oq];
+                        }
+                    }
+                }
+            }
+            $lines[] = $line;
         }
         if ($type === 'quote_request' && !$lines && !isset($errors['inquiry.products[0].id'])) {
             $errors['inquiry.products'] = 'at least one product is required for a quote_request (use custom_solution for bespoke requirements)';
@@ -193,6 +218,12 @@ final class Ranatec_Agent_Contact
             $m[] = 'Products:';
             foreach ($l['lines'] as $p) {
                 $m[] = "- {$p['quantity']} x {$p['name']} ({$p['url']})";
+                if (!empty($p['configuration'])) {
+                    $m[] = '    each unit configured with:';
+                    foreach ($p['configuration'] as $o) {
+                        $m[] = "      {$o['quantity_per_unit']} x {$o['name']}";
+                    }
+                }
             }
         }
         $extra = array_filter([
