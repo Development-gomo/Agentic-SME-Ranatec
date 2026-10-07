@@ -398,6 +398,17 @@ final class Ranatec_Agent_Sync
             . ($acf ? '<span style="color:#008a20">tables found ✓</span>' : '<strong style="color:#b32d2e">tables not found — activate Advanced CF7 DB, otherwise leads are only emailed</strong>') . '</p>';
         echo '<p><label>Contact Form 7 form ID: <input type="number" name="cf7_form_id" min="1" value="' . esc_attr(Ranatec_Agent_Contact::cf7_form_id()) . '" class="small-text" /></label> <span class="description">(ranatec.com/contact-us/ uses form 50)</span></p>';
         echo '<p><label>Field mapping (JSON, lead field → form field):<br><textarea name="cf7_fields" rows="4" cols="70" class="code">' . esc_textarea(wp_json_encode(Ranatec_Agent_Contact::cf7_fields(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . '</textarea></label></p>';
+        if (function_exists('wc_get_order_statuses')) {
+            $cur = (string) get_option('ranatec_api_quote_status', '');
+            echo '<h3>Product quote requests</h3><p>Agent quote requests with products are created as <strong>WooCommerce orders</strong> (currently status: <code>' . esc_html(Ranatec_Agent_Contact::quote_order_status()) . '</code>). Status: <select name="quote_status"><option value="">Automatic (YITH “new quote request” if available, else Pending)</option>';
+            foreach (wc_get_order_statuses() as $k => $label) {
+                $v = substr($k, 3);
+                echo '<option value="' . esc_attr($v) . '"' . selected($cur, $v, false) . '>' . esc_html($label) . '</option>';
+            }
+            echo '</select></p>';
+        } else {
+            echo '<h3>Product quote requests</h3><p><strong>WooCommerce not active</strong> — quote requests are stored with the contact-form leads.</p>';
+        }
         echo '<p><label><input type="checkbox" name="notify_email" value="1" ' . (Ranatec_Agent_Contact::notify_enabled() ? 'checked' : '') . ' /> Also send a notification email to the recipient above</label></p>';
         submit_button('Save', 'secondary', 'submit', false);
         echo '</form></div>';
@@ -444,6 +455,9 @@ final class Ranatec_Agent_Sync
             }
         }
         update_option('ranatec_api_notify_email', empty($_POST['notify_email']) ? '0' : '1', false);
+        if (isset($_POST['quote_status'])) {
+            update_option('ranatec_api_quote_status', sanitize_key(wp_unslash($_POST['quote_status'])), false);
+        }
         if (!empty($_POST['mcp_key_clear'])) {
             delete_option(self::OPTION_MCP_KEY);
             $msg .= ' MCP server key removed.';

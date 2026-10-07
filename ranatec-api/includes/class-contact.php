@@ -148,7 +148,18 @@ final class Ranatec_Agent_Contact
         $l['summary'] = !empty($ctx['user_request_summary']) ? self::text($ctx['user_request_summary'], 500) : '';
         $l['client_ip'] = $client_ip;
 
-        $stored = self::store_advanced_cf7_db($l);          // ['ok'=>bool,'entry_id'=>int|null,'detail'=>string]
+        // Product quote requests become WooCommerce orders (how ranatec.com manages quotes / YITH Request a Quote);
+        // every other enquiry is stored with the contact-form leads in Advanced CF7 DB.
+        $order = null;
+        if ($type === 'quote_request' && $lines) {
+            $order = self::create_wc_quote_order($l);   // ['ok'=>bool,'order_id'=>int|null,'status'=>string,'detail'=>string]
+        }
+        if ($order && $order['ok']) {
+            $stored = ['ok' => true, 'entry_id' => null, 'detail' => '', 'where' => 'woocommerce'];
+        } else {
+            $stored = self::store_advanced_cf7_db($l);   // ['ok'=>bool,'entry_id'=>int|null,'detail'=>string]
+            $stored['where'] = 'advanced_cf7_db';
+        }
         $mailed = self::notify_enabled() ? self::send_email($l, $body) : null; // bool|null (null = disabled)
 
         do_action('ranatec_api_contact_received', $lead_id, $type, $body, $lines, $stored['ok'] || $mailed, ['stored' => $stored, 'mailed' => $mailed]);
@@ -161,13 +172,18 @@ final class Ranatec_Agent_Contact
             'lead_id' => $lead_id,
             'type' => $type,
             'products' => $lines,
-            'stored_in' => $stored['ok'] ? 'ranatec.com contact form leads (Advanced CF7 DB, form ' . self::cf7_form_id() . ')' : null,
-            'entry_id' => $stored['ok'] ? $stored['entry_id'] : null,
+            'stored_in' => !$stored['ok'] ? null : ($stored['where'] === 'woocommerce'
+                ? 'WooCommerce order #' . $order['order_number'] . ' (status: ' . $order['status_label'] . ')'
+                : 'ranatec.com contact form leads (Advanced CF7 DB, form ' . self::cf7_form_id() . ')'),
+            'order_id' => $stored['ok'] && $stored['where'] === 'woocommerce' ? $order['order_id'] : null,
+            'entry_id' => $stored['ok'] && $stored['where'] === 'advanced_cf7_db' ? $stored['entry_id'] : null,
             'notification_email' => $mailed === null ? 'disabled' : ($mailed ? 'sent' : 'failed'),
             'message' => 'Thank you — your ' . strtolower($labels[$type]) . ' has been submitted to Ranatec AB.',
             'next_step' => 'Ranatec will reply to ' . $email . '. For urgent matters call +46 31 706 16 60 or email info@ranatec.com.',
         ];
-        if (!$stored['ok']) {
+        if ($order && !$order['ok'] && $stored['ok']) {
+            $out['note'] = 'Could not create a WooCommerce order (' . $order['detail'] . '); saved with the contact-form leads instead.';
+        } elseif (!$stored['ok']) {
             $out['note'] = 'Not stored in the lead database (' . $stored['detail'] . '); delivered by email.';
         }
         return [200, $out];
@@ -294,6 +310,110 @@ final class Ranatec_Agent_Contact
         }
         do_action('vsz_cf7_after_insert_db', $contact_form, $form_id, $data_id);
         return ['ok' => true, 'entry_id' => $data_id, 'detail' => ''];
+    }
+
+    /** Order status for agent quote orders: setting, else YITH "new quote request" if registered, else pending. */
+    public static function quote_order_status()
+    {
+        $statuses = function_exists('wc_get_order_statuses') ? wc_get_order_statuses() : [];
+        $opt = (string) get_option('ranatec_api_quote_status', '');
+        if ($opt !== '' && isset($statuses['wc-' . $opt])) {
+            return $opt;
+        }
+        return isset($statuses['wc-ywraq-new']) ? 'ywraq-new' : 'pending';
+    }
+
+    private static function wc_product_by_slug($slug)
+    {
+        $post = get_page_by_path($slug, OBJECT, 'product');
+        return $post ? wc_get_product($post->ID) : null;
+    }
+
+    /**
+     * Creates a WooCommerce order for a product quote request, like the site's Request a Quote flow:
+     * billing = customer, one line per product (configured options as their own lines with a note),
+     * customer note = message, private note = AI-agent origin + lead id. Prices stay as set in WooCommerce;
+     * Ranatec prices the quote in the order as usual.
+     */
+    private static function create_wc_quote_order(array $l)
+    {
+        $res = ['ok' => false, 'order_id' => null, 'order_number' => null, 'status' => '', 'status_label' => '', 'detail' => ''];
+        if (!function_exists('wc_create_order') || !function_exists('wc_get_product')) {
+            $res['detail'] = 'WooCommerce not active';
+            return $res;
+        }
+        // Resolve every product first, so a missing product never leaves a half-built order.
+        $items = [];
+        foreach ($l['lines'] as $line) {
+            $product = self::wc_product_by_slug($line['id']);
+            if (!$product) {
+                $res['detail'] = "product '{$line['id']}' not found in WooCommerce";
+                return $res;
+            }
+            $opts = [];
+            foreach (isset($line['configuration']) ? $line['configuration'] : [] as $o) {
+                $op = self::wc_product_by_slug($o['id']);
+                if (!$op) {
+                    $res['detail'] = "option '{$o['id']}' not found in WooCommerce";
+                    return $res;
+                }
+                $opts[] = [$op, $o];
+            }
+            $items[] = [$product, $line, $opts];
+        }
+        try {
+            $status = self::quote_order_status();
+            $order = wc_create_order(['created_via' => 'ranatec-agent-api', 'status' => $status]);
+            if (is_wp_error($order)) {
+                $res['detail'] = $order->get_error_message();
+                return $res;
+            }
+            $parts = preg_split('/\s+/', trim($l['name']), 2);
+            $order->set_billing_first_name($parts[0]);
+            $order->set_billing_last_name(isset($parts[1]) ? $parts[1] : '');
+            $order->set_billing_email($l['email']);
+            $order->set_billing_phone($l['phone']);
+            $order->set_billing_company($l['cname']);
+            if ($l['country'] && function_exists('WC') && WC()->countries) {
+                foreach (WC()->countries->get_countries() as $code => $label) {
+                    if (strcasecmp($label, $l['country']) === 0 || strcasecmp($code, $l['country']) === 0) {
+                        $order->set_billing_country($code);
+                        break;
+                    }
+                }
+            }
+            foreach ($items as $it) {
+                list($product, $line, $opts) = $it;
+                $item_id = $order->add_product($product, $line['quantity']);
+                if ($opts && $item_id) {
+                    $desc = [];
+                    foreach ($opts as $po) {
+                        $desc[] = $po[1]['quantity_per_unit'] . ' x ' . $po[1]['name'];
+                    }
+                    wc_add_order_item_meta($item_id, 'Configuration (per unit)', implode(', ', $desc));
+                }
+                foreach ($opts as $po) {
+                    list($op, $o) = $po;
+                    $oid = $order->add_product($op, $o['quantity_per_unit'] * $line['quantity']);
+                    if ($oid) {
+                        wc_add_order_item_meta($oid, 'Configured for', $line['quantity'] . ' x ' . $line['name'] . ' (' . $o['quantity_per_unit'] . ' per unit)');
+                    }
+                }
+            }
+            $order->set_customer_note(self::compose_message($l));
+            $order->update_meta_data('_ranatec_agent_lead_id', $l['lead_id']);
+            $order->update_meta_data('_ranatec_agent_name', $l['agent']);
+            $order->calculate_totals(false);
+            $order->save();
+            $order->add_order_note('Quote request created by AI agent "' . $l['agent'] . '" via the Ranatec MCP tool submit_inquiry, on behalf of the customer with their explicit consent. Lead ID: ' . $l['lead_id'] . '.');
+            do_action('ranatec_api_quote_order_created', $order->get_id(), $l);
+            $labels = wc_get_order_statuses();
+            $res = ['ok' => true, 'order_id' => $order->get_id(), 'order_number' => $order->get_order_number(), 'status' => $order->get_status(),
+                    'status_label' => isset($labels['wc-' . $order->get_status()]) ? $labels['wc-' . $order->get_status()] : $order->get_status(), 'detail' => ''];
+        } catch (Throwable $e) {
+            $res['detail'] = $e->getMessage();
+        }
+        return $res;
     }
 
     /** Notification email (can be switched off in Tools → Ranatec Agent API). */
