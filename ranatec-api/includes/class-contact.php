@@ -129,8 +129,33 @@ final class Ranatec_Agent_Contact
         if ($type === 'quote_request' && !$lines && !isset($errors['inquiry.products[0].id'])) {
             $errors['inquiry.products'] = 'at least one product is required for a quote_request (use custom_solution for bespoke requirements)';
         }
+        // ---- guard against test / sample submissions (e.g. an agent "trying out" the endpoint while reviewing the site) ----
+        $dry_run = isset($ctx['dry_run']) && $ctx['dry_run'] === true;
+        $raw_values = json_encode([isset($body['person']) ? $body['person'] : null, isset($body['company']) ? $body['company'] : null, isset($body['inquiry']) ? $body['inquiry'] : null]);
+        if (preg_match('/<[a-z][^<>]{0,60}>/i', (string) $raw_values)) {
+            $errors['placeholders'] = 'template placeholders such as <full name> were not replaced';
+        }
+        if ($email && preg_match('/@([a-z0-9-]+\.)*(example\.(com|org|net)|[a-z0-9-]+\.(test|invalid|example|localhost))$/i', $email)) {
+            $errors['person.email'] = 'example/test addresses are not accepted — real submissions need the user\'s real email (to test the endpoint, set agent_context.dry_run = true)';
+        }
+        $user_request = isset($ctx['user_request_summary']) ? self::text($ctx['user_request_summary'], 500) : '';
+        if (!$dry_run && Ranatec_Agent_API::str_len($user_request) < 10) {
+            $errors['agent_context.user_request_summary'] = 'required: describe what the user asked you to send to Ranatec (min 10 characters). Only submit when the user explicitly asked to contact Ranatec or request a quote — reviewing or testing the website is not a reason to submit; use agent_context.dry_run = true to test.';
+        }
         if ($errors) {
             return [400, self::err('validation_failed', 'One or more fields are invalid.', $errors)];
+        }
+
+        // ---- dry run: everything validated, nothing stored or sent ----
+        if ($dry_run) {
+            return [200, [
+                'status' => 'valid',
+                'submitted' => false,
+                'dry_run' => true,
+                'type' => $type,
+                'products' => $lines,
+                'message' => 'Dry run: the request is valid. NOTHING was stored or sent to Ranatec. To submit for real, the user must explicitly ask you to contact Ranatec; then call again without dry_run and with agent_context.user_request_summary.',
+            ]];
         }
 
         // ---- rate limit ----

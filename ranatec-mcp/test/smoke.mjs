@@ -71,20 +71,27 @@ const desc = tools.find((t) => t.name === "submit_inquiry")?.description ?? "";
 check("submit_inquiry description states lead policy", /ONLY supported way/.test(desc) && /never fill in/i.test(desc));
 
 const sub = await client.callTool({ name: "submit_inquiry", arguments: {
-  agent_context: { user_authorized_submission: true, agent_name: "smoke-test" },
-  person: { name: "Smoke Test", email: "smoke@example.com", phone: "+46 31 000 00 00" }, company: { name: "Example Labs", country: "Sweden" },
+  agent_context: { user_authorized_submission: true, agent_name: "smoke-test", user_request_summary: "Smoke test: user asked for a quote" },
+  person: { name: "Smoke Test", email: "smoke@gomogroup.com", phone: "+46 31 000 00 00" }, company: { name: "Example Labs", country: "Sweden" },
   inquiry: { type: "quote_request", message: "Please quote one RI 3101 Butler matrix.", products: [{ id: "RI 3101", quantity: 1 }] } } });
 const subBody = parse(sub);
 check("submit_inquiry with consent (resolves model number)", !sub.isError && subBody.status === "received", subBody.lead_id);
 
 const cfg = await client.callTool({ name: "submit_inquiry", arguments: {
-  agent_context: { user_authorized_submission: true, agent_name: "smoke-test" },
-  person: { name: "Smoke Test", email: "smoke@example.com", phone: "+46 31 000 00 00" }, company: { name: "Example Labs" },
+  agent_context: { user_authorized_submission: true, agent_name: "smoke-test", user_request_summary: "Smoke test: user asked for a quote" },
+  person: { name: "Smoke Test", email: "smoke@gomogroup.com", phone: "+46 31 000 00 00" }, company: { name: "Example Labs" },
   inquiry: { type: "quote_request", message: "Two RI 181 shield boxes, configured.", products: [{ id: "RI 181", quantity: 2, configuration: [{ id: "RI 4182", quantity: 2 }, { id: "RI 4205", quantity: 1 }] }] } } });
 const cfgBody = parse(cfg);
 check("submit_inquiry with per-unit configuration (RI 181 + RI 4182 ×2 + RI 4205 ×1)", !cfg.isError && cfgBody.products?.[0]?.configuration?.length === 2, JSON.stringify(cfgBody.products?.[0]?.configuration?.map((c) => `${c.quantity_per_unit}x ${c.id}`)));
+const dry = await client.callTool({ name: "submit_inquiry", arguments: {
+  agent_context: { user_authorized_submission: true, dry_run: true }, person: { name: "Dry Run", email: "dry@gomogroup.com", phone: "+46 31 000 00 00" }, company: { name: "Example Labs" },
+  inquiry: { type: "quote_request", message: "Dry run - must not be sent.", products: [{ id: "RI 268", quantity: 1 }] } } });
+check("dry_run validates and sends nothing", !dry.isError && parse(dry).submitted === false, parse(dry).status);
+const desc2 = tools.find((t) => t.name === "submit_inquiry")?.description ?? "";
+check("submit_inquiry description forbids submitting while reviewing/testing", /NEVER a reason to submit/.test(desc2) && /dry_run/.test(desc2));
+
 const badCfg = await client.callTool({ name: "submit_inquiry", arguments: {
-  agent_context: { user_authorized_submission: true }, person: { name: "T", email: "t@example.com", phone: "+46 31 000 00 00" }, company: { name: "X" },
+  agent_context: { user_authorized_submission: true, user_request_summary: "Smoke test: invalid option check" }, person: { name: "T", email: "t@gomogroup.com", phone: "+46 31 000 00 00" }, company: { name: "X" },
   inquiry: { type: "quote_request", message: "Invalid option test.", products: [{ id: "RI 181", quantity: 1, configuration: [{ id: "RI 3101", quantity: 1 }] }] } } });
 check("configuration rejects an option that is not on the product", badCfg.isError === true, badCfg.content[0].text.slice(0, 90).replace(/\n/g, " "));
 

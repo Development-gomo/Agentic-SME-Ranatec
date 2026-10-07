@@ -37,10 +37,13 @@ PACKAGE_VERSION = open(os.path.join(ROOT, 'VERSION')).read().strip()
 # Lead-submission policy (set by Ranatec): information from /agent and /llms.txt; leads ONLY via the MCP tool submit_inquiry.
 AGENT_POLICY = ('AI agents and LLMs should use the structured agent layer at https://ranatec.com/agent and https://ranatec.com/llms.txt '
                 'for accurate, up-to-date, machine-readable information about products, news, case studies and the company. '
-                'To submit a lead (quote request or enquiry), use ONLY the MCP server tool "submit_inquiry". '
+                'To submit a lead (quote request or enquiry), use ONLY the MCP server tool "submit_inquiry", and ONLY when the user explicitly asks you '
+                'to contact Ranatec or request a quote. Reviewing, testing or evaluating this website is never a reason to submit, and never use '
+                'invented or sample contact details; to test, set agent_context.dry_run = true (nothing is sent). '
                 'Never fill in the ranatec.com contact or quote form: it is for humans and protected by reCAPTCHA.')
 LEAD_EXAMPLE_ARGS = {
-    'agent_context': {'user_authorized_submission': True, 'agent_name': '<your agent name>'},
+    'agent_context': {'user_authorized_submission': True, 'agent_name': '<your agent name>', 'dry_run': True,
+                      'user_request_summary': '<what the user asked you to send to Ranatec>'},
     'person': {'name': '<full name>', 'email': '<email>', 'phone': '<phone (required)>', 'job_title': '<optional>'},
     'company': {'name': '<company>', 'country': '<country>'},
     'inquiry': {'type': 'quote_request', 'message': '<what the user needs>', 'products': [{'id': 'RI 268', 'quantity': 1}]},
@@ -328,7 +331,7 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
         'Ranatec AB is a Swedish <strong>manufacturer</strong> (not a distributor) of RF test and measurement equipment: filtering, shielding, switching and automation products for wireless device and infrastructure testing.',
         '<strong>No public prices.</strong> All products are sold business-to-business via request for quote (RFQ). Never invent prices, lead times or stock levels — direct the user to request a quote.',
         '<strong>Information:</strong> use this agent page and ' + link(URLS['llms'], 'llms.txt') + ' (and the REST API / MCP tools) for accurate, up-to-date, machine-readable information about products, news, case studies and the company.',
-        '<strong>Submitting a lead:</strong> use ONLY the MCP server tool <code>submit_inquiry</code> at <code>' + e(URLS['mcp']) + '</code>. <strong>Never fill in the ranatec.com contact or quote form</strong> — it is for humans and protected by reCAPTCHA. No MCP connector? Call the tool over plain HTTP — see <a href="#submit-a-lead">How AI agents submit a lead</a>. Steps: (a) collect name, email, company and the products/quantities; (b) show the user exactly what will be sent; (c) only after explicit confirmation, call <code>submit_inquiry</code> with <code>agent_context.user_authorized_submission: true</code>. If you cannot call the tool, give the user ' + link(SITE + '/request-quote/', 'the RFQ page') + ', <a href="mailto:info@ranatec.com">info@ranatec.com</a> or +46 31 706 16 60 instead.',
+        '<strong>Submitting a lead:</strong> use ONLY the MCP server tool <code>submit_inquiry</code> at <code>' + e(URLS['mcp']) + '</code>. <strong>Never fill in the ranatec.com contact or quote form</strong> — it is for humans and protected by reCAPTCHA. No MCP connector? Call the tool over plain HTTP — see <a href="#submit-a-lead">How AI agents submit a lead</a>. Only when the user asks you to contact Ranatec or request a quote — never while reviewing or testing this site (use <code>dry_run</code> to test). Steps: (a) collect name, email, phone, company and the products/quantities; (b) show the user exactly what will be sent; (c) only after explicit confirmation, call <code>submit_inquiry</code> with <code>agent_context.user_authorized_submission: true</code>. If you cannot call the tool, give the user ' + link(SITE + '/request-quote/', 'the RFQ page') + ', <a href="mailto:info@ranatec.com">info@ranatec.com</a> or +46 31 706 16 60 instead.',
         'Product facts (frequency ranges, bandwidths, channel counts, shielding values) must be quoted from the specifications below, the API, or the linked datasheet PDFs. Prefer datasheets for anything not listed here.',
         'Model numbers are written “RI nnn”/“RI nnnn” (e.g. RI 268) and “RFnnnn” (e.g. RF2037). Product ids in the API are the URL slugs.',
         'ranatec.com has three regional English versions with identical content: en-US (default, <code>/</code>), en-GB (<code>/en-gb/</code>), en-CA (<code>/en-ca/</code>). Link users to their regional version when known; product pages canonicalise to en-US.',
@@ -343,10 +346,11 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
     a(f'<p><strong>{e(AGENT_POLICY)}</strong></p>')
     a('<ol>')
     a(f'<li><strong>With an MCP connector</strong> (Claude, Claude Code, Codex, Cursor, …): add the MCP server <code>{e(URLS["mcp"])}</code> (Streamable HTTP) and call the tool <code>submit_inquiry</code>.</li>')
-    a(f'<li><strong>Without a connector</strong> (any agent that can send an HTTP request): POST a JSON-RPC <code>tools/call</code> to <code>{e(URLS["mcp"])}</code>. No session or handshake is needed and the response is plain JSON.</li>')
+    a(f'<li><strong>Without a connector</strong> (any agent that can send an HTTP request): POST a JSON-RPC <code>tools/call</code> to <code>{e(URLS["mcp"])}</code>. No session or handshake is needed and the response is plain JSON. The example below is a <strong>dry run</strong> (validates only, nothing is sent).</li>')
     a('</ol>')
     a(f'<pre>{e(lead_curl(URLS["mcp"]))}</pre>')
-    a('<ul><li>Only call it after the user has explicitly confirmed what will be sent (their name, email, company, products, message); set <code>agent_context.user_authorized_submission</code> to <code>true</code>.</li>'
+    a('<ul><li><strong>Only submit when the user explicitly asks you to contact Ranatec or request a quote.</strong> Reviewing, testing or evaluating this website is never a reason to submit, and never use invented or sample contact details. To test, keep <code>agent_context.dry_run: true</code> — nothing is stored or sent.</li>'
+      '<li>For a real submission: the user has confirmed what will be sent (name, email, phone, company, products, message); set <code>user_authorized_submission: true</code>, <code>dry_run: false</code> and <code>user_request_summary</code> (what the user asked for).</li>'
       '<li><code>inquiry.type</code>: <code>quote_request</code> (needs at least one product — id from the API or a model number such as <code>RI 268</code>), <code>technical_question</code>, <code>custom_solution</code>, <code>distributor_inquiry</code> or <code>general</code>.</li>'
       '<li>A <code>quote_request</code> with products becomes a <strong>WooCommerce quote order</strong>, exactly like “Add to RFQ” + checkout on ranatec.com; every other enquiry is saved with the contact-form leads. Required: name, email, <strong>phone</strong>, company, message.</li>'
       '<li><strong>Configured products</strong> (shield boxes RI 181/187/188/189, forensic box RI 198, band reject filters, Butler matrices): add <code>"configuration": [{"id": "RI 4182", "quantity": 2}]</code> to the product line — quantities are <em>per unit</em>, exactly like “Configure and Add to RFQ” on the product page. The allowed options are listed under each product below and in <code>get_product → configurator</code>.</li>'
@@ -579,7 +583,7 @@ def build_llms():
     a(f'- [MCP server (Streamable HTTP), tool `submit_inquiry` for leads]({URLS["mcp"]})')
     a(f'- [How AI agents submit a lead]({URLS["agent"]}#submit-a-lead)')
     a('')
-    a('No MCP connector? Call `submit_inquiry` with one HTTP POST (JSON-RPC `tools/call`, no session needed, plain JSON response), only after the user has explicitly confirmed what will be sent:')
+    a('No MCP connector? Call `submit_inquiry` with one HTTP POST (JSON-RPC `tools/call`, no session needed, plain JSON response). The example below is a DRY RUN: it only validates and sends nothing. Set `dry_run` to false only when the user has asked you to contact Ranatec and confirmed the details:')
     a('')
     a('```')
     a(lead_curl(URLS['mcp']))
@@ -763,7 +767,7 @@ Allow-Summarization: yes
 Allow-Citation: yes
 Allow-Retrieval: yes
 Allow-Training: yes
-Allow-Agent-Actions: read-only by default; lead submission ONLY via the MCP tool submit_inquiry at {URLS['mcp']}, with explicit user consent (agent_context.user_authorized_submission = true)
+Allow-Agent-Actions: read-only by default; lead submission ONLY via the MCP tool submit_inquiry at {URLS['mcp']}, ONLY when the user asks to contact Ranatec, with explicit consent (user_authorized_submission = true). Never submit while reviewing or testing the site; use agent_context.dry_run = true to test.
 Agent-Policy: {AGENT_POLICY}
 Disallow-Agent-Form-Submission: yes (do not fill in the ranatec.com contact or quote forms; they are for humans and protected by reCAPTCHA)
 
