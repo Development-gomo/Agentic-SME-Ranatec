@@ -20,6 +20,8 @@ final class Ranatec_Agent_Contact
     // Lead storage: the same backend as website leads — Advanced CF7 DB (Vsourz), under the contact form
     // on ranatec.com/contact-us/ (Contact Form 7, form ID 50), using that form's own field names.
     const DEFAULT_CF7_FORM_ID = 50;
+    // Payment method of RFQ orders created by the ranatec.com checkout (YITH WooCommerce Request a Quote).
+    const QUOTE_PAYMENT_METHOD = 'yith-request-a-quote';
     const DEFAULT_CF7_FIELDS = [
         'name' => 'your-name',
         'phone' => 'tel-882',
@@ -384,22 +386,21 @@ final class Ranatec_Agent_Contact
             }
             foreach ($items as $it) {
                 list($product, $line, $opts) = $it;
-                $item_id = $order->add_product($product, $line['quantity']);
-                if ($opts && $item_id) {
-                    $desc = [];
-                    foreach ($opts as $po) {
-                        $desc[] = $po[1]['quantity_per_unit'] . ' x ' . $po[1]['name'];
-                    }
-                    wc_add_order_item_meta($item_id, 'Configuration (per unit)', implode(', ', $desc));
-                }
+                $order->add_product($product, $line['quantity']);
+                // Configured options as separate line items, exactly like the ranatec.com RFQ cart/checkout
+                // ("Addon/Accessory for: <main product>", quantity = per-unit quantity x number of units).
                 foreach ($opts as $po) {
                     list($op, $o) = $po;
                     $oid = $order->add_product($op, $o['quantity_per_unit'] * $line['quantity']);
                     if ($oid) {
-                        wc_add_order_item_meta($oid, 'Configured for', $line['quantity'] . ' x ' . $line['name'] . ' (' . $o['quantity_per_unit'] . ' per unit)');
+                        wc_add_order_item_meta($oid, 'Addon/Accessory for', $product->get_name());
                     }
                 }
             }
+            // Same payment method as RFQ orders placed through the ranatec.com checkout (YITH Request a Quote).
+            $gateways = function_exists('WC') && WC()->payment_gateways() ? WC()->payment_gateways()->payment_gateways() : [];
+            $order->set_payment_method(self::QUOTE_PAYMENT_METHOD);
+            $order->set_payment_method_title(isset($gateways[self::QUOTE_PAYMENT_METHOD]) ? $gateways[self::QUOTE_PAYMENT_METHOD]->get_title() : 'Request a Quote');
             $order->set_customer_note(self::compose_message($l));
             $order->update_meta_data('_ranatec_agent_lead_id', $l['lead_id']);
             $order->update_meta_data('_ranatec_agent_name', $l['agent']);

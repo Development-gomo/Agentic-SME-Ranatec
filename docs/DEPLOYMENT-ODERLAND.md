@@ -95,10 +95,20 @@ Expect about 30–45 minutes. Do it in a quiet hour, and keep the **Before you s
     ```
 22. **Optional:** connect it in an MCP client, e.g. a custom connector with URL `https://agentic-mcp-sme-ranatec.onrender.com/mcp`.
 
-**Where agent leads go.** `submit_inquiry` saves each lead in **Advanced CF7 DB** as an entry of the contact form (ranatec.com/contact-us/, CF7 form **50**), using the form's own field names. Agent leads therefore appear in **Contact Forms → Database** next to website leads. The message field says "via AI agent" and carries the lead ID, and the `curn-url` field shows `https://ranatec.com/agent/ (AI agent via MCP …)`. A notification email also goes to info@ranatec.com; you can switch it off. The form itself and its reCAPTCHA are not touched.
-- Check in **Tools → Ranatec Agent API → Lead storage**: it should say "tables found ✓". The form ID (50) and the field mapping can be changed there if the form changes.
-- Phone is required, because the contact form requires it.
-- After deploying, submit one test lead and confirm it appears in Advanced CF7 DB under the contact form.
+**Where agent leads go** (no reCAPTCHA or form is touched):
+
+| Agent request | Saved as |
+|---|---|
+| `quote_request` with products | A **WooCommerce order**, like "Add to RFQ" + checkout: payment method `yith-request-a-quote`, status **New Quote Request** (or the status set in Tools → Ranatec Agent API), the products as line items, configured options as their own lines ("Addon/Accessory for: <product>"), billing = customer, customer note = full request, plus a private note saying it was created by an AI agent, with the lead ID. |
+| Any other enquiry (technical question, custom solution, distributor, general) | An entry of the contact form (CF7 form **50**) in **Advanced CF7 DB**, next to website leads. |
+| A quote whose product can't be found in WooCommerce | Saved in Advanced CF7 DB instead, so the lead is never lost. |
+
+A notification email also goes to info@ranatec.com; you can switch it off.
+- In **Tools → Ranatec Agent API**, check the following:
+  - **Lead storage** says "tables found ✓".
+  - **Product quote requests**: set the status to the one your real RFQ orders get (open a recent RFQ order in WooCommerce → Orders and compare).
+- Phone is required, because the contact form and the checkout require it.
+- After deploying, send one agent quote. Then compare the new order side by side with a real RFQ order: status, payment method and line items.
 
 **Lock lead submission to the MCP server (recommended).** This enforces "leads only via `submit_inquiry`":
 1. Generate a long random key, e.g. `openssl rand -hex 24`.
