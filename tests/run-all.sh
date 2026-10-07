@@ -16,12 +16,17 @@ echo "== PHP"
 for f in ranatec-api/ranatec-api.php ranatec-api/includes/*.php tests/*.php; do php -l "$f" >/dev/null && ok "lint $f" || bad "lint $f"; done
 for f in ranatec-api/data/*.json ranatec-api/openapi.json ranatec-api/public/*.json; do python3 -c "import json,sys;json.load(open(sys.argv[1]))" "$f" && ok "json $f" || bad "json $f"; done
 
-BODY='{"agent_context":{"user_authorized_submission":true},"person":{"name":"Jörg Ångström","email":"qa@example.com"},"company":{"name":"Prüf GmbH"},"inquiry":{"type":"quote_request","message":"Angebot für 2 × RI 268 bitte.","products":[{"id":"tunable-band-reject-filter-ri-268","quantity":2}]}}'
+BODY='{"agent_context":{"user_authorized_submission":true},"person":{"name":"Jörg Ångström","email":"qa@example.com","phone":"+46 31 000 00 00"},"company":{"name":"Prüf GmbH"},"inquiry":{"type":"quote_request","message":"Angebot für 2 × RI 268 bitte.","products":[{"id":"tunable-band-reject-filter-ri-268","quantity":2}]}}'
 cleanup_rl; echo "$BODY" | php tests/wp-stub-harness.php contact '' POST | grep -q '"status": "received"' && ok "contact (mbstring on)" || bad "contact (mbstring on)"
 if ! php -n -m | grep -qi mbstring; then
   cleanup_rl; echo "$BODY" | php -n tests/wp-stub-harness.php contact '' POST | grep -q '"status": "received"' && ok "contact (mbstring OFF)" || bad "contact (mbstring OFF)"
 fi
 cleanup_rl; echo "${BODY/true/false}" | php tests/wp-stub-harness.php contact '' POST | grep -q 'STATUS 403' && ok "contact without consent → 403" || bad "contact without consent → 403"
+TMPD=$(php -r 'echo sys_get_temp_dir();')
+cleanup_rl; rm -f "$TMPD/ranatec-acf7db.jsonl"; out=$(echo "$BODY" | TEST_ACF7DB=1 php tests/wp-stub-harness.php contact '' POST)
+if echo "$out" | grep -q '"entry_id": 101' && grep -q '"name":"your-name","value":"J' "$TMPD/ranatec-acf7db.jsonl" && grep -q '"name":"tel-882"' "$TMPD/ranatec-acf7db.jsonl" && grep -q '"name":"text-863","value":"Pr' "$TMPD/ranatec-acf7db.jsonl"; then ok "lead stored in Advanced CF7 DB under form 50 field names"; else echo "$out"; bad "Advanced CF7 DB storage"; fi
+cleanup_rl; echo "${BODY/,\"phone\":\"+46 31 000 00 00\"/}" | php tests/wp-stub-harness.php contact '' POST | grep -q 'person.phone' && ok "phone required" || bad "phone required"
+rm -f "$TMPD/ranatec-acf7db.jsonl"
 LOCK=lock-key-0123456789abcdefghijkl
 cleanup_rl; echo "$BODY" | WP_OPTION_ranatec_api_mcp_key=$LOCK php tests/wp-stub-harness.php contact '' POST | grep -q 'use_mcp_submit_inquiry' && ok "MCP-only lock: direct call without key → 403 use_mcp_submit_inquiry" || bad "MCP-only lock (no key)"
 cleanup_rl; echo "$BODY" | WP_OPTION_ranatec_api_mcp_key=$LOCK HTTP_X_RANATEC_MCP_KEY=$LOCK php tests/wp-stub-harness.php contact '' POST | grep -q '"status": "received"' && ok "MCP-only lock: call with MCP key → received" || bad "MCP-only lock (with key)"

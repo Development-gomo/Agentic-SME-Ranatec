@@ -72,7 +72,7 @@ check("submit_inquiry description states lead policy", /ONLY supported way/.test
 
 const sub = await client.callTool({ name: "submit_inquiry", arguments: {
   agent_context: { user_authorized_submission: true, agent_name: "smoke-test" },
-  person: { name: "Smoke Test", email: "smoke@example.com" }, company: { name: "Example Labs", country: "Sweden" },
+  person: { name: "Smoke Test", email: "smoke@example.com", phone: "+46 31 000 00 00" }, company: { name: "Example Labs", country: "Sweden" },
   inquiry: { type: "quote_request", message: "Please quote one RI 3101 Butler matrix.", products: [{ id: "RI 3101", quantity: 1 }] } } });
 const subBody = parse(sub);
 check("submit_inquiry with consent (resolves model number)", !sub.isError && subBody.status === "received", subBody.lead_id);

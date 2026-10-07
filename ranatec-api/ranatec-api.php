@@ -3,7 +3,7 @@
  * Plugin Name:       Ranatec Agent API
  * Plugin URI:        https://ranatec.com/agent/
  * Description:       Agentic Web package for ranatec.com — serves the machine-readable agent page (/agent/), clean JSON endpoints (/agent/v1/*.json), the OpenAPI spec (/openapi.json), llms.txt, ai.txt and the API catalog, plus an agent-safe RFQ / contact endpoint.
- * Version:           1.0.5
+ * Version:           1.0.6
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            GO MO Group for Ranatec AB
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('RANATEC_API_VERSION', '1.0.5');
+define('RANATEC_API_VERSION', '1.0.6');
 define('RANATEC_API_DIR', plugin_dir_path(__FILE__));
 define('RANATEC_API_DATA', RANATEC_API_DIR . 'data/');
 define('RANATEC_API_PUBLIC', RANATEC_API_DIR . 'public/');
@@ -141,7 +141,14 @@ final class Ranatec_Agent_API
             }
             // RANATEC_TEST_INPUT is only defined by tests/wp-stub-harness.php (php://input is empty on the CLI).
             $raw = defined('RANATEC_TEST_INPUT') ? RANATEC_TEST_INPUT : file_get_contents('php://input');
-            list($status, $body) = Ranatec_Agent_Contact::handle($raw, self::client_ip());
+            // Behind the MCP server every request comes from Render's IP; with a valid MCP key the server's
+            // X-Ranatec-Client-IP header (the agent's real IP) is trusted for per-client rate limiting.
+            $client_ip = null;
+            if ($mcp_key !== '' && !empty($_SERVER['HTTP_X_RANATEC_CLIENT_IP'])) {
+                $cand = trim((string) wp_unslash($_SERVER['HTTP_X_RANATEC_CLIENT_IP']));
+                $client_ip = filter_var($cand, FILTER_VALIDATE_IP) ? $cand : null;
+            }
+            list($status, $body) = Ranatec_Agent_Contact::handle($raw, self::client_ip(), $client_ip);
             self::respond($body, $status);
         }
 
@@ -419,7 +426,7 @@ final class Ranatec_Agent_API
         header('Content-Type: application/json; charset=utf-8');
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-        header('Access-Control-Allow-Headers: Content-Type, Accept, X-Ranatec-MCP-Key');
+        header('Access-Control-Allow-Headers: Content-Type, Accept, X-Ranatec-MCP-Key, X-Ranatec-Client-IP');
         header('X-Content-Type-Options: nosniff');
         header('X-Robots-Tag: noindex, follow');
         header('Link: <' . RANATEC_API_SITE . '/openapi.json>; rel="service-desc", <' . RANATEC_API_SITE . '/agent/>; rel="service-doc"');

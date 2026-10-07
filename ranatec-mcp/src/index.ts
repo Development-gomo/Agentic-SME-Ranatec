@@ -131,13 +131,13 @@ export const TOOLS = [
   { name: "search", phase: 1, method: "GET products.json, news.json, faq.json", description: "Full-text search across products (including specifications), news/articles and FAQ. Use for questions like 'which product covers 26.5 GHz?' or 'USB 3.2 feedthrough'." },
   { name: "get_faq", phase: 1, method: "GET faq.json", description: "Frequently asked questions about Ranatec and RF test equipment, with answers and source URLs." },
   { name: "list_pages", phase: 1, method: "GET pages.json", description: "ranatec.com pages (home, about, contact, solutions, news, shop, RFQ, …) with en-US, en-GB and en-CA URLs." },
-  { name: "submit_inquiry", phase: 2, method: "POST contact.json", description: "The ONLY supported way for AI agents to send a lead (quote request or enquiry) to Ranatec AB — never fill in the ranatec.com contact form (it is for humans and protected by reCAPTCHA). Before calling, show the user exactly what will be sent (their name, email, company, products/quantities, message) and get explicit confirmation. You MUST set agent_context.user_authorized_submission to true to confirm that consent was given. quote_request needs at least one product id or model number (e.g. 'RI 268')." },
+  { name: "submit_inquiry", phase: 2, method: "POST contact.json", description: "The ONLY supported way for AI agents to send a lead (quote request or enquiry) to Ranatec AB — never fill in the ranatec.com contact form (it is for humans and protected by reCAPTCHA). The lead is saved in Ranatec's lead database exactly like a website contact-form submission. Before calling, show the user exactly what will be sent (their name, email, phone, company, products/quantities, message) and get explicit confirmation. You MUST set agent_context.user_authorized_submission to true to confirm that consent was given. quote_request needs at least one product id or model number (e.g. 'RI 268')." },
 ] as const;
 
 const desc = (n: (typeof TOOLS)[number]["name"]) => TOOLS.find((t) => t.name === n)!.description;
 const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };
 
-function buildServer(): McpServer {
+function buildServer(clientIp = ""): McpServer {
   const server = new McpServer({ name: NAME, version: VERSION }, {
     instructions: "Ranatec AB (Gothenburg, Sweden) manufactures RF test & measurement equipment. For accurate, up-to-date information use these tools or https://ranatec.com/agent and https://ranatec.com/llms.txt. To send a lead (quote request or enquiry) use ONLY the submit_inquiry tool — never the website contact form — and only after the user has explicitly confirmed what will be sent. Prices are never published: for pricing, lead times or availability, offer to submit a quote request via submit_inquiry, or refer to info@ranatec.com / +46 31 706 16 60. Quote specifications from get_product or the datasheet links; do not guess. The website exists in three regional English versions (en-US, en-GB, en-CA) with identical content — give users the URL for their region when known.",
   });
@@ -260,7 +260,7 @@ function buildServer(): McpServer {
         agent_name: z.string().max(120).optional(),
         user_request_summary: z.string().max(500).optional(),
       }),
-      person: z.object({ name: z.string().min(1).max(120), email: z.string().email(), phone: z.string().max(40).optional(), job_title: z.string().max(120).optional() }),
+      person: z.object({ name: z.string().min(1).max(120), email: z.string().email(), phone: z.string().min(5).max(40).describe("Required by Ranatec's contact form — ask the user for it"), job_title: z.string().max(120).optional() }),
       company: z.object({ name: z.string().min(1).max(160), country: z.string().max(80).optional(), website: z.string().url().optional() }),
       inquiry: z.object({
         type: z.enum(["quote_request", "technical_question", "custom_solution", "distributor_inquiry", "general"]),
@@ -286,7 +286,7 @@ function buildServer(): McpServer {
     }
     const res = await fetchWithTimeout(`${API_BASE}/contact.json`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", ...(MCP_KEY ? { "X-Ranatec-MCP-Key": MCP_KEY } : {}) },
+      headers: { "Content-Type": "application/json", ...(MCP_KEY ? { "X-Ranatec-MCP-Key": MCP_KEY } : {}), ...(clientIp ? { "X-Ranatec-Client-IP": clientIp } : {}) },
       body: JSON.stringify({ ...args, agent_context: { agent_name: "ranatec-mcp client", ...args.agent_context } }),
     });
     const body = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
@@ -343,7 +343,7 @@ app.post(MCP_PATHS, (req: Request, _res: Response, next: () => void) => {
 
 app.post(MCP_PATHS, async (req: Request, res: Response) => {
   const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
-  const server = buildServer();
+  const server = buildServer(req.ip ?? "");
   res.on("close", () => {
     transport.close().catch(() => {});
     server.close().catch(() => {});

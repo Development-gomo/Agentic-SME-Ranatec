@@ -13,7 +13,7 @@ AI agents and LLMs should use the structured agent layer at https://ranatec.com/
 No MCP connector? Call `submit_inquiry` with one HTTP POST (JSON-RPC `tools/call`, no session needed, plain JSON response), only after the user has explicitly confirmed what will be sent:
 
 ```
-curl -X POST https://agentic-mcp-sme-ranatec.onrender.com/mcp -H 'Content-Type: application/json' -d '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "submit_inquiry", "arguments": {"agent_context": {"user_authorized_submission": true, "agent_name": "<your agent name>"}, "person": {"name": "<full name>", "email": "<email>", "phone": "<optional>", "job_title": "<optional>"}, "company": {"name": "<company>", "country": "<country>"}, "inquiry": {"type": "quote_request", "message": "<what the user needs>", "products": [{"id": "RI 268", "quantity": 1}]}}}}'
+curl -X POST https://agentic-mcp-sme-ranatec.onrender.com/mcp -H 'Content-Type: application/json' -d '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "submit_inquiry", "arguments": {"agent_context": {"user_authorized_submission": true, "agent_name": "<your agent name>"}, "person": {"name": "<full name>", "email": "<email>", "phone": "<phone (required)>", "job_title": "<optional>"}, "company": {"name": "<company>", "country": "<country>"}, "inquiry": {"type": "quote_request", "message": "<what the user needs>", "products": [{"id": "RI 268", "quantity": 1}]}}}}'
 ```
 
 ## Product domains

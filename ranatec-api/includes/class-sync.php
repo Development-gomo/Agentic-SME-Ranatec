@@ -393,6 +393,12 @@ final class Ranatec_Agent_Sync
         echo '<p><label>MCP server key: <input type="password" name="mcp_key" class="regular-text" autocomplete="new-password" placeholder="' . ($key_set ? '•••••••• (set — leave empty to keep)' : 'not set — leads accepted from any caller') . '" /></label><br>';
         echo '<span class="description">When set, <code>contact.json</code> accepts leads <strong>only</strong> from the Ranatec MCP server (tool <code>submit_inquiry</code>). Use the same value as the <code>RANATEC_MCP_KEY</code> environment variable on Render. Long random value, e.g. 40+ characters.</span><br>';
         echo '<label><input type="checkbox" name="mcp_key_clear" value="1" /> Remove the key (accept leads from any caller again)</label></p>';
+        $acf = Ranatec_Agent_Contact::acf7db_available();
+        echo '<h3>Lead storage</h3><p>Agent leads are saved in <strong>Advanced CF7 DB</strong> as entries of the contact form, next to website leads: '
+            . ($acf ? '<span style="color:#008a20">tables found ✓</span>' : '<strong style="color:#b32d2e">tables not found — activate Advanced CF7 DB, otherwise leads are only emailed</strong>') . '</p>';
+        echo '<p><label>Contact Form 7 form ID: <input type="number" name="cf7_form_id" min="1" value="' . esc_attr(Ranatec_Agent_Contact::cf7_form_id()) . '" class="small-text" /></label> <span class="description">(ranatec.com/contact-us/ uses form 50)</span></p>';
+        echo '<p><label>Field mapping (JSON, lead field → form field):<br><textarea name="cf7_fields" rows="4" cols="70" class="code">' . esc_textarea(wp_json_encode(Ranatec_Agent_Contact::cf7_fields(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . '</textarea></label></p>';
+        echo '<p><label><input type="checkbox" name="notify_email" value="1" ' . (Ranatec_Agent_Contact::notify_enabled() ? 'checked' : '') . ' /> Also send a notification email to the recipient above</label></p>';
         submit_button('Save', 'secondary', 'submit', false);
         echo '</form></div>';
     }
@@ -425,6 +431,19 @@ final class Ranatec_Agent_Sync
         } else {
             $msg = 'Invalid email — not saved.';
         }
+        $form_id = isset($_POST['cf7_form_id']) ? absint($_POST['cf7_form_id']) : 0;
+        if ($form_id > 0) {
+            update_option('ranatec_api_cf7_form_id', $form_id, false);
+        }
+        if (isset($_POST['cf7_fields'])) {
+            $map = json_decode(wp_unslash($_POST['cf7_fields']), true);
+            if (is_array($map) && isset($map['name'], $map['email'], $map['phone'], $map['company'], $map['message'])) {
+                update_option('ranatec_api_cf7_fields', wp_json_encode(array_map('sanitize_key', array_filter($map, 'is_string'))), false);
+            } else {
+                $msg .= ' Field mapping NOT saved: needs JSON with name, email, phone, company and message.';
+            }
+        }
+        update_option('ranatec_api_notify_email', empty($_POST['notify_email']) ? '0' : '1', false);
         if (!empty($_POST['mcp_key_clear'])) {
             delete_option(self::OPTION_MCP_KEY);
             $msg .= ' MCP server key removed.';

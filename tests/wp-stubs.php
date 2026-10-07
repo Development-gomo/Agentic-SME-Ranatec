@@ -22,4 +22,23 @@ function set_transient($k, $v, $t) { file_put_contents(sys_get_temp_dir() . "/rl
 function apply_filters($h, $v) { return $v; }
 function do_action(...$a) {}
 function get_option($k, $d = false) { $e = getenv('WP_OPTION_' . $k); return $e !== false ? $e : $d; }
+function current_time($t) { return gmdate('Y-m-d H:i:s'); }
+function wp_strip_all_tags($s) { return strip_tags((string) $s); }
+/** Fake $wpdb: Advanced CF7 DB tables "exist" when TEST_ACF7DB=1; inserts are appended to $TMPDIR/ranatec-acf7db.jsonl */
+class Fake_WPDB {
+    public $prefix = 'wp_'; public $insert_id = 0;
+    public function esc_like($s) { return addcslashes($s, '_%\\'); }
+    public function prepare($q, ...$a) { return vsprintf(str_replace(['%s', '%d'], ["'%s'", '%d'], $q), $a); }
+    public function get_var($q) {
+        if (!getenv('TEST_ACF7DB')) return null;
+        return preg_match("/LIKE '(.+)'/", $q, $m) ? stripslashes($m[1]) : null;
+    }
+    public function insert($table, $data, $format = null) {
+        static $n = 100;
+        if ($table === 'wp_cf7_vdata') $this->insert_id = ++$n;
+        file_put_contents(sys_get_temp_dir() . '/ranatec-acf7db.jsonl', json_encode(['table' => $table, 'data' => $data]) . "\n", FILE_APPEND);
+        return 1;
+    }
+}
+$GLOBALS['wpdb'] = new Fake_WPDB();
 function wp_mail($to, $s, $m, $h) { file_put_contents(sys_get_temp_dir() . '/ranatec-mail.txt', "TO: $to\nSUBJECT: $s\n" . implode("\n", $h) . "\n\n$m"); return getenv('MAIL_FAIL') ? false : true; }
