@@ -1,0 +1,106 @@
+{
+  "host": {
+    "displayName": "Ranatec AB",
+    "identifier": "https://ranatec.com",
+    "documentationUrl": "https://ranatec.com/agent/",
+    "description": "Ranatec designs and manufactures niche RF test and measurement equipment for filtering, shielding, switching and automation — used for design verification, product certification, production testing, expert troubleshooting and in-service monitoring of wireless devices and systems."
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:ranatec.com:mcp:ranatec-mcp",
+      "displayName": "Ranatec MCP server",
+      "type": "application/mcp-server-card+json",
+      "description": "Model Context Protocol server for Ranatec AB (RF test and measurement equipment): product specifications, comparisons, categories, news, FAQ and company data, plus consent-gated tools to request a product quote (request_quote) or send a contact enquiry (submit_inquiry).",
+      "capabilities": [
+        "get_company",
+        "list_products",
+        "get_product",
+        "compare_products",
+        "list_categories",
+        "list_solutions",
+        "list_news",
+        "get_news_item",
+        "search",
+        "get_faq",
+        "list_pages",
+        "request_quote",
+        "submit_inquiry"
+      ],
+      "representativeQueries": [
+        "What does Ranatec make?",
+        "What is RF equipment?",
+        "Where can an RF shielded enclosure be used?",
+        "What is an RF shielded test enclosure?",
+        "What are the advantages of RF test equipment from Ranatec?"
+      ],
+      "tags": [
+        "mcp",
+        "rf-test-equipment",
+        "product-catalog",
+        "request-for-quote"
+      ],
+      "version": "1.2.0",
+      "updatedAt": "2026-10-06T00:00:00Z",
+      "metadata": {
+        "transport": "streamable-http",
+        "endpoint": "https://agentic-mcp-sme-ranatec.onrender.com/mcp"
+      },
+      "data": {
+        "$schema": "https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json",
+        "name": "com.ranatec/ranatec-mcp",
+        "version": "1.2.0",
+        "description": "Ranatec products, company, news and FAQ, plus consent-gated quote and enquiry tools.",
+        "title": "Ranatec MCP server",
+        "websiteUrl": "https://ranatec.com/agent/",
+        "remotes": [
+          {
+            "type": "streamable-http",
+            "url": "https://agentic-mcp-sme-ranatec.onrender.com/mcp"
+          }
+        ]
+      }
+    },
+    {
+      "identifier": "urn:air:ranatec.com:api:ranatec-agent-api",
+      "displayName": "Ranatec Agent API",
+      "type": "application/vnd.oai.openapi+json",
+      "url": "https://ranatec.com/openapi.json",
+      "description": "Read-only JSON API describing Ranatec AB (Gothenburg, Sweden) — RF test & measurement equipment for filtering, shielding, switching and automation — plus two consent-gated POST endpoints: product quote requests and contact enquiries. Content mirrors ranatec.com in three regional English locales (en-US default, en-GB, en-CA); every entity lists all three URLs. Ranatec publishes no prices: all products are sold B2B via request for quote.",
+      "capabilities": [
+        "getIndex",
+        "getSchema",
+        "getCompany",
+        "listProducts",
+        "getProduct",
+        "listCategories",
+        "getCategory",
+        "listSolutions",
+        "listNews",
+        "getNewsItem",
+        "listPages",
+        "getFaq",
+        "requestQuote",
+        "submitInquiry"
+      ],
+      "representativeQueries": [
+        "What does Ranatec make?",
+        "What is RF equipment?",
+        "Where can an RF shielded enclosure be used?",
+        "What is an RF shielded test enclosure?",
+        "What are the advantages of RF test equipment from Ranatec?"
+      ],
+      "tags": [
+        "rest",
+        "openapi",
+        "rf-test-equipment",
+        "product-catalog"
+      ],
+      "version": "1.2.0",
+      "updatedAt": "2026-10-06T00:00:00Z",
+      "metadata": {
+        "baseUrl": "https://ranatec.com/agent/v1",
+        "openapiVersion": "3.0.3"
+      }
+    }
+  ]
+}

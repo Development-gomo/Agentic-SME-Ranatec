@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       Ranatec Agent API
  * Plugin URI:        https://ranatec.com/agent/
- * Description:       Agentic Web package for ranatec.com — serves the machine-readable agent page (/agent/), clean JSON endpoints (/agent/v1/*.json), the OpenAPI spec (/openapi.json), llms.txt, ai.txt and the API catalog, plus agent-safe product-quote and contact endpoints.
- * Version:           1.1.0
+ * Description:       Agentic Web package for ranatec.com — serves the machine-readable agent page (/agent/), clean JSON endpoints (/agent/v1/*.json), the OpenAPI spec (/openapi.json), llms.txt, ai.txt, the API catalog and the ARD manifest (/.well-known/ard.json), plus agent-safe product-quote and contact endpoints.
+ * Version:           1.2.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            GO MO Group for Ranatec AB
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('RANATEC_API_VERSION', '1.1.0');
+define('RANATEC_API_VERSION', '1.2.0');
 define('RANATEC_API_DIR', plugin_dir_path(__FILE__));
 define('RANATEC_API_DATA', RANATEC_API_DIR . 'data/');
 define('RANATEC_API_PUBLIC', RANATEC_API_DIR . 'public/');
@@ -26,6 +26,7 @@ define('RANATEC_MCP_URL', 'https://agentic-mcp-sme-ranatec.onrender.com/mcp');
 
 require_once RANATEC_API_DIR . 'includes/class-contact.php';
 require_once RANATEC_API_DIR . 'includes/class-sync.php';
+require_once RANATEC_API_DIR . 'includes/class-ard.php';
 
 final class Ranatec_Agent_API
 {
@@ -50,6 +51,7 @@ final class Ranatec_Agent_API
         'ai.txt'          => ['ai.txt', 'text/plain; charset=utf-8'],
         'api-catalog.json' => ['api-catalog.json', 'application/json; charset=utf-8'],
         'well-known-api-catalog' => ['well-known-api-catalog.json', 'application/linkset+json; charset=utf-8'],
+        'ard'             => ['ard.json', 'application/json; charset=utf-8'],
         'openapi'         => [null, 'application/json; charset=utf-8'],
         'agent-page'      => ['agent-page.html', 'text/html; charset=utf-8'],
     ];
@@ -61,7 +63,9 @@ final class Ranatec_Agent_API
         add_action('template_redirect', [__CLASS__, 'route'], 0);
         add_filter('redirect_canonical', [__CLASS__, 'no_trailing_slash_redirect'], 10, 2);
         add_action('wp_head', [__CLASS__, 'head_links'], 2);
+        add_action('init', [__CLASS__, 'maybe_flush_rewrites'], 99);
         Ranatec_Agent_Sync::init();
+        Ranatec_Agent_ARD::init();
     }
 
     public static function add_rewrite_rules()
@@ -76,6 +80,19 @@ final class Ranatec_Agent_API
         add_rewrite_rule('^ai\.txt$', 'index.php?ranatec_endpoint=ai.txt', 'top');
         add_rewrite_rule('^api-catalog\.json$', 'index.php?ranatec_endpoint=api-catalog.json', 'top');
         add_rewrite_rule('^\.well-known/api-catalog/?$', 'index.php?ranatec_endpoint=well-known-api-catalog', 'top');
+        add_rewrite_rule('^\.well-known/ard\.json$', 'index.php?ranatec_endpoint=ard', 'top');
+    }
+
+    /**
+     * Plugin updates (upload → "Replace current") do not run the activation hook, so new routes such as
+     * /.well-known/ard.json would 404 until someone saves the permalinks. Flush once per plugin version.
+     */
+    public static function maybe_flush_rewrites()
+    {
+        if (get_option('ranatec_api_rewrite_version') !== RANATEC_API_VERSION) {
+            flush_rewrite_rules(false);
+            update_option('ranatec_api_rewrite_version', RANATEC_API_VERSION, true);
+        }
     }
 
     public static function query_vars($vars)
@@ -97,6 +114,7 @@ final class Ranatec_Agent_API
         echo '<link rel="alternate" type="application/json" title="Ranatec Agent API" href="' . esc_url(RANATEC_API_BASE . '/index.json') . "\" />\n";
         echo '<link rel="service-desc" type="application/json" href="' . esc_url(RANATEC_API_SITE . '/openapi.json') . "\" />\n";
         echo '<link rel="api-catalog" href="' . esc_url(RANATEC_API_SITE . '/.well-known/api-catalog') . "\" />\n";
+        Ranatec_Agent_ARD::head_link();
     }
 
     // ------------------------------------------------------------------ routing
@@ -110,6 +128,10 @@ final class Ranatec_Agent_API
         $id = get_query_var('ranatec_id');
         $method = isset($_SERVER['REQUEST_METHOD']) ? strtoupper($_SERVER['REQUEST_METHOD']) : 'GET';
 
+        if ($endpoint === 'ard' && !Ranatec_Agent_ARD::enabled()) {
+            status_header(404);   // switched off in Tools → Ranatec Agent API
+            exit;
+        }
         if (isset(self::STATIC_FILES[$endpoint])) {
             self::serve_static($endpoint);
         }
@@ -198,7 +220,7 @@ final class Ranatec_Agent_API
             $d = self::load($f);
             $counts[$f] = isset($d['meta']['count']) ? $d['meta']['count'] : null;
         }
-        return [
+        $index = [
             'meta' => [
                 'source' => RANATEC_API_BASE . '/index.json',
                 'endpoint' => 'index',
@@ -248,6 +270,10 @@ final class Ranatec_Agent_API
                 'sitemap' => RANATEC_API_SITE . '/sitemap_index.xml',
             ],
         ];
+        if (Ranatec_Agent_ARD::active()) {
+            $index['discovery']['ard_manifest'] = Ranatec_Agent_ARD::url();
+        }
+        return $index;
     }
 
     public static function get_schema()
@@ -466,16 +492,23 @@ final class Ranatec_Agent_API
         }
         header('Content-Type: ' . $type);
         header('X-Content-Type-Options: nosniff');
-        self::cache_headers($path);
+        // The /agent/ page carries a build-time <link rel="ard"> to the configured site: point it at this site's
+        // own manifest (staging, alternate domains) and drop it while ARD is switched off.
+        $ard_variant = $endpoint === 'agent-page' ? Ranatec_Agent_ARD::page_variant() : '';
+        self::cache_headers($path, $ard_variant);
         status_header(200);
-        readfile($path);
+        if ($ard_variant !== '') {
+            echo Ranatec_Agent_ARD::filter_page(file_get_contents($path));
+        } else {
+            readfile($path);
+        }
         exit;
     }
 
-    private static function cache_headers($file)
+    private static function cache_headers($file, $variant = '')
     {
         $mtime = filemtime($file);
-        $etag = '"' . md5($file . $mtime . filesize($file)) . '"';
+        $etag = '"' . md5($file . $mtime . filesize($file) . $variant) . '"';
         header('Cache-Control: public, max-age=3600');
         header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $mtime) . ' GMT');
         header('ETag: ' . $etag);

@@ -19,6 +19,13 @@ found = {
     'ranatec-mcp/package-lock.json': js('ranatec-mcp/package-lock.json')['version'],
     'ranatec-mcp/package-lock.json packages[""]': js('ranatec-mcp/package-lock.json')['packages']['']['version'],
 }
+for f in ['ranatec-api/public/ard.json', 'web-root/.well-known/ard.json']:   # ARD manifest (present unless disabled)
+    if os.path.exists(os.path.join(ROOT, f)):
+        for e in js(f)['entries']:
+            if 'version' in e:
+                found[f"{f} {e['identifier']} version"] = e['version']
+            if isinstance(e.get('data'), dict) and 'version' in e['data']:
+                found[f"{f} {e['identifier']} Server Card version"] = e['data']['version']
 for f in sorted(glob.glob(os.path.join(ROOT, 'ranatec-api/data/*.json'))):
     found[f'data/{os.path.basename(f)} meta.version'] = json.load(open(f))['meta']['version']
 if 'const VERSION = "' in rd('ranatec-mcp/src/index.ts'):

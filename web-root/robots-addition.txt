@@ -20,6 +20,7 @@ Allow: /llms-full.txt
 Allow: /ai.txt
 Allow: /openapi.json
 Allow: /api-catalog.json
+Allow: /.well-known/ard.json
 Disallow: /cart/
 Disallow: /checkout/
 Disallow: /my-account/
@@ -31,3 +32,4 @@ LLM-Readable: https://ranatec.com/agent/
 LLM-Text: https://ranatec.com/llms.txt
 AI-Policy: https://ranatec.com/ai.txt
 Sitemap: https://ranatec.com/sitemap_index.xml
+Agentmap: https://ranatec.com/.well-known/ard.json

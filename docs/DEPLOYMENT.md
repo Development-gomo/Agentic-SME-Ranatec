@@ -40,6 +40,8 @@ curl -s  https://ranatec.com/agent/v1/products/ri-268.json | head -20
 curl -s 'https://ranatec.com/agent/v1/news.json?type=product-launch&fields=summary&limit=3'
 curl -s  https://ranatec.com/openapi.json        | python3 -c "import json,sys; json.load(sys.stdin); print('Valid JSON')"
 curl -sI https://ranatec.com/.well-known/api-catalog | grep -i content-type  # application/linkset+json
+curl -sI https://ranatec.com/.well-known/ard.json | grep -i content-type     # application/json (ARD manifest)
+python3 tools/ard.py validate https://ranatec.com/.well-known/ard.json --check-urls   # VALID, 0 errors, 0 warnings
 curl -s  https://ranatec.com/agent/ | grep -c '<article'                     # > 100
 ```
 
@@ -64,7 +66,7 @@ curl -s -X POST https://ranatec.com/agent/v1/quote.json -H "Content-Type: applic
 
 ## 2. Static files (optional)
 
-The plugin already serves `/agent/`, `/llms.txt`, `/llms-full.txt`, `/ai.txt`, `/api-catalog.json` and `/.well-known/api-catalog`. Upload the files in `web-root/` only if the host serves the web root before WordPress and you want physical files. A physical file always takes precedence, so remember to re-upload it after every rebuild.
+The plugin already serves `/agent/`, `/llms.txt`, `/llms-full.txt`, `/ai.txt`, `/api-catalog.json`, `/.well-known/api-catalog` and `/.well-known/ard.json`. Upload the files in `web-root/` only if the host serves the web root before WordPress and you want physical files. A physical file always takes precedence, so remember to re-upload it after every rebuild.
 
 ## 3. robots.txt
 

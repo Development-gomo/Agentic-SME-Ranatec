@@ -1,0 +1,31 @@
+{
+  "$comment": "Optional ARD configuration. Copy to ard.config.json only if you need to change something: without it, ARD is enabled and the MCP server and OpenAPI API are discovered automatically from the package. Keys starting with $ or _ are ignored. See docs/ARD.md.",
+
+  "enabled": true,
+
+  "_publisher": "Optional FQDN for urn:air:<publisher>:… identifiers. Default: the site's host without www. Set it to keep identifiers identical on staging.",
+  "publisher": null,
+
+  "_autoDiscover": "Turn off an auto-discovered resource type without touching the rest.",
+  "autoDiscover": { "mcp": true, "openapi": true },
+
+  "_overrides": "Replace generated terms, keyed by resource kind (mcp, openapi, a2a, skills, custom) or by identifier. null removes a term.",
+  "overrides": {
+    "mcp": {
+      "representativeQueries": [
+        "Which Ranatec shield box fits a 5G smartphone test?",
+        "Compare the RI 268 and RI 270 tunable filters",
+        "Request a quote for two RI 181 shield boxes"
+      ]
+    }
+  },
+
+  "_a2a": "Register A2A agents only when their agent card is really published.",
+  "a2a": [],
+
+  "_skills": "Register Agent Skills (format md | json | zip | gzip) only when the file is really published.",
+  "skills": [],
+
+  "_entries": "Any other agentic resource, written as an ARD entry. identifier is derived from namespace + displayName when omitted; a relative url is resolved against the site URL; exactly one of url / data.",
+  "entries": []
+}

@@ -24,6 +24,8 @@ function do_action(...$a) {}
 function get_option($k, $d = false) { $e = getenv('WP_OPTION_' . $k); return $e !== false ? $e : $d; }
 function current_time($t) { return gmdate('Y-m-d H:i:s'); }
 function wp_strip_all_tags($s) { return strip_tags((string) $s); }
+function untrailingslashit($s) { return rtrim((string) $s, '/\\'); }
+function flush_rewrite_rules($hard = true) {} function update_option(...$a) { return true; }
 /** Fake $wpdb: Advanced CF7 DB tables "exist" when TEST_ACF7DB=1; inserts are appended to $TMPDIR/ranatec-acf7db.jsonl */
 class Fake_WPDB {
     public $prefix = 'wp_'; public $insert_id = 0;

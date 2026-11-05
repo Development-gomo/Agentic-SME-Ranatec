@@ -44,6 +44,7 @@ Expect about 30–45 minutes. Do it in a quiet hour, and keep the **Before you s
     - https://ranatec.com/openapi.json
     - https://ranatec.com/api-catalog.json
     - https://ranatec.com/.well-known/api-catalog
+    - https://ranatec.com/.well-known/ard.json (ARD manifest; should be JSON with an `entries` array, not an HTML 404 page)
     - https://ranatec.com/agent/v1/index.json
     - https://ranatec.com/agent/v1/products/ri-268.json
 11. **Test both submission endpoints as dry runs.** Nothing is stored or emailed. Run these before you set the MCP key in Part C; afterwards, direct calls get 403.
@@ -78,7 +79,11 @@ Expect about 30–45 minutes. Do it in a quiet hour, and keep the **Before you s
 ## Part B: robots.txt (~5 min)
 
 13. Go to **Yoast SEO → Tools → File editor** (or edit `public_html/robots.txt` in File Manager if it's a physical file). Paste the contents of `web-root/robots-addition.txt` at the **end**, then save. Leave the existing lines unchanged.
-14. Open https://ranatec.com/robots.txt and check that the new lines appear.
+14. Open https://ranatec.com/robots.txt and check that the new lines appear, including
+    `Agentmap: https://ranatec.com/.well-known/ard.json`. Paste this only after step 10 shows that URL returning JSON:
+    Lighthouse tries an `Agentmap:` location first, and an advertised URL that fails scores 0.
+    If robots.txt is WordPress' virtual file (no physical file, and Yoast's editor is not used), the plugin adds the
+    `Agentmap:` line by itself.
 
 ---
 
@@ -147,13 +152,26 @@ A notification email also goes to info@ranatec.com; you can switch it off.
 
 ## Part D: after go-live
 
-21. **Google Search Console:** use URL inspection, then request indexing for `https://ranatec.com/agent/` and `https://ranatec.com/llms.txt`. Do the same in Bing Webmaster Tools.
-22. **Optional footer link:** add "For AI agents" → `/agent/` in the site footer, so crawlers discover the page.
-23. **Share `docs/FINDINGS.md` with Ranatec's web team.** Start with the swapped RF2037/RF2038 specs, the 13 duplicate product listings and the en-GB/en-CA legacy articles.
-24. **When content changes:** news posts and products update the API automatically every day, or immediately via **Sync now**. To refresh the agent page and llms files as well, run `python3 tools/build_static.py` then `bash tools/release.sh`, and upload the new plugin zip: WordPress asks to **replace** the current version, which you should confirm.
+21. **Check ARD (the Lighthouse "ARD manifest is valid" audit).** Run these from any computer with Python 3, in the
+    package folder:
+    ```bash
+    curl -sI https://ranatec.com/.well-known/ard.json | grep -iE "^HTTP|content-type"   # 200, application/json
+    python3 tools/ard.py validate https://ranatec.com/.well-known/ard.json --check-urls  # → VALID: 2 entries, 0 errors, 0 warnings
+    python3 tools/vendor/ard-spec/conformance/bin/conformance-test publisher ranatec.com # official tool → PASS
+    ```
+    Then run Lighthouse (Chrome DevTools → Lighthouse, or PageSpeed Insights). **ARD manifest is valid** should pass.
+    If it doesn't, see the troubleshooting table in `docs/ARD.md`. Purge LiteSpeed first, because an old cached 404
+    is the most common cause right after deployment.
+
+22. **Google Search Console:** use URL inspection, then request indexing for `https://ranatec.com/agent/` and `https://ranatec.com/llms.txt`. Do the same in Bing Webmaster Tools.
+23. **Optional footer link:** add "For AI agents" → `/agent/` in the site footer, so crawlers discover the page.
+24. **Share `docs/FINDINGS.md` with Ranatec's web team.** Start with the swapped RF2037/RF2038 specs, the 13 duplicate product listings and the en-GB/en-CA legacy articles.
+25. **When content changes:** news posts and products update the API automatically every day, or immediately via **Sync now**. To refresh the agent page and llms files as well, run `python3 tools/build_static.py` then `bash tools/release.sh`, and upload the new plugin zip: WordPress asks to **replace** the current version, which you should confirm.
 
 ## Rollback
 
 - **Plugin:** go to **Plugins → Ranatec Agent API → Deactivate**, then **Settings → Permalinks → Save**. The site goes back to exactly how it was. The plugin doesn't change any WordPress content.
 - **MCP server:** suspend the Render service.
 - **robots.txt:** remove the pasted block.
+- **ARD only:** untick **Tools → Ranatec Agent API → Publish the ARD manifest** and save. The URL, `<link rel="ard">` and
+  the virtual-robots `Agentmap:` line disappear; remove a pasted `Agentmap:` line by hand, then purge LiteSpeed.

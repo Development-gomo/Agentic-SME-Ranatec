@@ -53,7 +53,7 @@ All component versions come from the repo \`VERSION\` file ($V) and are checked 
 
 | File | What it is | How to use |
 |---|---|---|
-| \`release/ranatec-api-$V.zip\` | WordPress plugin: agent page, llms.txt, llms-full.txt, ai.txt, API catalogs, OpenAPI, REST API, product-quote + contact endpoints, daily sync | WordPress → Plugins → Add New → Upload → Activate → Settings → Permalinks → Save |
+| \`release/ranatec-api-$V.zip\` | WordPress plugin: agent page, llms.txt, llms-full.txt, ai.txt, API catalogs, ARD manifest (/.well-known/ard.json), OpenAPI, REST API, product-quote + contact endpoints, daily sync | WordPress → Plugins → Add New → Upload → Activate → Settings → Permalinks → Save |
 | \`release/ranatec-mcp-$V-cpanel.zip\` | MCP server, prebuilt (dist/ + app.cjs + package.json) for cPanel "Setup Node.js App" | Upload to the Node.js app root, Run NPM Install, startup file \`app.cjs\` (see docs/DEPLOYMENT-ODERLAND.md) |
 | \`ranatec-agentic-web-package-$V.zip\` | Complete package: plugin source + **the plugin zip above** (in \`release/\`), MCP server source, web-root copies, robots.txt additions, build tools, tests, docs | Hand-over / archive; see README.md and docs/DEPLOYMENT.md inside |
 
@@ -77,13 +77,13 @@ $( [[ $1 == yes ]] || echo '(The checksum of the complete-package zip cannot be 
 
 ## Checks
 - \`python3 tools/check_versions.py\`: all components at $V
-- \`bash tests/run-all.sh\`: $TESTS (PHP lint, JSON, contact + quote endpoints with and without mbstring, HTTP endpoints, version consistency, MCP end-to-end incl. runtime version)
+- \`bash tests/run-all.sh\`: $TESTS (PHP lint, JSON, contact + quote endpoints with and without mbstring, ARD manifest (official schema + conformance tool, routes, on/off), HTTP endpoints, version consistency, MCP end-to-end incl. runtime version)
 - Crawl coverage: 262/262 sitemap URLs (9 cart/checkout/account pages skipped on purpose), 0 pending; 425 spec rows, 0 mismatches vs Firecrawl
 MD
 }
 write_manifest no
-zip -qr "release/ranatec-agentic-web-package-$V.zip" VERSION README.md docs ranatec-api ranatec-mcp web-root tools tests "release/ranatec-api-$V.zip" "release/ranatec-mcp-$V-cpanel.zip" release/MANIFEST.md \
-  -x 'ranatec-mcp/node_modules/*' 'ranatec-mcp/dist/*' 'tools/.work/*' 'tools/__pycache__/*' '*.DS_Store'
+zip -qr "release/ranatec-agentic-web-package-$V.zip" VERSION README.md ard.config.example.json docs ranatec-api ranatec-mcp web-root tools tests "release/ranatec-api-$V.zip" "release/ranatec-mcp-$V-cpanel.zip" release/MANIFEST.md \
+  -x 'ranatec-mcp/node_modules/*' 'ranatec-mcp/dist/*' 'tools/.work/*' '*/__pycache__/*' '*.DS_Store'
 write_manifest yes
 
 # verify the archives
@@ -92,4 +92,8 @@ unzip -l "release/ranatec-agentic-web-package-$V.zip" | grep -qE "node_modules|/
 unzip -p "release/ranatec-api-$V.zip" ranatec-api/ranatec-api.php | grep -q "Version:           $V" || { echo "plugin zip has wrong version"; exit 1; }
 unzip -p "release/ranatec-mcp-$V-cpanel.zip" package.json | grep -q "\"version\": \"$V\"" || { echo "MCP bundle has wrong version"; exit 1; }
 unzip -l "release/ranatec-mcp-$V-cpanel.zip" | grep -q "dist/index.js" || { echo "MCP bundle missing dist/index.js"; exit 1; }
+if [[ -f ranatec-api/public/ard.json ]]; then
+  unzip -l "release/ranatec-api-$V.zip" | grep -q "ranatec-api/public/ard.json" || { echo "ARD manifest missing from plugin zip"; exit 1; }
+  python3 tools/ard.py validate ranatec-api/public/ard.json >/dev/null || { python3 tools/ard.py validate ranatec-api/public/ard.json; echo "ARD manifest invalid"; exit 1; }
+fi
 echo "== release/"; ls -la release

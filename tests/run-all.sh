@@ -74,6 +74,24 @@ cleanup_rl; echo "$BODY" | WP_OPTION_ranatec_api_mcp_key=$LOCK php tests/wp-stub
 cleanup_rl; echo "$QBODY" | WP_OPTION_ranatec_api_mcp_key=$LOCK php tests/wp-stub-harness.php quote '' POST | grep -q 'use_mcp_request_quote' && ok "MCP-only lock: direct quote call without key → 403 use_mcp_request_quote" || bad "MCP-only lock quote (no key)"
 cleanup_rl; echo "$BODY" | WP_OPTION_ranatec_api_mcp_key=$LOCK HTTP_X_RANATEC_MCP_KEY=$LOCK php tests/wp-stub-harness.php contact '' POST | grep -q '"status": "received"' && ok "MCP-only lock: call with MCP key → received" || bad "MCP-only lock (with key)"
 
+echo "== ARD (Agentic Resource Discovery)"
+if python3 -W error::ResourceWarning -m unittest tests/test_ard.py >"$TMP/ard-unit.log" 2>&1; then ok "ARD core + generated manifest: $(grep -o 'Ran [0-9]* tests' "$TMP/ard-unit.log") (official JSON Schema, conformance tool, any domain, disabled, missing metadata, no secrets)"; else cat "$TMP/ard-unit.log"; bad "ARD unit tests"; fi
+out=$(php tests/wp-stub-harness.php ard '' GET </dev/null)
+echo "$out" | grep -q 'STATUS 200' && echo "$out" | sed '$d' | python3 -c "import json,sys; d=json.load(sys.stdin); assert d['entries']" && ok "/.well-known/ard.json served (200, JSON with entries)" || { echo "$out" | tail -3; bad "ARD route"; }
+WP_OPTION_ranatec_api_ard_enabled=0 php tests/wp-stub-harness.php ard '' GET </dev/null | grep -q 'STATUS 404' && ok "ARD switched off → /.well-known/ard.json 404" || bad "ARD off → 404"
+headlinks() { php -r 'require "tests/wp-stubs.php"; require "ranatec-api/ranatec-api.php"; Ranatec_Agent_API::head_links();'; }
+WP_OPTION_home=https://staging.example.org headlinks | grep -q '<link rel="ard" type="application/json" href="https://staging.example.org/.well-known/ard.json" />' && ok "<link rel=\"ard\"> in page head, on the site's own domain" || bad "ARD head link"
+WP_OPTION_ranatec_api_ard_enabled=0 headlinks | grep -q 'rel="ard"' && bad "ARD off → head link still present" || ok "ARD off → no <link rel=\"ard\">"
+robots() { php -r 'require "tests/wp-stubs.php"; require "ranatec-api/ranatec-api.php"; echo Ranatec_Agent_ARD::robots_txt("User-agent: *\nDisallow: /wp-admin/\n", "1");'; }
+WP_OPTION_home=https://example.org robots | grep -qx 'Agentmap: https://example.org/.well-known/ard.json' && ok "virtual robots.txt gets Agentmap:" || bad "robots Agentmap"
+WP_OPTION_ranatec_api_ard_enabled=0 robots | grep -q 'Agentmap' && bad "ARD off → robots still has Agentmap" || ok "ARD off → no Agentmap in robots.txt"
+php -r 'require "tests/wp-stubs.php"; require "ranatec-api/ranatec-api.php"; echo Ranatec_Agent_ARD::robots_txt("Agentmap: https://x.example/a.json\n", "1");' | grep -c Agentmap | grep -qx 1 && ok "existing Agentmap line not duplicated" || bad "Agentmap duplicated"
+php tests/wp-stub-harness.php index '' GET </dev/null | grep -q '"ard_manifest": "https://ranatec.com/.well-known/ard.json"' && ok "index.json discovery lists ard_manifest" || bad "index.json ard_manifest"
+WP_OPTION_ranatec_api_ard_enabled=0 php tests/wp-stub-harness.php index '' GET </dev/null | grep -q 'ard_manifest' && bad "ARD off → index.json still lists it" || ok "ARD off → index.json has no ard_manifest"
+page=$(php tests/wp-stub-harness.php agent-page '' GET </dev/null); grep -q 'rel="ard"' <<<"$page" && ok "/agent/ page links the manifest" || bad "/agent/ rel=ard"
+page=$(WP_OPTION_home=https://staging.example.org php tests/wp-stub-harness.php agent-page '' GET </dev/null); grep -q '<link rel="ard" type="application/json" href="https://staging.example.org/.well-known/ard.json">' <<<"$page" && ok "/agent/ page links this site's own manifest (staging domain)" || bad "/agent/ rel=ard on staging"
+page=$(WP_OPTION_ranatec_api_ard_enabled=0 php tests/wp-stub-harness.php agent-page '' GET </dev/null); grep -q 'rel="ard"' <<<"$page" && bad "ARD off → /agent/ still links it" || ok "ARD off → /agent/ page link removed"
+
 echo "== Versions"
 python3 tools/check_versions.py >"$TMP/versions.log" 2>&1 && ok "all component versions match VERSION ($(tr -d '[:space:]' < VERSION))" || { cat "$TMP/versions.log"; bad "version mismatch"; }
 
@@ -81,9 +99,16 @@ echo "== HTTP (PHP built-in server)"
 php -S 127.0.0.1:$PHP_PORT tests/php-router.php >"$TMP/php.log" 2>&1 & PHP_PID=$!
 ready=0; for i in $(seq 1 80); do curl -s -o /dev/null "http://127.0.0.1:$PHP_PORT/agent/v1/index.json" && { ready=1; break; }; sleep 0.25; done
 [[ $ready == 1 ]] && ok "PHP server ready on :$PHP_PORT" || { bad "PHP server did not start on :$PHP_PORT (port in use?)"; cat "$TMP/php.log"; }
-for p in agent/ agent/v1/index.json agent/v1/products.json agent/v1/products/ri-268.json agent/v1/categories/butler-matrices.json agent/v1/news.json agent/v1/faq.json openapi.json llms.txt llms-full.txt ai.txt api-catalog.json .well-known/api-catalog; do
+for p in .well-known/ard.json agent/ agent/v1/index.json agent/v1/products.json agent/v1/products/ri-268.json agent/v1/categories/butler-matrices.json agent/v1/news.json agent/v1/faq.json openapi.json llms.txt llms-full.txt ai.txt api-catalog.json .well-known/api-catalog; do
   code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:$PHP_PORT/$p"); [[ $code == 200 ]] && ok "GET /$p" || bad "GET /$p ($code)"
 done
+
+hdr=$(curl -s -D - -o "$TMP/ard.json" "http://127.0.0.1:$PHP_PORT/.well-known/ard.json")
+echo "$hdr" | grep -qi '^content-type: application/json' && echo "$hdr" | grep -qi '^access-control-allow-origin: \*' && ok "ARD over HTTP: application/json + CORS" || { echo "$hdr"; bad "ARD headers"; }
+python3 tools/ard.py validate "$TMP/ard.json" >"$TMP/ard-validate.log" 2>&1 && grep -q 'VALID: 2 entries, 0 errors, 0 warnings' "$TMP/ard-validate.log" && ok "served manifest: official conformance PASS, 0 errors, 0 warnings" || { cat "$TMP/ard-validate.log"; bad "served ARD manifest validation"; }
+# Every advertised url must resolve on the site that serves the manifest (production host swapped for the test server).
+sed "s#https://ranatec.com#http://127.0.0.1:$PHP_PORT#g" "$TMP/ard.json" > "$TMP/ard-local.json"
+python3 tools/ard.py validate "$TMP/ard-local.json" --check-urls >"$TMP/ard-urls.log" 2>&1 && ok "every advertised ARD url resolves (HTTP 200)" || { cat "$TMP/ard-urls.log"; bad "ARD urls"; }
 
 echo "== MCP server"
 ( cd ranatec-mcp && { [[ -d node_modules ]] || npm ci --no-audit --no-fund >/dev/null; } && npm run build >/dev/null ) && ok "npm ci + build" || bad "npm ci + build"
@@ -91,6 +116,10 @@ RANATEC_API_BASE="http://127.0.0.1:$PHP_PORT/agent/v1" PORT=$MCP_PORT node ranat
 ready=0; for i in $(seq 1 80); do curl -s -o /dev/null "http://127.0.0.1:$MCP_PORT/health" && { ready=1; break; }; sleep 0.25; done
 [[ $ready == 1 ]] && ok "MCP server ready on :$MCP_PORT" || { bad "MCP server did not start on :$MCP_PORT (port in use?)"; cat "$TMP/mcp.log"; }
 cleanup_rl
+curl -s "http://127.0.0.1:$MCP_PORT/mcp/tools" | python3 -c "
+import json,sys; live=[t['name'] for t in json.load(sys.stdin)['tools']]; m=json.load(open('ranatec-api/public/ard.json'))
+mcp=next(e for e in m['entries'] if e['type']=='application/mcp-server-card+json')
+assert mcp['capabilities']==live, (mcp['capabilities'], live); assert mcp['data']['version']==json.load(open('ranatec-mcp/package.json'))['version']" && ok "ARD MCP entry matches the running MCP server (tools, version)" || bad "ARD MCP entry drifted from the MCP server"
 if ( cd ranatec-mcp && MCP_URL="http://127.0.0.1:$MCP_PORT/mcp" npm test --silent ) >"$TMP/smoke.log" 2>&1; then
   cat "$TMP/smoke.log"; ok "MCP smoke test"
 else

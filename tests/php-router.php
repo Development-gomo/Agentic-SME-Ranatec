@@ -12,6 +12,7 @@ $rules = [
     '#^/openapi\.json$#' => fn($m) => ['ranatec_endpoint' => 'openapi'],
     '#^/(llms\.txt|llms-full\.txt|ai\.txt|api-catalog\.json)$#' => fn($m) => ['ranatec_endpoint' => $m[1]],
     '#^/\.well-known/api-catalog/?$#' => fn($m) => ['ranatec_endpoint' => 'well-known-api-catalog'],
+    '#^/\.well-known/ard\.json$#' => fn($m) => ['ranatec_endpoint' => 'ard'],
 ];
 $GLOBALS['qv'] = [];
 foreach ($rules as $re => $fn) {

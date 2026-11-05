@@ -410,6 +410,15 @@ final class Ranatec_Agent_Sync
             echo '<h3>Product quote requests</h3><p><strong>WooCommerce not active</strong> — agent product quotes are refused (the agent is told to email info@ranatec.com).</p>';
         }
         echo '<p><label><input type="checkbox" name="notify_email" value="1" ' . (Ranatec_Agent_Contact::notify_enabled() ? 'checked' : '') . ' /> Also send a notification email to the recipient above</label></p>';
+        $ard = Ranatec_Agent_ARD::summary();
+        echo '<h3>Agentic Resource Discovery (ARD)</h3>';
+        echo '<p><label><input type="checkbox" name="ard_enabled" value="1" ' . (Ranatec_Agent_ARD::enabled() ? 'checked' : '') . ' /> Publish the ARD manifest at <code>/.well-known/ard.json</code>, with <code>&lt;link rel="ard"&gt;</code> in page heads and an <code>Agentmap:</code> line in the virtual robots.txt</label></p>';
+        if ($ard['count']) {
+            echo '<p>' . (Ranatec_Agent_ARD::active() ? '<span style="color:#008a20">Published ✓</span> <a href="' . esc_url(Ranatec_Agent_ARD::url()) . '" target="_blank" rel="noopener">' . esc_html(Ranatec_Agent_ARD::url()) . '</a>' : '<strong>Switched off</strong> — the URL returns 404 and nothing is advertised.')
+                . ' — ' . (int) $ard['count'] . ' entries: <code>' . implode('</code>, <code>', array_map('esc_html', $ard['identifiers'])) . '</code></p>';
+        } else {
+            echo '<p><strong>No manifest in this build</strong> (ARD disabled in <code>ard.config.json</code>, or no resources to publish). Rebuild with <code>tools/release.sh</code> to generate one.</p>';
+        }
         submit_button('Save', 'secondary', 'submit', false);
         echo '</form></div>';
     }
@@ -455,6 +464,7 @@ final class Ranatec_Agent_Sync
             }
         }
         update_option('ranatec_api_notify_email', empty($_POST['notify_email']) ? '0' : '1', false);
+        update_option(Ranatec_Agent_ARD::OPTION_ENABLED, empty($_POST['ard_enabled']) ? '0' : '1', true);
         if (isset($_POST['quote_status'])) {
             update_option('ranatec_api_quote_status', sanitize_key(wp_unslash($_POST['quote_status'])), false);
         }

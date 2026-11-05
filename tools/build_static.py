@@ -9,26 +9,36 @@ Outputs
   ranatec-api/public/ai.txt                 AI permissions               (served at /ai.txt)
   ranatec-api/public/api-catalog.json       APIs.json 0.16               (served at /api-catalog.json)
   ranatec-api/public/well-known-api-catalog.json  RFC 9727 linkset     (served at /.well-known/api-catalog)
+  ranatec-api/public/ard.json               ARD v0.91 manifest           (served at /.well-known/ard.json; see tools/ard.py)
   web-root/*                                copies for upload to the web root (optional — the plugin serves them too)
   web-root/robots-addition.txt              lines to merge into the live robots.txt
 
 Usage: python3 tools/build_static.py
 """
-import json, os, re, shutil, html
+import json, os, re, shutil, html, sys
 from datetime import date
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import ard  # noqa: E402 — Agentic Resource Discovery core (framework-neutral)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'ranatec-api', 'data')
 PUB = os.path.join(ROOT, 'ranatec-api', 'public')
 WEB = os.path.join(ROOT, 'web-root')
-SITE = 'https://ranatec.com'
+# Site and MCP endpoint come from the plugin constants (single source of truth); MCP identity from the MCP server.
+_PLUGIN_SRC = open(os.path.join(ROOT, 'ranatec-api', 'ranatec-api.php')).read()
+SITE = re.search(r"define\('RANATEC_API_SITE', '([^']+)'\)", _PLUGIN_SRC).group(1)
 API = SITE + '/agent/v1'
-MCP_URL = re.search(r"define\('RANATEC_MCP_URL', '([^']+)'\)", open(os.path.join(ROOT, 'ranatec-api', 'ranatec-api.php')).read()).group(1)
+MCP_URL = re.search(r"define\('RANATEC_MCP_URL', '([^']+)'\)", _PLUGIN_SRC).group(1)
+MCP_NAME = re.search(r'const NAME = "([^"]+)"', open(os.path.join(ROOT, 'ranatec-mcp', 'src', 'index.ts')).read()).group(1)
+MCP_VERSION = json.load(open(os.path.join(ROOT, 'ranatec-mcp', 'package.json')))['version']
+ARD_CONFIG = os.path.join(ROOT, 'ard.config.json')   # optional; absent = defaults (enabled, auto-discovered entries)
+ARD_URL = None                                       # set by build_ard() when a manifest is published
 URLS = {
     'agent': SITE + '/agent/', 'llms': SITE + '/llms.txt', 'llms_full': SITE + '/llms-full.txt', 'ai': SITE + '/ai.txt',
     'catalog': SITE + '/api-catalog.json', 'wk_catalog': SITE + '/.well-known/api-catalog', 'openapi': SITE + '/openapi.json',
     'index': API + '/index.json', 'mcp': MCP_URL, 'mcp_tools': MCP_URL + '/tools', 'mcp_health': MCP_URL + '/health',
-    'sitemap': SITE + '/sitemap_index.xml', 'robots': SITE + '/robots.txt',
+    'sitemap': SITE + '/sitemap_index.xml', 'robots': SITE + '/robots.txt', 'ard': SITE + ard.WELL_KNOWN_PATH,
 }
 LOCALES = [('en-US', 'United States (default)', SITE + '/'), ('en-GB', 'United Kingdom', SITE + '/en-gb/'), ('en-CA', 'Canada', SITE + '/en-ca/')]
 
@@ -123,7 +133,7 @@ def build_openapi():
         'info': {
             'title': 'Ranatec Agent API',
             'version': PACKAGE_VERSION,
-            'description': 'Read-only JSON API describing Ranatec AB (Gothenburg, Sweden) — RF test & measurement equipment for filtering, shielding, switching and automation — plus one consent-gated POST endpoint for quote requests and enquiries. Content mirrors ranatec.com in three regional English locales (en-US default, en-GB, en-CA); every entity lists all three URLs. Ranatec publishes no prices: all products are sold B2B via request for quote.',
+            'description': 'Read-only JSON API describing Ranatec AB (Gothenburg, Sweden) — RF test & measurement equipment for filtering, shielding, switching and automation — plus two consent-gated POST endpoints: product quote requests and contact enquiries. Content mirrors ranatec.com in three regional English locales (en-US default, en-GB, en-CA); every entity lists all three URLs. Ranatec publishes no prices: all products are sold B2B via request for quote.',
             'contact': {'name': 'Ranatec AB', 'email': 'info@ranatec.com', 'url': SITE + '/contact-us/'},
             'x-agent-page': URLS['agent'], 'x-llms-txt': URLS['llms'], 'x-mcp-server': URLS['mcp'],
         },
@@ -331,6 +341,8 @@ def build_agent_page():
         pass
     a(f'<link rel="alternate" type="text/plain" title="llms.txt" href="{URLS["llms"]}">\n<link rel="alternate" type="text/plain" title="llms-full.txt" href="{URLS["llms_full"]}">')
     a(f'<link rel="alternate" type="application/json" title="Ranatec Agent API" href="{URLS["index"]}">\n<link rel="service-desc" type="application/json" href="{URLS["openapi"]}">\n<link rel="api-catalog" href="{URLS["wk_catalog"]}">')
+    if ARD_URL:
+        a(f'<link rel="ard" type="application/json" href="{ARD_URL}">')
     a('<style>')
     a(""":root{--bg:#0b0f14;--panel:#111821;--fg:#d7e1ea;--dim:#8a9aab;--acc:#58d6a7;--acc2:#7cc4ff;--warn:#ffcc66;--line:#1e2a36}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
@@ -942,7 +954,7 @@ Allow: /llms-full.txt
 Allow: /ai.txt
 Allow: /openapi.json
 Allow: /api-catalog.json
-Disallow: /cart/
+{'Allow: /.well-known/ard.json' + chr(10) if ARD_URL else ''}Disallow: /cart/
 Disallow: /checkout/
 Disallow: /my-account/
 Disallow: /en-gb/basket/
@@ -953,8 +965,62 @@ LLM-Readable: {URLS['agent']}
 LLM-Text: {URLS['llms']}
 AI-Policy: {URLS['ai']}
 Sitemap: {URLS['sitemap']}
-"""
+{'Agentmap: ' + ARD_URL + chr(10) if ARD_URL else ''}"""
     write(os.path.join(WEB, 'robots-addition.txt'), t)
+
+# ====================================================================== ARD (/.well-known/ard.json)
+def build_ard(spec):
+    """Agentic Resource Discovery manifest from the package's existing metadata (company data, MCP server,
+    OpenAPI spec). ard.config.json can disable it, add custom entries or override generated terms."""
+    global ARD_URL
+    queries = [f['q'] for f in faq][:5]
+    resources = {
+        'mcp': [{
+            'name': MCP_NAME, 'title': 'Ranatec MCP server', 'endpoint': URLS['mcp'], 'transport': 'streamable-http', 'version': MCP_VERSION,
+            'description': 'Ranatec products, company, news and FAQ, plus consent-gated quote and enquiry tools.',
+            'longDescription': 'Model Context Protocol server for Ranatec AB (RF test and measurement equipment): product specifications, '
+                               'comparisons, categories, news, FAQ and company data, plus consent-gated tools to request a product quote '
+                               '(request_quote) or send a contact enquiry (submit_inquiry).',
+            'tools': MCP_TOOLS, 'websiteUrl': URLS['agent'], 'queries': queries,
+            'tags': ['mcp', 'rf-test-equipment', 'product-catalog', 'request-for-quote'],
+        }],
+        'openapi': [{
+            'url': URLS['openapi'], 'title': spec['info']['title'], 'version': spec['info']['version'], 'openapiVersion': spec['openapi'],
+            'description': spec['info']['description'], 'baseUrl': spec['servers'][0]['url'], 'queries': queries,
+            'operations': [op['operationId'] for ops in spec['paths'].values() for op in ops.values() if op.get('operationId')],
+            'tags': ['rest', 'openapi', 'rf-test-equipment', 'product-catalog'],
+        }],
+    }
+    site = {'url': SITE, 'name': company['legal_name'], 'description': company['description'], 'documentationUrl': URLS['agent']}
+    manifest = ard.build_manifest(site, resources, ard.load_config(ARD_CONFIG), updated=UPDATED)
+    pub, web = os.path.join(PUB, 'ard.json'), os.path.join(WEB, '.well-known', 'ard.json')
+    if manifest is None:                                 # disabled / nothing to publish: remove stale copies
+        ARD_URL = None
+        for f in (pub, web):
+            if os.path.exists(f):
+                os.remove(f)
+        return None
+    errors, _, _ = ard.validate_manifest(manifest)
+    if errors:
+        raise SystemExit('ARD manifest invalid:\n  ' + '\n  '.join(errors))
+    ARD_URL = URLS['ard']
+    dump(pub, manifest)
+    return manifest
+
+def build_ard_docs(manifest):
+    """Keep the example in docs/ARD.md identical to the manifest this build generates."""
+    doc = os.path.join(ROOT, 'docs', 'ARD.md')
+    if not os.path.exists(doc):
+        return
+    text = open(doc, encoding='utf-8').read()
+    start, end = '<!-- ARD-EXAMPLE:START -->', '<!-- ARD-EXAMPLE:END -->'
+    if start not in text or end not in text:
+        return
+    body = ('```json\n' + json.dumps(manifest, indent=2, ensure_ascii=False) + '\n```') if manifest else \
+           '_ARD is disabled in this build (`ard.config.json`), so no manifest was generated._'
+    new = text[:text.index(start) + len(start)] + '\n' + body + '\n' + text[text.index(end):]
+    if new != text:
+        write(doc, new)
 
 MCP_TOOLS = [
     {'name': 'get_company', 'description': 'Company profile, contact details, certifications, locales, partners and careers.'},
@@ -974,6 +1040,7 @@ MCP_TOOLS = [
 
 if __name__ == '__main__':
     spec = build_openapi()
+    build_ard_docs(build_ard(spec))
     build_agent_page()
     build_llms()
     build_llms_full()
@@ -985,6 +1052,8 @@ if __name__ == '__main__':
     shutil.copy(os.path.join(ROOT, 'ranatec-api', 'openapi.json'), os.path.join(WEB, 'openapi.json'))
     os.makedirs(os.path.join(WEB, '.well-known'), exist_ok=True)
     shutil.copy(os.path.join(PUB, 'well-known-api-catalog.json'), os.path.join(WEB, '.well-known', 'api-catalog'))
+    if ARD_URL:
+        shutil.copy(os.path.join(PUB, 'ard.json'), os.path.join(WEB, '.well-known', 'ard.json'))
     for f in sorted(os.listdir(PUB)):
         print(f'{os.path.getsize(os.path.join(PUB, f)):>9}  ranatec-api/public/{f}')
     print(f'{os.path.getsize(os.path.join(ROOT, "ranatec-api", "openapi.json")):>9}  ranatec-api/openapi.json')
