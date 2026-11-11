@@ -89,8 +89,9 @@ php -r 'require "tests/wp-stubs.php"; require "ranatec-api/ranatec-api.php"; ech
 php tests/wp-stub-harness.php index '' GET </dev/null | grep -q '"ard_manifest": "https://ranatec.com/.well-known/ard.json"' && ok "index.json discovery lists ard_manifest" || bad "index.json ard_manifest"
 WP_OPTION_ranatec_api_ard_enabled=0 php tests/wp-stub-harness.php index '' GET </dev/null | grep -q 'ard_manifest' && bad "ARD off → index.json still lists it" || ok "ARD off → index.json has no ard_manifest"
 page=$(php tests/wp-stub-harness.php agent-page '' GET </dev/null); grep -q 'rel="ard"' <<<"$page" && ok "/agent/ page links the manifest" || bad "/agent/ rel=ard"
-page=$(WP_OPTION_home=https://staging.example.org php tests/wp-stub-harness.php agent-page '' GET </dev/null); grep -q '<link rel="ard" type="application/json" href="https://staging.example.org/.well-known/ard.json">' <<<"$page" && ok "/agent/ page links this site's own manifest (staging domain)" || bad "/agent/ rel=ard on staging"
-page=$(WP_OPTION_ranatec_api_ard_enabled=0 php tests/wp-stub-harness.php agent-page '' GET </dev/null); grep -q 'rel="ard"' <<<"$page" && bad "ARD off → /agent/ still links it" || ok "ARD off → /agent/ page link removed"
+grep -q '<li data-ard><a href="https://ranatec.com/.well-known/ard.json">ARD manifest</a>' <<<"$page" && ok "/agent/ LLM Discovery list has a visible ARD manifest link" || bad "/agent/ visible ARD link"
+page=$(WP_OPTION_home=https://staging.example.org php tests/wp-stub-harness.php agent-page '' GET </dev/null); grep -q '<link rel="ard" type="application/json" href="https://staging.example.org/.well-known/ard.json">' <<<"$page" && grep -q '<li data-ard><a href="https://staging.example.org/.well-known/ard.json">' <<<"$page" && ok "/agent/ page links this site's own manifest (staging domain)" || bad "/agent/ rel=ard on staging"
+page=$(WP_OPTION_ranatec_api_ard_enabled=0 php tests/wp-stub-harness.php agent-page '' GET </dev/null); grep -qE 'rel="ard"|data-ard|ARD manifest</a>' <<<"$page" && bad "ARD off → /agent/ still links it" || ok "ARD off → /agent/ page link removed"
 
 echo "== Versions"
 python3 tools/check_versions.py >"$TMP/versions.log" 2>&1 && ok "all component versions match VERSION ($(tr -d '[:space:]' < VERSION))" || { cat "$TMP/versions.log"; bad "version mismatch"; }

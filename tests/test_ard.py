@@ -170,12 +170,14 @@ class Core(unittest.TestCase):
             self.assertFalse(os.path.exists(os.path.join(tmp, 'ranatec-api', 'public', 'ard.json')))
             self.assertFalse(os.path.exists(os.path.join(tmp, 'web-root', '.well-known', 'ard.json')))
             self.assertNotIn('rel="ard"', rd(os.path.join(tmp, 'ranatec-api', 'public', 'agent-page.html')))
+            self.assertNotIn('data-ard', rd(os.path.join(tmp, 'ranatec-api', 'public', 'agent-page.html')))
             self.assertNotIn('Agentmap:', rd(os.path.join(tmp, 'web-root', 'robots-addition.txt')))
             # …and the default (no config file) publishes it again with every reference.
             os.remove(os.path.join(tmp, 'ard.config.json'))
             subprocess.run([sys.executable, os.path.join(tmp, 'tools', 'build_static.py')], check=True, capture_output=True)
             self.assertTrue(os.path.exists(os.path.join(tmp, 'web-root', '.well-known', 'ard.json')))
             self.assertIn('rel="ard"', rd(os.path.join(tmp, 'ranatec-api', 'public', 'agent-page.html')))
+            self.assertIn('<li data-ard><a href="https://ranatec.com/.well-known/ard.json">ARD manifest</a>', rd(os.path.join(tmp, 'ranatec-api', 'public', 'agent-page.html')))
             self.assertIn('Agentmap: https://ranatec.com/.well-known/ard.json', rd(os.path.join(tmp, 'web-root', 'robots-addition.txt')))
         finally:
             shutil.rmtree(tmp)

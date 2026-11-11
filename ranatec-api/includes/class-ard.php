@@ -71,10 +71,11 @@ final class Ranatec_Agent_ARD
         return rtrim((string) $output) . "\n\n# Agentic Resource Discovery (ARD)\nAgentmap: " . self::url() . "\n";
     }
 
-    /** Removes the build-time <link rel="ard"> from static HTML (the /agent/ page) while ARD is switched off. */
+    /** Removes the build-time ARD references (<link rel="ard"> and the visible "ARD manifest" item) from the /agent/ page while ARD is switched off. */
     public static function strip_link($html)
     {
-        return preg_replace('#<link rel="ard"[^>]*>\s*#i', '', (string) $html);
+        $html = preg_replace('#<link rel="ard"[^>]*>\s*#i', '', (string) $html);
+        return preg_replace('#<li data-ard>.*?</li>\s*#is', '', $html);
     }
 
     /** '' when the static page can be served as built; otherwise a cache variant key for filter_page(). */

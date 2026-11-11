@@ -71,7 +71,7 @@ To cut a new release: edit `VERSION`, run `bash tools/release.sh`, commit.
 One command runs everything (PHP lint, JSON, the contact and quote endpoints with and without `mbstring`, the ARD manifest and its routes, HTTP endpoints and the MCP end-to-end test). It runs `npm ci` itself if `node_modules` is missing. Strict ARD schema validation needs the Python `jsonschema` package:
 
 ```bash
-bash tests/run-all.sh      # 89 checks
+bash tests/run-all.sh      # 90 checks
 python3 -m unittest tests/test_ard.py              # ARD only (17 tests)
 python3 tools/ard.py validate https://ranatec.com/.well-known/ard.json --check-urls   # live check after deployment
 ```
