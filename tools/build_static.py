@@ -378,7 +378,7 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
                     ('REST API', URLS['index'], 'JSON endpoints under /agent/v1/'), ('OpenAPI 3.0.3', URLS['openapi'], 'machine-readable API contract'),
                     ('MCP server', URLS['mcp'], 'Model Context Protocol tools (tool list: ' + URLS['mcp_tools'] + ')'), ('APIs.json catalog', URLS['catalog'], 'APIs.json 0.16'),
                     ('RFC 9727 API catalog', URLS['wk_catalog'], 'application/linkset+json')] + \
-                   ([('ARD manifest', ARD_URL, 'Agentic Resource Discovery (ARD v0.91): MCP server and OpenAPI API')] if ARD_URL else []) + \
+                   ([('ard.json', ARD_URL, 'Agentic Resource Discovery (ARD v0.91) manifest')] if ARD_URL else []) + \
                    [('XML sitemap', URLS['sitemap'], 'Yoast SEO sitemap index'), ('robots.txt', URLS['robots'], 'AI crawlers allowed')]:
         # data-ard marks the ARD item so the plugin can drop it while ARD is switched off (Ranatec_Agent_ARD::strip_link).
         a(f'<li{" data-ard" if u == ARD_URL else ""}>{link(u, t)} — <span class="dim">{e(d)}</span></li>')

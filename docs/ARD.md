@@ -47,7 +47,7 @@ ard.config.json (optional) ─────────────────�
 |---|---|
 | `GET /.well-known/ard.json` | `200`, `application/json; charset=utf-8`, `Access-Control-Allow-Origin: *`, `Cache-Control: public, max-age=3600`, ETag |
 | Every WordPress page `<head>` | `<link rel="ard" type="application/json" href="https://<this site>/.well-known/ard.json">` |
-| The static `/agent/` page | The same `<link rel="ard">`, plus a visible **ARD manifest** link in its *LLM Discovery* list (both removed at serve time while ARD is switched off) |
+| The static `/agent/` page | The same `<link rel="ard">`, plus a visible **ard.json** link in its *LLM Discovery* list (both removed at serve time while ARD is switched off) |
 | WordPress' virtual robots.txt | `Agentmap: https://<this site>/.well-known/ard.json` (only if no Agentmap line exists) |
 | `/agent/v1/index.json` | `discovery.ard_manifest` |
 | `web-root/robots-addition.txt` | `Agentmap:` and `Allow:` lines for sites with a physical robots.txt |
@@ -238,7 +238,7 @@ npx lighthouse https://ranatec.com/ --only-audits=ard-schema --output=json --qui
         "product-catalog",
         "request-for-quote"
       ],
-      "version": "1.2.1",
+      "version": "1.2.2",
       "updatedAt": "2026-10-06T00:00:00Z",
       "metadata": {
         "transport": "streamable-http",
@@ -247,7 +247,7 @@ npx lighthouse https://ranatec.com/ --only-audits=ard-schema --output=json --qui
       "data": {
         "$schema": "https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json",
         "name": "com.ranatec/ranatec-mcp",
-        "version": "1.2.1",
+        "version": "1.2.2",
         "description": "Ranatec products, company, news and FAQ, plus consent-gated quote and enquiry tools.",
         "title": "Ranatec MCP server",
         "websiteUrl": "https://ranatec.com/agent/",
@@ -294,7 +294,7 @@ npx lighthouse https://ranatec.com/ --only-audits=ard-schema --output=json --qui
         "rf-test-equipment",
         "product-catalog"
       ],
-      "version": "1.2.1",
+      "version": "1.2.2",
       "updatedAt": "2026-10-06T00:00:00Z",
       "metadata": {
         "baseUrl": "https://ranatec.com/agent/v1",
