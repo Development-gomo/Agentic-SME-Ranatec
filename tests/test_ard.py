@@ -178,7 +178,7 @@ class Core(unittest.TestCase):
             self.assertTrue(os.path.exists(os.path.join(tmp, 'web-root', '.well-known', 'ard.json')))
             self.assertIn('rel="ard"', rd(os.path.join(tmp, 'ranatec-api', 'public', 'agent-page.html')))
             self.assertIn('<li data-ard><a href="https://ranatec.com/.well-known/ard.json">ard.json</a>', rd(os.path.join(tmp, 'ranatec-api', 'public', 'agent-page.html')))
-            self.assertIn('<tr data-ard><th>ard.json</th>', rd(os.path.join(tmp, 'ranatec-api', 'public', 'agent-page.html')))
+            self.assertIn('<tr data-ard><th>ARD manifest</th>', rd(os.path.join(tmp, 'ranatec-api', 'public', 'agent-page.html')))
             self.assertIn('Agentmap: https://ranatec.com/.well-known/ard.json', rd(os.path.join(tmp, 'web-root', 'robots-addition.txt')))
         finally:
             shutil.rmtree(tmp)
