@@ -71,11 +71,11 @@ final class Ranatec_Agent_ARD
         return rtrim((string) $output) . "\n\n# Agentic Resource Discovery (ARD)\nAgentmap: " . self::url() . "\n";
     }
 
-    /** Removes the build-time ARD references (<link rel="ard"> and the visible "ARD manifest" item) from the /agent/ page while ARD is switched off. */
+    /** Removes the build-time ARD references (<link rel="ard">, the LLM Discovery item and the Metadata row) from the /agent/ page while ARD is switched off. */
     public static function strip_link($html)
     {
         $html = preg_replace('#<link rel="ard"[^>]*>\s*#i', '', (string) $html);
-        return preg_replace('#<li data-ard>.*?</li>\s*#is', '', $html);
+        return preg_replace(['#<li data-ard>.*?</li>\s*#is', '#<tr data-ard>.*?</tr>\s*#is'], '', $html);
     }
 
     /** '' when the static page can be served as built; otherwise a cache variant key for filter_page(). */
@@ -93,7 +93,8 @@ final class Ranatec_Agent_ARD
         if (!self::active()) {
             return self::strip_link($html);
         }
-        return str_replace('href="' . RANATEC_API_SITE . self::PATH . '"', 'href="' . esc_url(self::url()) . '"', (string) $html);
+        $from = RANATEC_API_SITE . self::PATH;
+        return str_replace(['href="' . $from . '"', '>' . $from . '<'], ['href="' . esc_url(self::url()) . '"', '>' . esc_html(self::url()) . '<'], (string) $html);
     }
 
     /** @return array{count:int, identifiers:string[]} for the admin status line. */

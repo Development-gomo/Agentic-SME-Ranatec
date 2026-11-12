@@ -16,6 +16,7 @@ function sanitize_email($e) { return filter_var(trim((string) $e), FILTER_SANITI
 function is_email($e) { return (bool) filter_var($e, FILTER_VALIDATE_EMAIL); }
 function esc_url_raw($u) { return filter_var($u, FILTER_VALIDATE_URL) ? $u : ''; }
 function esc_url($u) { return $u; }
+function esc_html($s) { return htmlspecialchars((string) $s, ENT_QUOTES, "UTF-8"); }
 function sanitize_title($s) { return strtolower(preg_replace('/[^a-z0-9-]/i', '', (string) $s)); }
 function get_transient($k) { $f = sys_get_temp_dir() . "/rl-$k"; return is_file($f) ? (int) file_get_contents($f) : false; }
 function set_transient($k, $v, $t) { file_put_contents(sys_get_temp_dir() . "/rl-$k", $v); }

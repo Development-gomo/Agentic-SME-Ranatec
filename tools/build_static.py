@@ -367,8 +367,11 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
     for k, v in [('Last crawled', f'<time datetime="{UPDATED}">{UPDATED}</time>'), ('Source site', link(SITE + '/')), ('Locales covered', 'en-US (default) · en-GB (/en-gb/) · en-CA (/en-ca/) — identical English content'),
                  ('Pages crawled', f'{len(pages)} pages × 3 locales, {len(news)} news articles × 3 locales, {len(products)} product listings, {len(categories) - 1} category pages, careers site'),
                  ('Agent page', link(URLS['agent'])), ('REST API index', link(URLS['index'])), ('OpenAPI', link(URLS['openapi'])), ('MCP server', link(URLS['mcp']) + ' (Streamable HTTP)'),
-                 ('API catalog', link(URLS['catalog']) + ' · ' + link(URLS['wk_catalog'])), ('llms.txt', link(URLS['llms']) + ' · ' + link(URLS['llms_full'])), ('ai.txt', link(URLS['ai'])), ('Sitemap', link(URLS['sitemap']))]:
-        a(f'<tr><th>{k}</th><td>{v}</td></tr>')
+                 ('API catalog', link(URLS['catalog']) + ' · ' + link(URLS['wk_catalog']))] + \
+                ([('ard.json', link(ARD_URL) + ' (Agentic Resource Discovery, ARD v0.91)')] if ARD_URL else []) + \
+                [('llms.txt', link(URLS['llms']) + ' · ' + link(URLS['llms_full'])), ('ai.txt', link(URLS['ai'])), ('Sitemap', link(URLS['sitemap']))]:
+        # data-ard marks the ARD row so the plugin can drop it while ARD is switched off.
+        a(f'<tr{" data-ard" if k == "ard.json" else ""}><th>{k}</th><td>{v}</td></tr>')
     a('</table></section>')
 
     # 2 llm discovery
