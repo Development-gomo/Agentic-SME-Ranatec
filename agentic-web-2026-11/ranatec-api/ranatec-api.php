@@ -3,7 +3,7 @@
  * Plugin Name:       Ranatec Agent API
  * Plugin URI:        https://ranatec.com/agent/
  * Description:       Agentic Web package for ranatec.com — serves the machine-readable agent page (/agent/), clean JSON endpoints (/agent/v1/*.json), the OpenAPI spec (/openapi.json), llms.txt, ai.txt, the API catalog and the ARD manifest (/.well-known/ard.json), plus agent-safe product-quote and contact endpoints.
- * Version:           1.3.6
+ * Version:           1.3.7
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            GO MO Group for Ranatec AB
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('RANATEC_API_VERSION', '1.3.6');
+define('RANATEC_API_VERSION', '1.3.7');
 define('RANATEC_API_DIR', plugin_dir_path(__FILE__));
 define('RANATEC_API_DATA', RANATEC_API_DIR . 'data/');
 define('RANATEC_API_PUBLIC', RANATEC_API_DIR . 'public/');
@@ -27,6 +27,7 @@ define('RANATEC_MCP_URL', 'https://agentic-mcp-sme-ranatec.onrender.com/mcp');
 require_once RANATEC_API_DIR . 'includes/class-contact.php';
 require_once RANATEC_API_DIR . 'includes/class-sync.php';
 require_once RANATEC_API_DIR . 'includes/class-ard.php';
+require_once RANATEC_API_DIR . 'includes/class-webmcp.php';
 
 final class Ranatec_Agent_API
 {
@@ -66,6 +67,7 @@ final class Ranatec_Agent_API
         add_action('init', [__CLASS__, 'maybe_flush_rewrites'], 99);
         Ranatec_Agent_Sync::init();
         Ranatec_Agent_ARD::init();
+        Ranatec_Agent_WebMCP::init();
     }
 
     public static function add_rewrite_rules()
@@ -515,11 +517,17 @@ final class Ranatec_Agent_API
         header('X-Content-Type-Options: nosniff');
         // The /agent/ page carries a build-time <link rel="ard"> to the configured site: point it at this site's
         // own manifest (staging, alternate domains) and drop it while ARD is switched off.
+        // It also gets the WebMCP script tag (it is served outside the theme, so wp_head does not add it).
         $ard_variant = $endpoint === 'agent-page' ? Ranatec_Agent_ARD::page_variant() : '';
-        self::cache_headers($path, $ard_variant);
+        $webmcp_variant = $endpoint === 'agent-page' ? Ranatec_Agent_WebMCP::page_variant() : '';
+        self::cache_headers($path, $ard_variant . $webmcp_variant);
         status_header(200);
-        if ($ard_variant !== '') {
-            echo Ranatec_Agent_ARD::filter_page(file_get_contents($path));
+        if ($endpoint === 'agent-page') {
+            $html = (string) file_get_contents($path);
+            if ($ard_variant !== '') {
+                $html = Ranatec_Agent_ARD::filter_page($html);
+            }
+            echo Ranatec_Agent_WebMCP::filter_page($html);
         } else {
             readfile($path);
         }

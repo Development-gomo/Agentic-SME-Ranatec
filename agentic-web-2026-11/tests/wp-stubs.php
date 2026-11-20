@@ -16,6 +16,8 @@ function sanitize_email($e) { return filter_var(trim((string) $e), FILTER_SANITI
 function is_email($e) { return (bool) filter_var($e, FILTER_VALIDATE_EMAIL); }
 function esc_url_raw($u) { return filter_var($u, FILTER_VALIDATE_URL) ? $u : ''; }
 function esc_url($u) { return $u; }
+function esc_attr($s) { return htmlspecialchars((string) $s, ENT_QUOTES); }
+function plugins_url($p = '', $f = '') { return (getenv('WP_OPTION_home') ?: 'https://ranatec.com') . '/wp-content/plugins/' . basename(dirname($f)) . '/' . $p; }
 function current_user_can($c) { return getenv('TEST_ADMIN') !== '0'; }
 function esc_html($s) { return htmlspecialchars((string) $s, ENT_QUOTES, "UTF-8"); }
 function sanitize_title($s) { return strtolower(preg_replace('/[^a-z0-9-]/i', '', (string) $s)); }

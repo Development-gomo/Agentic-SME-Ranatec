@@ -187,6 +187,11 @@ echo "== HTTP (PHP built-in server)"
 php -S 127.0.0.1:$PHP_PORT tests/php-router.php >"$TMP/php.log" 2>&1 & PHP_PID=$!
 ready=0; for i in $(seq 1 80); do curl -s -o /dev/null "http://127.0.0.1:$PHP_PORT/agent/v1/index.json" && { ready=1; break; }; sleep 0.25; done
 [[ $ready == 1 ]] && ok "PHP server ready on :$PHP_PORT" || { bad "PHP server did not start on :$PHP_PORT (port in use?)"; cat "$TMP/php.log"; }
+wm_rc=0; wm_out=$(node tests/webmcp-test.cjs "http://127.0.0.1:$PHP_PORT" ranatec-api/public/webmcp.js 2>&1) || wm_rc=$?
+if [[ $wm_rc -eq 3 ]]; then echo "SKIP WebMCP browser test: $wm_out"; else
+  while IFS= read -r line; do case $line in PASS\ *) ok "WebMCP: ${line#PASS }";; FAIL\ *) bad "WebMCP: ${line#FAIL }";; esac; done <<<"$wm_out"
+  [[ $(grep -c '^PASS' <<<"$wm_out") -eq 9 ]] || bad "WebMCP browser test: expected 9 checks ($wm_out)"
+fi
 for p in .well-known/ard.json agent/ agent/v1/index.json agent/v1/products.json agent/v1/products/ri-268.json agent/v1/categories/butler-matrices.json agent/v1/news.json agent/v1/faq.json openapi.json llms.txt llms-full.txt ai.txt api-catalog.json .well-known/api-catalog; do
   code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:$PHP_PORT/$p"); [[ $code == 200 ]] && ok "GET /$p" || bad "GET /$p ($code)"
 done
@@ -198,6 +203,19 @@ python3 tools/ard.py validate "$TMP/ard.json" >"$TMP/ard-validate.log" 2>&1 && g
 # Every advertised url must resolve on the site that serves the manifest (production host swapped for the test server).
 sed "s#https://ranatec.com#http://127.0.0.1:$PHP_PORT#g" "$TMP/ard.json" > "$TMP/ard-local.json"
 python3 tools/ard.py validate "$TMP/ard-local.json" --check-urls >"$TMP/ard-urls.log" 2>&1 && ok "every advertised ARD url resolves (HTTP 200)" || { cat "$TMP/ard-urls.log"; bad "ARD urls"; }
+
+echo "== WebMCP"
+node --check ranatec-api/public/webmcp.js && ok "webmcp.js is valid JavaScript" || bad "webmcp.js syntax"
+head=$(php -r 'require "tests/wp-stubs.php"; require "ranatec-api/ranatec-api.php"; Ranatec_Agent_WebMCP::head();' </dev/null)
+has 'data-ranatec-webmcp' <<<"$head" && has 'public/webmcp.js?ver=' <<<"$head" && ! has 'origin-trial' <<<"$head" && ok "WebMCP script in page heads (no origin-trial meta without a token)" || bad "WebMCP head tag: $head"
+head=$(WP_OPTION_ranatec_api_webmcp_enabled=0 php -r 'require "tests/wp-stubs.php"; require "ranatec-api/ranatec-api.php"; Ranatec_Agent_WebMCP::head();' </dev/null)
+[[ -z $head ]] && ok "WebMCP switched off → nothing added to pages" || bad "WebMCP off still outputs: $head"
+head=$(WP_OPTION_ranatec_api_webmcp_ot_token='AnOriginTrialTokenAbc123+/=' php -r 'require "tests/wp-stubs.php"; require "ranatec-api/ranatec-api.php"; Ranatec_Agent_WebMCP::head();' </dev/null)
+has '<meta http-equiv="origin-trial" content="AnOriginTrialTokenAbc123+/=" />' <<<"$head" && ok "origin-trial token printed as a meta tag" || bad "origin-trial meta: $head"
+head=$(WP_OPTION_ranatec_api_webmcp_ot_token='"><script>alert(1)</script>' php -r 'require "tests/wp-stubs.php"; require "ranatec-api/ranatec-api.php"; Ranatec_Agent_WebMCP::head();' </dev/null)
+! has 'origin-trial' <<<"$head" && ! has 'alert' <<<"$head" && ok "a malformed token is not printed" || bad "malformed token printed: $head"
+page=$(php tests/wp-stub-harness.php agent-page '' GET </dev/null); has 'data-ranatec-webmcp' <<<"$page" && ok "/agent/ page loads the WebMCP script" || bad "/agent/ page WebMCP script"
+page=$(WP_OPTION_ranatec_api_webmcp_enabled=0 php tests/wp-stub-harness.php agent-page '' GET </dev/null); ! has 'data-ranatec-webmcp' <<<"$page" && ok "WebMCP off → /agent/ page without the script" || bad "/agent/ page script while off"
 
 echo "== MCP server"
 ( cd ranatec-mcp && { [[ -d node_modules ]] || npm ci --no-audit --no-fund >/dev/null; } && npm run build >/dev/null ) && ok "npm ci + build" || bad "npm ci + build"

@@ -1,5 +1,24 @@
 # Changelog — Ranatec Agentic Web package
 
+## 1.3.7 — 2026-11-20 (`agentic-web-2026-11`)
+
+New: **WebMCP**, the Lighthouse "Agentic Browsing" audit **WebMCP schemas are valid**. Same crawl and data as 1.3.6.
+
+- **Why the audit showed "Not applicable":** read in Lighthouse 13.6's source. It does so when the page registers no WebMCP tools, or when the browser running Lighthouse has no WebMCP. ranatec.com registered none.
+- **5 read-only WebMCP tools on every page** (`search_ranatec`, `get_product`, `list_products`, `compare_products`, `get_company_info`) and on `/agent/`. They are registered with `document.modelContext.registerTool()` from the new `public/webmcp.js`, which `tools/build_static.py` generates so that the category and domain lists come from the data. The tools read the same-origin `/agent/v1` API, so they work on staging too. Every tool is marked read-only, and nothing can be submitted through them: quotes and enquiries stay with the MCP server, which carries the consent rules. Errors such as an unknown product come back as a readable message. The website forms are deliberately not annotated for WebMCP, so agents can't fill in the reCAPTCHA-protected forms.
+- **Tools → Ranatec Agent API:** a switch (on by default), and an optional Chrome origin-trial token, printed as `<meta http-equiv="origin-trial">`. Only a well-formed token is printed.
+- **Verified:**
+  - **Lighthouse 13.6** in Chrome 153, on a real WordPress install: **WebMCP schemas are valid** passes, **WebMCP tools registered** lists all 5 tools with their full input schemas, and **ARD manifest is valid** still passes.
+  - **Real-browser tests** call every tool and check the answers.
+- 17 new tests (166 in total).
+
+Deploy:
+1. Upload `release/ranatec-api-1.3.7.zip` in WordPress and choose **Replace current**.
+2. Replace `public_html/.well-known/ard.json` with `web-root/.well-known/ard.json`.
+3. Run LiteSpeed **Purge All**.
+4. Check in Lighthouse as in step 24a of `docs/DEPLOYMENT-ODERLAND.md`.
+5. The MCP server code is unchanged. Only its version number changes, in `Development-gomo/agentic-mcp-sme-ranatec`.
+
 ## 1.3.6 — 2026-11-20 (`agentic-web-2026-11`)
 
 Fixes from a third external review (Codex) of 1.3.5. Both points held up when checked.

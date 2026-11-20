@@ -110,6 +110,7 @@ grep -q "Version:           $V" <<<"$PLUGIN_MAIN" || { echo "plugin zip has wron
 grep -q "\"version\": \"$V\"" <<<"$MCP_PKG" || { echo "MCP bundle has wrong version"; exit 1; }
 grep -q "dist/index.js" <<<"$MCP_LIST" || { echo "MCP bundle missing dist/index.js"; exit 1; }
 if [[ -f ranatec-api/public/ard.json ]]; then
+  grep -q "ranatec-api/public/webmcp.js" <<<"$PLUGIN_LIST" || { echo "WebMCP script missing from plugin zip"; exit 1; }
   grep -q "ranatec-api/public/ard.json" <<<"$PLUGIN_LIST" || { echo "ARD manifest missing from plugin zip"; exit 1; }
   python3 tools/ard.py validate ranatec-api/public/ard.json >/dev/null || { python3 tools/ard.py validate ranatec-api/public/ard.json; echo "ARD manifest invalid"; exit 1; }
 fi

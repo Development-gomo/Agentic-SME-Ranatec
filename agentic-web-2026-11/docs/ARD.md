@@ -238,7 +238,7 @@ npx lighthouse https://ranatec.com/ --only-audits=ard-schema --output=json --qui
         "product-catalog",
         "request-for-quote"
       ],
-      "version": "1.3.6",
+      "version": "1.3.7",
       "updatedAt": "2026-11-20T00:00:00Z",
       "metadata": {
         "transport": "streamable-http",
@@ -247,7 +247,7 @@ npx lighthouse https://ranatec.com/ --only-audits=ard-schema --output=json --qui
       "data": {
         "$schema": "https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json",
         "name": "com.ranatec/ranatec-mcp",
-        "version": "1.3.6",
+        "version": "1.3.7",
         "description": "Ranatec products, company, news and FAQ, plus consent-gated quote and enquiry tools.",
         "title": "Ranatec MCP server",
         "websiteUrl": "https://ranatec.com/agent/",
@@ -294,7 +294,7 @@ npx lighthouse https://ranatec.com/ --only-audits=ard-schema --output=json --qui
         "rf-test-equipment",
         "product-catalog"
       ],
-      "version": "1.3.6",
+      "version": "1.3.7",
       "updatedAt": "2026-11-20T00:00:00Z",
       "metadata": {
         "baseUrl": "https://ranatec.com/agent/v1",

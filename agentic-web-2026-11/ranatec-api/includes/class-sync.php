@@ -608,6 +608,10 @@ final class Ranatec_Agent_Sync
         } else {
             echo '<p><strong>No manifest in this build</strong> (ARD disabled in <code>ard.config.json</code>, or no resources to publish). Rebuild with <code>tools/release.sh</code> to generate one.</p>';
         }
+        echo '<h3>WebMCP (tools for AI agents in the browser)</h3>';
+        echo '<p><label><input type="checkbox" name="webmcp_enabled" value="1" ' . (Ranatec_Agent_WebMCP::enabled() ? 'checked' : '') . ' /> Register read-only WebMCP tools on every page (search_ranatec, get_product, list_products, compare_products, get_company_info). They only read the catalogue; nothing can be submitted through them.</label></p>';
+        echo '<p>' . (Ranatec_Agent_WebMCP::active() ? '<span style="color:#008a20">On ✓</span> — script: <a href="' . esc_url(Ranatec_Agent_WebMCP::script_url()) . '" target="_blank" rel="noopener">webmcp.js</a>' : '<strong>Off</strong> — no script is added to pages.') . ' Chrome exposes WebMCP behind <code>chrome://flags/#enable-webmcp-testing</code> or in the WebMCP origin trial.</p>';
+        echo '<p><label>Chrome origin-trial token (optional): <input type="text" class="large-text code" name="webmcp_ot_token" value="' . esc_attr((string) get_option(Ranatec_Agent_WebMCP::OPTION_OT_TOKEN, '')) . '" placeholder="Paste the token for https://ranatec.com from the Chrome origin trials page" /></label></p>';
         submit_button('Save', 'secondary', 'submit', false);
         echo '</form></div>';
     }
@@ -654,6 +658,11 @@ final class Ranatec_Agent_Sync
         }
         update_option('ranatec_api_notify_email', empty($_POST['notify_email']) ? '0' : '1', false);
         update_option(Ranatec_Agent_ARD::OPTION_ENABLED, empty($_POST['ard_enabled']) ? '0' : '1', true);
+        update_option(Ranatec_Agent_WebMCP::OPTION_ENABLED, empty($_POST['webmcp_enabled']) ? '0' : '1', true);
+        if (isset($_POST['webmcp_ot_token'])) {
+            $t = preg_replace('#[^A-Za-z0-9+/=]#', '', (string) wp_unslash($_POST['webmcp_ot_token']));
+            update_option(Ranatec_Agent_WebMCP::OPTION_OT_TOKEN, $t, true);
+        }
         if (isset($_POST['quote_status'])) {
             update_option('ranatec_api_quote_status', sanitize_key(wp_unslash($_POST['quote_status'])), false);
         }
