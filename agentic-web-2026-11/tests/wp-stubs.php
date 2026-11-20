@@ -86,7 +86,7 @@ if (getenv('TEST_WC') !== '0') {
     class Fake_WC_Gateways { public function payment_gateways() { return ['yith-request-a-quote' => new Fake_WC_Gateway()]; } }
     class Fake_WC { public $countries; public function __construct() { $this->countries = new Fake_WC_Countries(); } public function payment_gateways() { return new Fake_WC_Gateways(); } }
     function WC() { static $wc; return $wc ?: ($wc = new Fake_WC()); }
-    class Fake_WC_Product { public $slug; public function __construct($s) { $this->slug = $s; } public function get_name() { return 'Product ' . $this->slug; } }
+    class Fake_WC_Product { public $slug; public function __construct($s) { $this->slug = $s; } public function get_name() { return 'Product ' . $this->slug; } public function get_sku() { return 'SKU-' . $this->slug; } public function get_stock_status() { return 'onbackorder'; } }
     function get_page_by_path($slug, $o = null, $t = null) { return in_array($slug, explode(',', (string) getenv('TEST_WC_MISSING')), true) ? null : (object) ['ID' => $slug]; }
     function wc_get_product($id) { return new Fake_WC_Product($id); }
     function wc_get_order_statuses() { return ['wc-pending' => 'Pending payment', 'wc-ywraq-new' => 'New Quote Request']; }

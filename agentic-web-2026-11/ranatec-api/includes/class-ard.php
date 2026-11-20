@@ -46,12 +46,16 @@ final class Ranatec_Agent_ARD
     public static function static_copies()
     {
         $out = [];
+        $managed = class_exists('Ranatec_Agent_Static_Files') ? Ranatec_Agent_Static_Files::status() : [];
         foreach (self::OVERRIDABLE as $path => $own) {
             $copy = ABSPATH . $path;
             $mine = RANATEC_API_DIR . $own;
-            if (is_file($copy) && is_readable($mine)) {
-                $out[$path] = md5_file($copy) === md5_file($mine) ? 'current' : 'outdated';
+            if (!is_file($copy) || !is_readable($mine) || (($managed['files'][$path]['state'] ?? '') === 'static')) {
+                continue;   // missing, or written by the plugin itself (fast agent files)
             }
+            $endpoint = class_exists('Ranatec_Agent_Static_Files') && isset(Ranatec_Agent_Static_Files::FILES[$path]) ? Ranatec_Agent_Static_Files::FILES[$path][0] : null;
+            $served = $endpoint ? Ranatec_Agent_API::render_static($endpoint) : null;
+            $out[$path] = md5_file($copy) === ($served !== null ? md5($served) : md5_file($mine)) ? 'current' : 'outdated';
         }
         return $out;
     }

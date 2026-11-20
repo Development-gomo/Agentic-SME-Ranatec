@@ -6,7 +6,7 @@
   "created": "2026-11-20",
   "modified": "2026-11-20",
   "specificationVersion": "0.16",
-  "X-package-version": "1.3.7",
+  "X-package-version": "1.4.0",
   "tags": [
     "RF test equipment",
     "test and measurement",
@@ -68,6 +68,20 @@
       "properties": [],
       "tags": [
         "policy"
+      ]
+    },
+    {
+      "name": "ARD manifest",
+      "description": "Agentic Resource Discovery manifest (ARD v0.91): lists the MCP server and the Agent API.",
+      "baseURL": "https://ranatec.com/.well-known/ard.json",
+      "humanURL": "https://ranatec.com/agent/",
+      "X-format": "application/json",
+      "X-contentType": "ard-manifest",
+      "X-purpose": "Agent discovery",
+      "properties": [],
+      "tags": [
+        "discovery",
+        "ard"
       ]
     },
     {
@@ -397,6 +411,7 @@
     "mcp_server": "https://agentic-mcp-sme-ranatec.onrender.com/mcp",
     "api_catalog": "https://ranatec.com/api-catalog.json",
     "well_known_api_catalog": "https://ranatec.com/.well-known/api-catalog",
-    "sitemap": "https://ranatec.com/sitemap_index.xml"
+    "sitemap": "https://ranatec.com/sitemap_index.xml",
+    "ard_manifest": "https://ranatec.com/.well-known/ard.json"
   }
 }

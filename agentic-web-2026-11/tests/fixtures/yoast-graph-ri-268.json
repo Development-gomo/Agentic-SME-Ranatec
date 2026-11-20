@@ -1,0 +1,112 @@
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "WebPage",
+   "@id": "https://ranatec.com/product/tunable-band-reject-filter-ri-268/",
+   "url": "https://ranatec.com/product/tunable-band-reject-filter-ri-268/",
+   "name": "Tunable Band Reject Filter RI 268 - Ranatec",
+   "isPartOf": {
+    "@id": "https://ranatec.com/#website"
+   },
+   "primaryImageOfPage": {
+    "@id": "https://ranatec.com/product/tunable-band-reject-filter-ri-268/#primaryimage"
+   },
+   "image": {
+    "@id": "https://ranatec.com/product/tunable-band-reject-filter-ri-268/#primaryimage"
+   },
+   "thumbnailUrl": "https://ranatec.com/wp-content/uploads/2026/07/Main-image_Menu_Product-page_Cart_etc._Ranatec-RI-268-Tunable-Band-Reject-Filter_front-scaled.webp",
+   "datePublished": "2026-07-08T11:26:42+00:00",
+   "dateModified": "2026-09-11T06:04:13+00:00",
+   "description": "Ranatec RI 268 tunable band reject filter: 0.6–8 GHz with combined 5/160 MHz bandwidths, for 5G carrier aggregation testing.",
+   "breadcrumb": {
+    "@id": "https://ranatec.com/product/tunable-band-reject-filter-ri-268/#breadcrumb"
+   },
+   "inLanguage": "en-US",
+   "potentialAction": [
+    {
+     "@type": "ReadAction",
+     "target": [
+      "https://ranatec.com/product/tunable-band-reject-filter-ri-268/"
+     ]
+    }
+   ]
+  },
+  {
+   "@type": "ImageObject",
+   "inLanguage": "en-US",
+   "@id": "https://ranatec.com/product/tunable-band-reject-filter-ri-268/#primaryimage",
+   "url": "https://ranatec.com/wp-content/uploads/2026/07/Main-image_Menu_Product-page_Cart_etc._Ranatec-RI-268-Tunable-Band-Reject-Filter_front-scaled.webp",
+   "contentUrl": "https://ranatec.com/wp-content/uploads/2026/07/Main-image_Menu_Product-page_Cart_etc._Ranatec-RI-268-Tunable-Band-Reject-Filter_front-scaled.webp",
+   "width": 1920,
+   "height": 1288
+  },
+  {
+   "@type": "BreadcrumbList",
+   "@id": "https://ranatec.com/product/tunable-band-reject-filter-ri-268/#breadcrumb",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Home",
+     "item": "https://ranatec.com/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Shop",
+     "item": "https://ranatec.com/shop/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 3,
+     "name": "Tunable Band Reject Filter RI 268"
+    }
+   ]
+  },
+  {
+   "@type": "WebSite",
+   "@id": "https://ranatec.com/#website",
+   "url": "https://ranatec.com/",
+   "name": "Ranatec",
+   "description": "Reliable RF &amp; Microwave Test Equipment of quality",
+   "publisher": {
+    "@id": "https://ranatec.com/#organization"
+   },
+   "potentialAction": [
+    {
+     "@type": "SearchAction",
+     "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://ranatec.com/?s={search_term_string}"
+     },
+     "query-input": {
+      "@type": "PropertyValueSpecification",
+      "valueRequired": true,
+      "valueName": "search_term_string"
+     }
+    }
+   ],
+   "inLanguage": "en-US"
+  },
+  {
+   "@type": "Organization",
+   "@id": "https://ranatec.com/#organization",
+   "name": "Ranatec",
+   "url": "https://ranatec.com/",
+   "logo": {
+    "@type": "ImageObject",
+    "inLanguage": "en-US",
+    "@id": "https://ranatec.com/#/schema/logo/image/",
+    "url": "https://ranatec.com/wp-content/uploads/2019/02/ranatec.png",
+    "contentUrl": "https://ranatec.com/wp-content/uploads/2019/02/ranatec.png",
+    "width": 250,
+    "height": 36,
+    "caption": "Ranatec"
+   },
+   "image": {
+    "@id": "https://ranatec.com/#/schema/logo/image/"
+   }
+  }
+ ]
+}

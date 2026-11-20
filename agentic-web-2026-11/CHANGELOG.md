@@ -1,5 +1,42 @@
 # Changelog — Ranatec Agentic Web package
 
+## 1.4.0 — 2026-11-20 (`agentic-web-2026-11`)
+
+Agent-file consistency, speed, homepage tools and Product schema. Same crawl; the data is unchanged apart from two reworded data texts (an FAQ answer and the leadership note).
+
+- **The ARD manifest is referenced wherever agents look.**
+  - **llms.txt and llms-full.txt:** `- [ARD manifest](https://ranatec.com/.well-known/ard.json): lists the MCP server and Agent API`. llms-full.txt gets a "Machine-readable resources" section with the same list as llms.txt.
+  - **ai.txt:** `ARD-Manifest:` under `[Canonical-Sources]`.
+  - **/.well-known/api-catalog:** a `describedby` link (application/json) on the `https://ranatec.com/` anchor.
+  - **/api-catalog.json:** an `apis` entry plus `X-discovery.ard_manifest`. APIs.json has no anchors.
+- **One product-count wording, from the API's own data:** "49 catalogue products in 11 categories, plus 20 accessories and options; 82 shop listings in total, including 13 additional listings of catalogue products".
+  - **Where it appears:** llms.txt, llms-full.txt, ai.txt, `/agent/` (including its meta description) and `/agent/v1/index.json`. The index's `counts` now also has `catalogue_products`, `product_categories`, `accessories_and_options`, `additional_listings`, `product_listings` and `summary`.
+  - **Why it can't drift:** the plugin computes the numbers from the same data files the API serves, and puts them into each file when it serves or writes it, so a sync updates them everywhere.
+  - **Why this wording:** the brief's suggestion, "plus 20 accessories and options (82 product listings in total)", doesn't add up, because 49 + 20 = 69. The remaining 13 are additional or older shop listings of catalogue products.
+- **Agent text is now descriptions, not commands,** in llms.txt, llms-full.txt, ai.txt, `/agent/`, the FAQ answer about buying and the WebMCP tool description. The MCP and consent description appears once per file. All the facts are kept: the two tools, the required fields, consent, `dry_run`, and the reCAPTCHA-protected forms. The OpenAPI file and the MCP server's tool texts are unchanged.
+- **Fast agent files.** llms.txt, llms-full.txt and ai.txt were never built per request: they are prebuilt files. The ~1.6 s came from WordPress starting up for every request, and LiteSpeed's page cache is not active on ranatec.com (no cache headers on any page), so a transient would not have helped.
+  - **What the plugin does:** writes those files and both API catalogs into `public_html`, with `.htaccess` rules for exactly the headers the plugin sends (`text/plain; charset=utf-8` or the JSON types, `Cache-Control: public, max-age=3600`, `Access-Control-Allow-Origin: *`, nosniff).
+  - **Safety check:** after writing, it fetches every URL and removes any file whose content or headers don't come back exactly right, so that URL stays served by PHP.
+  - **Upkeep and status:** the files are rewritten after every sync and removed on deactivation. They have a switch and a status table on the Tools page.
+  - **Tested on Apache 2.4 with `.htaccess`:** 5 of 5 files were served statically with the right headers, at under 1 ms locally, against about 40 ms through WordPress on the same machine. Deactivation removed everything and the plugin served the URLs again.
+- **Homepage.** The heading, its text, the menu and the images are WordPress content, not part of the plugin. The exact admin steps are in **`docs/HOMEPAGE-FIXES.md`**: the "EQUIPEMENT" typo, the agent-instruction block, the duplicate meta description and the two `#` menu links, on all three homepages. A new tool, **Tools → Ranatec Agent API → Image alt text on the homepage**, scans the homepage and proposes alt text: every image found on 20 November is a product or category tile, so each is named after the product or category it links to. After review, the text is saved in the Media Library; it never overwrites existing alt text.
+- **schema.org Product on every product page.** With Yoast, which ranatec.com uses, the Product is added to Yoast's existing graph and becomes the WebPage's `mainEntity`, linked to Yoast's Organization and primary image. It has:
+  - name, url, SKU (WooCommerce's, or the model number), mpn and model;
+  - brand Ranatec, manufacturer, category and description;
+  - the datasheet as `subjectOf` DigitalDocument;
+  - an Offer with availability from WooCommerce's stock status and a `priceSpecification` "Price on request", with no price value.
+
+  Without Yoast, a single JSON-LD block is printed instead. WooCommerce's own Product markup is switched off on these pages, so there is never a second Product. Note: Google's product rich results expect a price, so "price on request" products are unlikely to get price-based rich results; the markup is still valid schema.org and fully describes the product.
+- **Unchanged:** the MCP server URL, the two ARD entries, and robots.txt and its AI crawler rules.
+- 37 new tests (203 in total), using the live Yoast graph of the RI 268 page and the live homepage's linked images as fixtures.
+
+Deploy:
+1. Upload `release/ranatec-api-1.4.0.zip` in WordPress and choose **Replace current**. The plugin syncs and writes the fast agent files by itself.
+2. Replace `public_html/.well-known/ard.json` with `web-root/.well-known/ard.json` (version stamp only).
+3. Run LiteSpeed **Purge All**.
+4. Check **Tools → Ranatec Agent API → Fast agent files**.
+5. Work through `docs/HOMEPAGE-FIXES.md`.
+
 ## 1.3.7 — 2026-11-20 (`agentic-web-2026-11`)
 
 New: **WebMCP**, the Lighthouse "Agentic Browsing" audit **WebMCP schemas are valid**. Same crawl and data as 1.3.6.

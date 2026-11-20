@@ -33,6 +33,7 @@ final class Ranatec_Agent_Sync
         add_action('admin_notices', [__CLASS__, 'stale_static_notice']);
         add_action('admin_post_ranatec_api_sync', [__CLASS__, 'handle_sync']);
         add_action('admin_post_ranatec_api_flush', [__CLASS__, 'handle_flush']);
+        add_action('admin_post_ranatec_api_static', [__CLASS__, 'handle_static']);
         add_action('admin_post_ranatec_api_settings', [__CLASS__, 'handle_settings']);
     }
 
@@ -61,7 +62,13 @@ final class Ranatec_Agent_Sync
         }
         self::$lock_token = $token;
         try {
-            return self::run_locked($report);
+            $report = self::run_locked($report);
+            // The web-root copies of llms.txt, llms-full.txt, ai.txt and the catalogs carry the product numbers:
+            // rewrite them from the fresh data (only on a real WordPress, which can check its own URLs).
+            if (function_exists('wp_remote_get')) {
+                Ranatec_Agent_Static_Files::publish();
+            }
+            return $report;
         } finally {
             if (self::$lock_token !== null) {
                 self::release_lock(self::$lock_token);
@@ -566,6 +573,26 @@ final class Ranatec_Agent_Sync
         submit_button('Flush rewrite rules', 'secondary', 'submit', false);
         echo '</form>';
 
+        // Fast agent files
+        $st = Ranatec_Agent_Static_Files::status();
+        echo '<h2>Fast agent files</h2><p>llms.txt, llms-full.txt, ai.txt and the API catalogs are written to the web root so the web server serves them without starting WordPress. They are rewritten after every sync; each URL is checked after writing, and any file whose content or headers do not come back exactly right is removed again, so the plugin keeps serving it.</p>';
+        if (!empty($st['files'])) {
+            echo '<table class="widefat striped" style="max-width:720px"><tbody>';
+            foreach ($st['files'] as $rel => $f) {
+                echo '<tr><td><a href="' . esc_url(home_url('/' . $rel)) . '" target="_blank" rel="noopener"><code>/' . esc_html($rel) . '</code></a></td><td>' . ($f['state'] === 'static' ? '<span style="color:#008a20">static file ✓</span>' : 'served by the plugin — ' . esc_html($f['reason'] ?? '')) . '</td></tr>';
+            }
+            echo '</tbody></table><p>Last written: ' . esc_html($st['time'] ?? '') . (!empty($st['rules_error']) ? ' · <strong>' . esc_html(implode('; ', $st['rules_error'])) . '</strong>' : '') . '</p>';
+        } elseif (($st['state'] ?? '') === 'off') {
+            echo '<p><strong>Switched off</strong> — the plugin serves these files.</p>';
+        }
+        echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
+        wp_nonce_field('ranatec_api_static');
+        echo '<input type="hidden" name="action" value="ranatec_api_static" />';
+        submit_button('Rewrite static files now', 'secondary', 'submit', false);
+        echo '</form>';
+
+        Ranatec_Agent_Alt_Text::render_admin();
+
         echo '<h2>Agent submissions (contact enquiries and product quotes)</h2><form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
         wp_nonce_field('ranatec_api_settings');
         echo '<input type="hidden" name="action" value="ranatec_api_settings" />';
@@ -608,6 +635,7 @@ final class Ranatec_Agent_Sync
         } else {
             echo '<p><strong>No manifest in this build</strong> (ARD disabled in <code>ard.config.json</code>, or no resources to publish). Rebuild with <code>tools/release.sh</code> to generate one.</p>';
         }
+        echo '<h3>Fast agent files</h3><p><label><input type="checkbox" name="static_enabled" value="1" ' . (Ranatec_Agent_Static_Files::enabled() ? 'checked' : '') . ' /> Serve llms.txt, llms-full.txt, ai.txt and the API catalogs as static files from the web root (see “Fast agent files” above)</label></p>';
         echo '<h3>WebMCP (tools for AI agents in the browser)</h3>';
         echo '<p><label><input type="checkbox" name="webmcp_enabled" value="1" ' . (Ranatec_Agent_WebMCP::enabled() ? 'checked' : '') . ' /> Register read-only WebMCP tools on every page (search_ranatec, get_product, list_products, compare_products, get_company_info). They only read the catalogue; nothing can be submitted through them.</label></p>';
         echo '<p>' . (Ranatec_Agent_WebMCP::active() ? '<span style="color:#008a20">On ✓</span> — script: <a href="' . esc_url(Ranatec_Agent_WebMCP::script_url()) . '" target="_blank" rel="noopener">webmcp.js</a>' : '<strong>Off</strong> — no script is added to pages.') . ' Chrome exposes WebMCP behind <code>chrome://flags/#enable-webmcp-testing</code> or in the WebMCP origin trial.</p>';
@@ -621,6 +649,16 @@ final class Ranatec_Agent_Sync
         self::guard('ranatec_api_sync');
         $r = self::run('manual');
         $msg = !empty($r['skipped']) ? 'Sync not started: ' . $r['skipped'] . '.' : ($r['errors'] ? 'Sync finished with errors: ' . implode('; ', $r['errors']) : 'Sync complete.');
+        wp_safe_redirect(add_query_arg('ranatec_msg', rawurlencode($msg), admin_url('tools.php?page=ranatec-agent-api')));
+        exit;
+    }
+
+    public static function handle_static()
+    {
+        self::guard('ranatec_api_static');
+        $s = Ranatec_Agent_Static_Files::publish();
+        $fast = isset($s['files']) ? count(array_filter($s['files'], function ($f) { return $f['state'] === 'static'; })) : 0;
+        $msg = ($s['state'] ?? '') === 'off' ? 'Static files are switched off; the plugin serves the agent files.' : "Static files rewritten: {$fast} of " . count(Ranatec_Agent_Static_Files::FILES) . ' served directly by the web server.';
         wp_safe_redirect(add_query_arg('ranatec_msg', rawurlencode($msg), admin_url('tools.php?page=ranatec-agent-api')));
         exit;
     }
@@ -659,6 +697,11 @@ final class Ranatec_Agent_Sync
         update_option('ranatec_api_notify_email', empty($_POST['notify_email']) ? '0' : '1', false);
         update_option(Ranatec_Agent_ARD::OPTION_ENABLED, empty($_POST['ard_enabled']) ? '0' : '1', true);
         update_option(Ranatec_Agent_WebMCP::OPTION_ENABLED, empty($_POST['webmcp_enabled']) ? '0' : '1', true);
+        $static_was = Ranatec_Agent_Static_Files::enabled();
+        update_option(Ranatec_Agent_Static_Files::OPTION_ENABLED, empty($_POST['static_enabled']) ? '0' : '1', false);
+        if ($static_was !== Ranatec_Agent_Static_Files::enabled()) {
+            Ranatec_Agent_Static_Files::publish();   // writes them, or removes them when switched off
+        }
         if (isset($_POST['webmcp_ot_token'])) {
             $t = preg_replace('#[^A-Za-z0-9+/=]#', '', (string) wp_unslash($_POST['webmcp_ot_token']));
             update_option(Ranatec_Agent_WebMCP::OPTION_OT_TOKEN, $t, true);

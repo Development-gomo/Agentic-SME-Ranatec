@@ -392,7 +392,7 @@ company = {
             {'name': 'Leslie Johnsen', 'role': 'Public Relations', 'email': 'leslie.johnsen@ranatec.com', 'phone': '+47 4145 8043', 'source': 'https://ranatec.com/ranatec-launches-16-channel-rf-attenuator-box/', 'source_date': '2025-05-06'},
         ],
         'named_contacts_note': 'ranatec.com has no team page. These people are named as contacts in Ranatec press releases (2024–2025). For quotes and general enquiries use info@ranatec.com.',
-        'leadership_note': 'Current leadership is not published on ranatec.com. Magnus Kilian was appointed CEO on 2019-10-01 and is last named as CEO in site news on 2023-03-16; treat this as historical and do not state who the current CEO is.',
+        'leadership_note': 'Current leadership is not published on ranatec.com. Magnus Kilian was appointed CEO on 2019-10-01 and is last named as CEO in site news on 2023-03-16; this is historical information, and the current CEO is not stated on the site.',
         'social': {'linkedin': 'https://www.linkedin.com/company/ranatec-ab/', 'x_twitter': 'https://twitter.com/ranatec1'},
         'founded': 1991,
         'founded_source': 'https://career.ranatec.com/jobs',

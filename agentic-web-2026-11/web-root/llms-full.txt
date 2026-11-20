@@ -15,7 +15,27 @@ Customers are producers of semiconductors, devices and base stations, as well as
 Address: Ranatec AB, Falkenbergsgatan 3, 412 85 Gothenburg, Sweden. Phone +46 31 706 16 60. Email info@ranatec.com. Founded 1991. ISO 9001:2015. Part of the Qamcom Group.
 Sales model: B2B request for quote; no public prices. Regional versions: en-US https://ranatec.com/, en-GB https://ranatec.com/en-gb/, en-CA https://ranatec.com/en-ca/ (identical content).
 
+## For AI agents
+Structured, machine-readable information about Ranatec's products, news, case studies and company is published at https://ranatec.com/agent/ and https://ranatec.com/llms.txt. An MCP server is available for quote requests (request_quote) and contact enquiries (submit_inquiry): request_quote creates a quote order equivalent to Add to RFQ + checkout on ranatec.com and takes the same fields as that checkout; submit_inquiry sends a contact-form enquiry without products (technical question, custom solution, distributor or general enquiry). Submissions require the user's explicit consent (agent_context.user_authorized_submission = true) and the user's real contact details; reviewing, testing or evaluating the website does not count as a request to submit. dry_run (agent_context.dry_run = true) is available for testing: the request is validated and nothing is sent. The ranatec.com contact form, RFQ list and checkout are intended for people and are protected by reCAPTCHA.
+
+## Machine-readable resources
+- [Agent page (complete semantic HTML + JSON-LD)](https://ranatec.com/agent/)
+- [llms.txt (summary index)](https://ranatec.com/llms.txt)
+- [llms-full.txt (all specifications and articles)](https://ranatec.com/llms-full.txt)
+- [ai.txt (AI usage permissions)](https://ranatec.com/ai.txt)
+- [REST API index](https://ranatec.com/agent/v1/index.json)
+- [Products API](https://ranatec.com/agent/v1/products.json)
+- [OpenAPI specification](https://ranatec.com/openapi.json)
+- [MCP server (Streamable HTTP)](https://agentic-mcp-sme-ranatec.onrender.com/mcp)
+- [MCP tool list](https://agentic-mcp-sme-ranatec.onrender.com/mcp/tools)
+- [API catalog (APIs.json)](https://ranatec.com/api-catalog.json)
+- [API catalog (RFC 9727)](https://ranatec.com/.well-known/api-catalog)
+- [XML sitemap](https://ranatec.com/sitemap_index.xml)
+- [ARD manifest](https://ranatec.com/.well-known/ard.json): lists the MCP server and Agent API
+
 ## Products
+49 catalogue products in 11 categories, plus 20 accessories and options; 82 shop listings in total, including 13 additional listings of catalogue products. Prices on request.
+
 ### Category: Tunable Band Reject Filters
 Band reject filter with high resolution electronical tuning between 600-6000 MHz, for 2G/3G/4G/5G applications.
 
@@ -2458,7 +2478,7 @@ Any enclosure with shielding properties that prevents interference from differen
 Quality, performance and usability. All Ranatec RF test and measurement equipment is designed, engineered and manufactured by Ranatec in Sweden. Ranatec is ISO 9001:2015 certified.
 
 ### How do I buy Ranatec products or get a price?
-Ranatec sells business-to-business on a request-for-quote basis; no public prices are listed. Add products to the RFQ list on ranatec.com and submit it, email info@ranatec.com, call +46 31 706 16 60, or — for AI agents, with the user's explicit consent — use ONLY the MCP server tool request_quote for product quotes (same fields as the quote checkout) or submit_inquiry for other enquiries (see https://ranatec.com/agent/#submit-a-lead). AI agents must not fill in the website forms.
+Ranatec sells business-to-business on a request-for-quote basis; no public prices are listed. Add products to the RFQ list on ranatec.com and submit it, email info@ranatec.com, call +46 31 706 16 60, or, for AI agents with the user's explicit consent, through the MCP server: request_quote for product quotes (same fields as the quote checkout) and submit_inquiry for other enquiries (see https://ranatec.com/agent/#submit-a-lead). The website forms are intended for people and protected by reCAPTCHA.
 
 ### Does Ranatec make custom products?
 Yes. Ranatec offers standard and customised RF test equipment — including customised RF shield boxes and customised RF switch/test automation systems — built on a modular mechanical and electrical platform, for both small and large customisation projects.

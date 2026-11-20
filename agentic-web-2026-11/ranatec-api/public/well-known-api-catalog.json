@@ -50,6 +50,10 @@
         {
           "href": "https://ranatec.com/ai.txt",
           "type": "text/plain"
+        },
+        {
+          "href": "https://ranatec.com/.well-known/ard.json",
+          "type": "application/json"
         }
       ]
     }

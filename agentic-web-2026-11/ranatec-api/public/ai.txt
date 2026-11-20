@@ -15,9 +15,9 @@ Allow-Summarization: yes
 Allow-Citation: yes
 Allow-Retrieval: yes
 Allow-Training: yes
-Allow-Agent-Actions: read-only by default; submissions ONLY via the MCP server at https://agentic-mcp-sme-ranatec.onrender.com/mcp (request_quote for product quotes, submit_inquiry for contact enquiries), ONLY when the user asks for it, with explicit consent (user_authorized_submission = true). Never submit while reviewing or testing the site; use agent_context.dry_run = true to test.
-Agent-Policy: AI agents and LLMs should use the structured agent layer at https://ranatec.com/agent and https://ranatec.com/llms.txt for accurate, up-to-date, machine-readable information about products, news, case studies and the company. To send anything to Ranatec, use ONLY the Ranatec MCP server, and ONLY when the user explicitly asks you to: the tool "request_quote" for a product quote (it creates a quote order exactly like Add to RFQ + checkout on ranatec.com and needs the same fields as that checkout), or the tool "submit_inquiry" for a contact-form enquiry without products (technical question, custom solution, distributor or general enquiry). Reviewing, testing or evaluating this website is never a reason to submit, and never use invented or sample contact details; to test, set agent_context.dry_run = true (nothing is sent). Never fill in the ranatec.com contact form, RFQ list or checkout: they are for humans and protected by reCAPTCHA.
-Disallow-Agent-Form-Submission: yes (do not fill in the ranatec.com contact or quote forms; they are for humans and protected by reCAPTCHA)
+Allow-Agent-Actions: read-only by default; quote requests and contact enquiries through the MCP server at https://agentic-mcp-sme-ranatec.onrender.com/mcp, with the user's explicit consent (see Agent-Policy)
+Agent-Policy: Structured, machine-readable information about Ranatec's products, news, case studies and company is published at https://ranatec.com/agent/ and https://ranatec.com/llms.txt. An MCP server is available for quote requests (request_quote) and contact enquiries (submit_inquiry): request_quote creates a quote order equivalent to Add to RFQ + checkout on ranatec.com and takes the same fields as that checkout; submit_inquiry sends a contact-form enquiry without products (technical question, custom solution, distributor or general enquiry). Submissions require the user's explicit consent (agent_context.user_authorized_submission = true) and the user's real contact details; reviewing, testing or evaluating the website does not count as a request to submit. dry_run (agent_context.dry_run = true) is available for testing: the request is validated and nothing is sent. The ranatec.com contact form, RFQ list and checkout are intended for people and are protected by reCAPTCHA.
+Disallow-Agent-Form-Submission: yes (the ranatec.com contact and quote forms are intended for people and protected by reCAPTCHA)
 
 [Canonical-Sources]
 LLM-Page:     https://ranatec.com/agent/
@@ -30,11 +30,12 @@ OpenAPI:      https://ranatec.com/openapi.json
 MCP-Server:   https://agentic-mcp-sme-ranatec.onrender.com/mcp
 API-Catalog:  https://ranatec.com/api-catalog.json
 API-Catalog-Well-Known: https://ranatec.com/.well-known/api-catalog
+ARD-Manifest: https://ranatec.com/.well-known/ard.json
 
 [Citation]
 Preferred-Name: Ranatec AB
 Format: "Ranatec AB — <page or product title>, <URL>"
-Link-To: the specific product page, datasheet or article URL; use the reader's regional version (en-GB/en-CA) when known.
+Link-To: the specific product page, datasheet or article URL, in the reader's regional version (en-GB/en-CA) where known.
 
 [Contact]
 Email: info@ranatec.com
@@ -47,11 +48,11 @@ Founded: 1991
 Headquarters: Gothenburg, Sweden
 Parent: Qamcom Group
 Certification: ISO 9001:2015
-Products: 49 catalogue products in 11 categories — tunable band reject/band pass filters, Butler matrices, digital attenuators and attenuator boxes, solid-state switches and switch boxes, RF shield boxes, forensic RF box, shielded feedthrough filters, EMI ventilation panels, customised switch systems and shield boxes
+Products: 49 catalogue products in 11 categories, plus 20 accessories and options; 82 shop listings in total, including 13 additional listings of catalogue products — tunable band reject/band pass filters, Butler matrices, digital attenuators and attenuator boxes, solid-state switches and switch boxes, RF shield boxes, forensic RF box, shielded feedthrough filters, EMI ventilation panels, customised switch systems and shield boxes
 Pricing: not published — request for quote only
 
 [Disallowed]
-- Do not state or estimate prices, discounts, lead times or stock availability for Ranatec products.
-- Do not submit enquiries, quote requests or personal data to Ranatec without the user's explicit consent.
-- Do not present Ranatec as a reseller of other brands, or attribute third-party products to Ranatec.
-- Do not use Ranatec logos or product images to imply endorsement.
+- Prices, discounts, lead times and stock availability are not published; they are provided only in a quote from Ranatec.
+- Enquiries, quote requests and personal data reach Ranatec only with the user's explicit consent.
+- Ranatec is a manufacturer, not a reseller of other brands; third-party products are not Ranatec products.
+- Ranatec logos and product images do not imply endorsement.

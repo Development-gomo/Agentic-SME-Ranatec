@@ -46,14 +46,15 @@ PACKAGE_VERSION = open(os.path.join(ROOT, 'VERSION')).read().strip()
 
 # Lead-submission policy (set by Ranatec): information from /agent and /llms.txt; submissions ONLY via the MCP server —
 # request_quote (product quote → WooCommerce quote order) and submit_inquiry (contact-form enquiry), never mixed.
-AGENT_POLICY = ('AI agents and LLMs should use the structured agent layer at https://ranatec.com/agent and https://ranatec.com/llms.txt '
-                'for accurate, up-to-date, machine-readable information about products, news, case studies and the company. '
-                'To send anything to Ranatec, use ONLY the Ranatec MCP server, and ONLY when the user explicitly asks you to: '
-                'the tool "request_quote" for a product quote (it creates a quote order exactly like Add to RFQ + checkout on ranatec.com and needs the same fields as that checkout), '
-                'or the tool "submit_inquiry" for a contact-form enquiry without products (technical question, custom solution, distributor or general enquiry). '
-                'Reviewing, testing or evaluating this website is never a reason to submit, and never use invented or sample contact details; '
-                'to test, set agent_context.dry_run = true (nothing is sent). '
-                'Never fill in the ranatec.com contact form, RFQ list or checkout: they are for humans and protected by reCAPTCHA.')
+AGENT_POLICY = ('Structured, machine-readable information about Ranatec\'s products, news, case studies and company is published at '
+                'https://ranatec.com/agent/ and https://ranatec.com/llms.txt. '
+                'An MCP server is available for quote requests (request_quote) and contact enquiries (submit_inquiry): '
+                'request_quote creates a quote order equivalent to Add to RFQ + checkout on ranatec.com and takes the same fields as that checkout; '
+                'submit_inquiry sends a contact-form enquiry without products (technical question, custom solution, distributor or general enquiry). '
+                'Submissions require the user\'s explicit consent (agent_context.user_authorized_submission = true) and the user\'s real contact details; '
+                'reviewing, testing or evaluating the website does not count as a request to submit. '
+                'dry_run (agent_context.dry_run = true) is available for testing: the request is validated and nothing is sent. '
+                'The ranatec.com contact form, RFQ list and checkout are intended for people and are protected by reCAPTCHA.')
 _CTX = {'user_authorized_submission': True, 'agent_name': '<your agent name>', 'dry_run': True,
         'user_request_summary': '<what the user asked you to send to Ranatec>'}
 QUOTE_EXAMPLE_ARGS = {
@@ -113,6 +114,18 @@ for d_ in _dangling:
     print(f'WARNING: left out a reference to a product not in the catalogue — {d_}', file=sys.stderr)
 CAT = {c['id']: c for c in categories}
 catalogue = [p for p in products if p['listing'] == 'catalogue']
+def count_sentence(products_, categories_):
+    """The one product-count wording used in every file. ranatec-api.php (Ranatec_Agent_API::count_sentence) builds the
+    same sentence from the live data files when it serves a file, so the numbers always match /agent/v1/index.json."""
+    acc = next((c for c in categories_ if c['id'] == 'accessories'), None)
+    acc_ids = set(acc['product_ids']) | set(acc.get('additional_listing_ids', [])) if acc else set()
+    cat = sum(1 for p in products_ if p['listing'] == 'catalogue')
+    n_cat = sum(1 for c in categories_ if c['id'] != 'accessories')
+    n_acc = sum(1 for p in products_ if p['id'] in acc_ids)
+    other = len(products_) - cat - n_acc
+    return (f'{cat} catalogue products in {n_cat} categories, plus {n_acc} accessories and options; '
+            f'{len(products_)} shop listings in total, including {other} additional listings of catalogue products')
+COUNTS = count_sentence(products, categories)
 os.makedirs(PUB, exist_ok=True)
 os.makedirs(WEB, exist_ok=True)
 
@@ -354,7 +367,7 @@ def build_agent_page():
     # ---------- HTML ----------
     a('<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">')
     a('<title>Ranatec AB — Machine-Readable Agent Page | RF Test &amp; Measurement Equipment</title>')
-    a(f'<meta name="description" content="Complete machine-readable profile of Ranatec AB (Gothenburg, Sweden): {len(catalogue)} RF test and measurement products with specifications, categories, solutions, news, contact and RFQ process. Built for LLMs and AI agents.">')
+    a(f'<meta name="description" content="Complete machine-readable profile of Ranatec AB (Gothenburg, Sweden): {e(COUNTS)} (RF test and measurement), with specifications, categories, solutions, news, contact and RFQ process. Built for LLMs and AI agents.">')
     a('<meta name="robots" content="index, follow, max-snippet:-1">')
     a(f'<meta name="last-crawled" content="{UPDATED}">\n<meta name="generator" content="Ranatec Agentic Web package {PACKAGE_VERSION} (GO MO Group)">')
     a(f'<link rel="canonical" href="{URLS["agent"]}">')
@@ -386,7 +399,7 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
     # 1 metadata
     a('<section id="metadata"><h2>Metadata</h2><table>')
     for k, v in [('Last crawled', f'<time datetime="{UPDATED}">{UPDATED}</time>'), ('Source site', link(SITE + '/')), ('Locales covered', 'en-US (default) · en-GB (/en-gb/) · en-CA (/en-ca/) — identical English content'),
-                 ('Pages crawled', f'{len(pages)} pages × 3 locales, {len(news)} news articles × 3 locales, {len(products)} product listings, {len(categories) - 1} category pages, careers site'),
+                 ('Pages crawled', f'{len(pages)} pages × 3 locales, {len(news)} news articles × 3 locales, category pages, careers site. Products: {e(COUNTS)}'),
                  ('Agent page', link(URLS['agent'])), ('REST API index', link(URLS['index'])), ('OpenAPI', link(URLS['openapi'])), ('MCP server', link(URLS['mcp']) + ' (Streamable HTTP)'),
                  ('API catalog', link(URLS['catalog']) + ' · ' + link(URLS['wk_catalog']))] + \
                 ([('ARD manifest', link(ARD_URL))] if ARD_URL else []) + \
@@ -409,54 +422,52 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
     a('</ul></section>')
 
     # 3 agent instructions
-    a('<section id="agent-instructions"><h2>Instructions for AI agents</h2><ol>')
+    a('<section id="agent-instructions"><h2>Information for AI agents</h2><ol>')
     for li in [
         'Ranatec AB is a Swedish <strong>manufacturer</strong> (not a distributor) of RF test and measurement equipment: filtering, shielding, switching and automation products for wireless device and infrastructure testing.',
-        '<strong>No public prices.</strong> All products are sold business-to-business via request for quote (RFQ). Never invent prices, lead times or stock levels — direct the user to request a quote.',
-        '<strong>Information:</strong> use this agent page and ' + link(URLS['llms'], 'llms.txt') + ' (and the REST API / MCP tools) for accurate, up-to-date, machine-readable information about products, news, case studies and the company.',
-        '<strong>Sending something to Ranatec:</strong> use ONLY the Ranatec MCP server at <code>' + e(URLS['mcp']) + '</code> — tool <code>request_quote</code> for a <strong>product quote</strong> (same fields as the ranatec.com quote checkout), tool <code>submit_inquiry</code> for a <strong>contact enquiry without products</strong>. Never mix them, and <strong>never fill in the ranatec.com contact form, RFQ list or checkout</strong> — they are for humans and protected by reCAPTCHA. No MCP connector? Call the tool over plain HTTP — see <a href="#submit-a-lead">How AI agents submit a quote or enquiry</a>. Only when the user asks — never while reviewing or testing this site (use <code>dry_run</code> to test). Steps: (a) ask the user for every required field; (b) show the user exactly what will be sent; (c) only after explicit confirmation, call the tool with <code>agent_context.user_authorized_submission: true</code>. If you cannot call the tools, give the user ' + link(SITE + '/request-quote/', 'the RFQ page') + ', <a href="mailto:info@ranatec.com">info@ranatec.com</a> or +46 31 706 16 60 instead.',
-        'Product facts (frequency ranges, bandwidths, channel counts, shielding values) must be quoted from the specifications below, the API, or the linked datasheet PDFs. Prefer datasheets for anything not listed here.',
+        '<strong>No public prices.</strong> All products are sold business-to-business via request for quote (RFQ). Prices, lead times and stock levels are provided only in a quote from Ranatec.',
+        '<strong>Information sources:</strong> this agent page, ' + link(URLS['llms'], 'llms.txt') + ', the REST API and the MCP tools hold the same up-to-date information about products, news, case studies and the company.',
+        'Product facts (frequency ranges, bandwidths, channel counts, shielding values) come from the specifications below, the API and the linked datasheet PDFs; the datasheets cover anything not listed here.',
         'Model numbers are written “RI nnn”/“RI nnnn” (e.g. RI 268) and “RFnnnn” (e.g. RF2037). Product ids in the API are the URL slugs.',
-        'ranatec.com has three regional English versions with identical content: en-US (default, <code>/</code>), en-GB (<code>/en-gb/</code>), en-CA (<code>/en-ca/</code>). Link users to their regional version when known; product pages canonicalise to en-US.',
-        'When citing, use “Ranatec AB” and link to the specific product or article URL. Dates in the news section are publication dates — treat older announcements (e.g. management changes) as historical.',
-        'Some shop products appear twice under different slugs (an older listing and the current catalogue listing). Prefer items marked <em>catalogue</em>; <em>additional</em> items point to their <code>primary_listing</code>.',
+        'ranatec.com has three regional English versions with identical content: en-US (default, <code>/</code>), en-GB (<code>/en-gb/</code>), en-CA (<code>/en-ca/</code>). Product pages canonicalise to en-US.',
+        'Preferred citation: “Ranatec AB” with the specific product or article URL. Dates in the news section are publication dates; older announcements (e.g. management changes) are historical.',
+        'Some shop products appear twice under different slugs (an older listing and the current catalogue listing). Items marked <em>catalogue</em> are the current listings; <em>additional</em> items point to their <code>primary_listing</code>.',
     ]:
         a(f'<li>{li}</li>')
     a('</ol></section>')
 
-    # 3b how agents submit a lead
-    a('<section id="submit-a-lead"><h2>How AI agents submit a quote or enquiry</h2>')
-    a(f'<p><strong>{e(AGENT_POLICY)}</strong></p>')
-    a('<table><thead><tr><th>The user wants…</th><th>MCP tool</th><th>Required (ask the user)</th><th>Result at Ranatec</th></tr></thead><tbody>')
-    a('<tr><td>A price / quote for one or more products</td><td><code>request_quote</code></td><td>' + e(QUOTE_REQUIRED) + '. Optional: apartment/suite (<code>address_2</code>), additional note (<code>note</code>).</td><td>A quote order in the shop, exactly like “Add to RFQ” + checkout</td></tr>')
+    # 3b quote requests and enquiries
+    a('<section id="submit-a-lead"><h2>Quote requests and enquiries through the MCP server</h2>')
+    a(f'<p>{e(AGENT_POLICY)}</p>')
+    a('<table><thead><tr><th>The user wants…</th><th>MCP tool</th><th>Required fields (from the user)</th><th>Result at Ranatec</th></tr></thead><tbody>')
+    a('<tr><td>A price / quote for one or more products</td><td><code>request_quote</code></td><td>' + e(QUOTE_REQUIRED) + '. Optional: apartment/suite (<code>address_2</code>), additional note (<code>note</code>).</td><td>A quote order in the shop, equivalent to “Add to RFQ” + checkout</td></tr>')
     a('<tr><td>To ask a question or start a conversation (technical question, custom solution, distributor, general) — no products</td><td><code>submit_inquiry</code></td><td>' + e(CONTACT_REQUIRED) + '</td><td>A contact-form enquiry, like ranatec.com/contact-us/</td></tr>')
     a('</tbody></table>')
-    a('<p>The two are never mixed: <code>submit_inquiry</code> refuses products (use <code>request_quote</code>), and <code>request_quote</code> needs at least one product (use <code>submit_inquiry</code> for questions).</p>')
+    a('<p><code>submit_inquiry</code> does not accept products, and <code>request_quote</code> needs at least one product.</p>')
     a('<ol>')
-    a(f'<li><strong>With an MCP connector</strong> (Claude, Claude Code, Codex, Cursor, …): add the MCP server <code>{e(URLS["mcp"])}</code> (Streamable HTTP) and call <code>request_quote</code> or <code>submit_inquiry</code>.</li>')
-    a(f'<li><strong>Without a connector</strong> (any agent that can send an HTTP request): POST a JSON-RPC <code>tools/call</code> to <code>{e(URLS["mcp"])}</code>. No session or handshake is needed and the response is plain JSON. The examples below are <strong>dry runs</strong> (validate only, nothing is sent).</li>')
+    a(f'<li><strong>With an MCP connector</strong> (Claude, Claude Code, Codex, Cursor, …): the MCP server is <code>{e(URLS["mcp"])}</code> (Streamable HTTP), with the tools <code>request_quote</code> and <code>submit_inquiry</code>.</li>')
+    a(f'<li><strong>Without a connector</strong> (any agent that can send an HTTP request): a JSON-RPC <code>tools/call</code> POST to <code>{e(URLS["mcp"])}</code> works without a session or handshake, and the response is plain JSON. The examples below are <strong>dry runs</strong>: they validate and send nothing.</li>')
     a('</ol>')
     a('<p><strong>Product quote</strong> (<code>request_quote</code>):</p>')
     a(f'<pre>{e(lead_curl(URLS["mcp"], "request_quote"))}</pre>')
     a('<p><strong>Contact enquiry</strong> (<code>submit_inquiry</code>):</p>')
     a(f'<pre>{e(lead_curl(URLS["mcp"], "submit_inquiry"))}</pre>')
-    a('<ul><li><strong>Only submit when the user explicitly asks you to request a quote or contact Ranatec.</strong> Reviewing, testing or evaluating this website is never a reason to submit, and never use invented or sample contact details. To test, keep <code>agent_context.dry_run: true</code> — nothing is stored or sent.</li>'
-      '<li>If a required field is missing, ask the user for it — never guess an address or phone number. The tool lists any missing or invalid fields.</li>'
-      '<li>For a real submission: the user has confirmed what will be sent; set <code>user_authorized_submission: true</code>, <code>dry_run: false</code> and <code>user_request_summary</code> (what the user asked for).</li>'
+    a('<ul><li>A real submission carries <code>user_authorized_submission: true</code>, <code>dry_run: false</code> and <code>user_request_summary</code> (what the user asked for), after the user has confirmed what will be sent. Missing or invalid fields are listed in the tool\'s reply.</li>'
       '<li><code>request_quote</code>: <code>customer.country</code> is an ISO code (e.g. <code>SE</code>, <code>DE</code>, <code>US</code>, <code>GB</code>); <code>customer.state</code> is needed where the checkout asks for it (e.g. US states, Canadian provinces). Products are ids from the API or model numbers such as <code>RI 268</code>.</li>'
-      '<li><strong>Configured products</strong> (shield boxes RI 181/187/188/189, forensic box RI 198, band reject filters, Butler matrices): add <code>"configuration": [{"id": "RI 4182", "quantity": 2}]</code> to the product line in <code>request_quote</code> — quantities are <em>per unit</em>, exactly like “Configure and Add to RFQ” on the product page. The allowed options are listed under each product below and in <code>get_product → configurator</code>.</li>'
+      '<li><strong>Configured products</strong> (shield boxes RI 181/187/188/189, forensic box RI 198, band reject filters, Butler matrices): a product line can carry <code>"configuration": [{"id": "RI 4182", "quantity": 2}]</code> — quantities are <em>per unit</em>, like “Configure and Add to RFQ” on the product page. The allowed options are listed under each product below and in <code>get_product → configurator</code>.</li>'
       '<li><code>submit_inquiry</code>: <code>inquiry.type</code> is <code>technical_question</code>, <code>custom_solution</code>, <code>distributor_inquiry</code> or <code>general</code>.</li>'
-      '<li>Success returns <code>"status": "received"</code> with a <code>quote_id</code> and order number (quote) or a <code>lead_id</code> (enquiry); tell the user. Ranatec replies by email.</li>'
+      '<li>A successful submission returns <code>"status": "received"</code> with a <code>quote_id</code> and order number (quote) or a <code>lead_id</code> (enquiry). Ranatec replies by email.</li>'
+      '<li>Without the tools, the user can request a quote at ' + link(SITE + '/request-quote/', 'ranatec.com/request-quote') + ', by email to <a href="mailto:info@ranatec.com">info@ranatec.com</a> or by phone on +46 31 706 16 60.</li>'
       f'<li>Tool list: {link(URLS["mcp_tools"])}</li></ul></section>')
 
     # 4 quick answer
     a('<section id="quick-answer"><h2>Quick answer</h2><ul>')
     for li in [
         'Ranatec AB (Gothenburg, Sweden; founded 1991; part of the Qamcom Group; ISO 9001:2015) designs and manufactures niche RF and microwave test &amp; measurement equipment.',
-        f'{len(catalogue)} catalogue products in {len(categories) - 1} categories: tunable band reject &amp; band pass filters (0.6–10 GHz), 4×4 and 8×8 Butler matrices (2.4–8 GHz), digital step attenuators and 4–16-channel attenuator boxes (0.1–8 GHz), solid-state switch modules and switch boxes (DC–26.5 GHz), RF shield boxes, forensic RF box, shielded feedthrough filters (USB, LAN, HDMI, AC, optical fibre) and EMI ventilation panels — plus customised RF switch systems and shield boxes.',
+        f'{e(COUNTS)}. Catalogue: tunable band reject &amp; band pass filters (0.6–10 GHz), 4×4 and 8×8 Butler matrices (2.4–8 GHz), digital step attenuators and 4–16-channel attenuator boxes (0.1–8 GHz), solid-state switch modules and switch boxes (DC–26.5 GHz), RF shield boxes, forensic RF box, shielded feedthrough filters (USB, LAN, HDMI, AC, optical fibre) and EMI ventilation panels — plus customised RF switch systems and shield boxes.',
         'Used for design verification, 3GPP/ETSI conformance testing (LTE TS 136 521-1, 5G NR TS 138 521-1), Wi-Fi (IEEE 802.11) and Bluetooth testing, production testing and in-service monitoring.',
         'Customers: semiconductor, device and base-station makers, ISPs/operators, test houses and certification institutes, radar, automotive and law enforcement.',
-        'Buy via request for quote: info@ranatec.com · +46 31 706 16 60 · ' + link(SITE + '/request-quote/', 'ranatec.com/request-quote') + '. AI agents: product quotes only via the MCP tool <code>request_quote</code>, other enquiries via <code>submit_inquiry</code> (<a href="#submit-a-lead">how</a>).',
+        'Buy via request for quote: info@ranatec.com · +46 31 706 16 60 · ' + link(SITE + '/request-quote/', 'ranatec.com/request-quote') + '. MCP server for agents: <code>request_quote</code> and <code>submit_inquiry</code> (<a href="#submit-a-lead">details</a>).',
     ]:
         a(f'<li>{li}</li>')
     a('</ul></section>')
@@ -488,7 +499,7 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
     a('</ul></section>')
 
     # 8 products
-    a(f'<section id="products"><h2>Products ({len(catalogue)} catalogue items)</h2>')
+    a(f'<section id="products"><h2>Products</h2><p>{e(COUNTS)}. Prices on request.</p>')
     a('<p class="dim">Grouped by category. Each product: summary, description, applications, features, specifications, ordering notes, datasheet and URLs in all three locales. API: <code>' + API + '/products/{id}.json</code>.</p>')
     for dm in domains:
         a(f'<p><span class="tag">{e(dm["name"])}</span> {e(dm["summary"])}</p>')
@@ -529,7 +540,7 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
     a(f'<section id="category-accessories"><h3>Accessories, options and additional shop listings</h3><p>{e(CAT["accessories"]["summary"])}</p><ul>')
     for p in acc:
         a(f'<li id="product-{e(p["id"])}">{link(p["url"], p["name"])}' + (f' — {e(p["summary"])}' if p['summary'] else '') + '</li>')
-    a('</ul><p class="dim">Duplicate shop listings of catalogue models (prefer the catalogue item):</p><ul>')
+    a('</ul><p class="dim">Duplicate shop listings of catalogue models (the catalogue item is the current listing):</p><ul>')
     for p in products:
         if p['listing'] == 'additional' and 'accessories' not in p['categories']:
             prim = p.get('primary_listing')
@@ -593,7 +604,7 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
     a('<section id="contact"><h2>Contact and how to buy</h2><table>')
     for k, v in [('General / sales', '<a href="mailto:info@ranatec.com">info@ranatec.com</a> · <a href="tel:+46317061660">+46 31 706 16 60</a>'),
                  ('Request a quote (web)', 'Add products to the RFQ list on any product page, then submit at ' + locale_links(company['contact']['quote_page'])),
-                 ('Request a quote (AI agents)', f'MCP tool <code>request_quote</code> at <code>{e(URLS["mcp"])}</code> only (consent required; contact enquiries without products: <code>submit_inquiry</code>) — see <a href="#submit-a-lead">How AI agents submit a quote or enquiry</a>. Never the web forms.'),
+                 ('Request a quote (AI agents)', f'MCP tool <code>request_quote</code> at <code>{e(URLS["mcp"])}</code>; contact enquiries without products: <code>submit_inquiry</code> — see <a href="#submit-a-lead">Quote requests and enquiries through the MCP server</a>.'),
                  ('Custom solutions', 'Describe requirements (frequency range, ports, shielding, interfaces, form factor) via info@ranatec.com or inquiry type <code>custom_solution</code>'),
                  ('LinkedIn', link(company['social']['linkedin'])), ('X / Twitter', link(company['social']['x_twitter']))]:
         a(f'<tr><th>{k}</th><td>{v}</td></tr>')
@@ -653,13 +664,26 @@ address{font-style:normal}nav ol{columns:2;padding-left:22px}@media(max-width:70
     write(os.path.join(PUB, 'agent-page.html'), out)
     return out
 
-SECTIONS = [('metadata', 'Metadata'), ('llm-discovery', 'LLM discovery'), ('agent-instructions', 'Instructions for AI agents'), ('submit-a-lead', 'How AI agents submit a quote or enquiry'), ('quick-answer', 'Quick answer'),
+SECTIONS = [('metadata', 'Metadata'), ('llm-discovery', 'LLM discovery'), ('agent-instructions', 'Information for AI agents'), ('submit-a-lead', 'Quote requests and enquiries through the MCP server'), ('quick-answer', 'Quick answer'),
             ('site-index', 'Site index'), ('primary-contact', 'Primary contact'), ('overview', 'Company overview'), ('products', 'Products'), ('solutions', 'Solutions'),
             ('industries', 'Industries and standards'), ('customer-results', 'Customer results'), ('news', 'News and articles'), ('people', 'People'), ('offices', 'Offices'),
             ('contact', 'Contact and how to buy'), ('careers', 'Careers'), ('events', 'Events'), ('faq', 'FAQ'), ('testimonials', 'Testimonials'),
             ('locales', 'Languages and regional versions'), ('page-index', 'Page index')]
 
 # ====================================================================== llms.txt
+def resources_section(a):
+    """'## Machine-readable resources' — the same list in llms.txt and llms-full.txt."""
+    a('## Machine-readable resources')
+    for t, u in [('Agent page (complete semantic HTML + JSON-LD)', URLS['agent']), ('llms.txt (summary index)', URLS['llms']), ('llms-full.txt (all specifications and articles)', URLS['llms_full']),
+                 ('ai.txt (AI usage permissions)', URLS['ai']), ('REST API index', URLS['index']), ('Products API', API + '/products.json'), ('OpenAPI specification', URLS['openapi']),
+                 ('MCP server (Streamable HTTP)', URLS['mcp']), ('MCP tool list', URLS['mcp_tools']), ('API catalog (APIs.json)', URLS['catalog']), ('API catalog (RFC 9727)', URLS['wk_catalog']),
+                 ('XML sitemap', URLS['sitemap'])]:
+        a(f'- [{t}]({u})')
+    if ARD_URL:
+        a(f'- [ARD manifest]({ARD_URL}): lists the MCP server and Agent API')
+    a('')
+
+
 def build_llms():
     L = []
     a = L.append
@@ -672,14 +696,13 @@ def build_llms():
     a(AGENT_POLICY)
     a('')
     a(f'- [Agent page: complete structured information]({URLS["agent"]})')
-    a(f'- [MCP server (Streamable HTTP): tool `request_quote` for product quotes, `submit_inquiry` for contact enquiries]({URLS["mcp"]})')
-    a(f'- [How AI agents submit a quote or enquiry]({URLS["agent"]}#submit-a-lead)')
+    a(f'- [MCP server (Streamable HTTP): `request_quote` for product quotes, `submit_inquiry` for contact enquiries]({URLS["mcp"]})')
+    a(f'- [Quote requests and enquiries through the MCP server]({URLS["agent"]}#submit-a-lead)')
     a('')
-    a(f'- Product quote → `request_quote` (a quote order exactly like Add to RFQ + checkout). Required, ask the user: {QUOTE_REQUIRED}.')
-    a(f'- Contact enquiry without products → `submit_inquiry` (like the contact form). Required: {CONTACT_REQUIRED}.')
-    a('- Never mix them, and never fill in the website forms.')
+    a(f'- Product quote: `request_quote` (a quote order equivalent to Add to RFQ + checkout). Required fields, from the user: {QUOTE_REQUIRED}.')
+    a(f'- Contact enquiry without products: `submit_inquiry` (equivalent to the contact form). Required fields: {CONTACT_REQUIRED}.')
     a('')
-    a('No MCP connector? Call the tool with one HTTP POST (JSON-RPC `tools/call`, no session needed, plain JSON response). These examples are DRY RUNS: they only validate and send nothing. Set `dry_run` to false only when the user has asked for it and confirmed the details:')
+    a('Without an MCP connector, a tool is called with one HTTP POST (JSON-RPC `tools/call`, no session needed, plain JSON response). These examples are dry runs: they validate and send nothing. A real submission sets `dry_run` to false after the user has asked for it and confirmed the details:')
     a('')
     a('```')
     a(lead_curl(URLS['mcp'], 'request_quote'))
@@ -699,7 +722,9 @@ def build_llms():
             continue
         a(f'- [{c["name"]}]({c["url"]}): {c["summary"]}')
     a('')
-    a(f'## Products ({len(catalogue)} catalogue items — price on request)')
+    a('## Products')
+    a(f'{COUNTS}. Prices on request.')
+    a('')
     for c in categories:
         if c['id'] == 'accessories':
             continue
@@ -720,7 +745,6 @@ def build_llms():
     a('')
     a('## Contact')
     a('- Ranatec AB, Falkenbergsgatan 3, 412 85 Gothenburg, Sweden | info@ranatec.com | +46 31 706 16 60')
-    a(f'- AI agents: product quotes only via the MCP tool request_quote, other enquiries via submit_inquiry, at the [Ranatec MCP server]({URLS["mcp"]}) (never the website forms)')
     a('- Press: Leslie Johnsen (Public Relations) | leslie.johnsen@ranatec.com; Operations: Charlotte Ornstein | charlotte.ornstein@ranatec.com (as named in 2025 press releases)')
     a('')
     a('## Key pages')
@@ -729,12 +753,7 @@ def build_llms():
             a(f'- [{pg["title"]}]({pg["urls"]["en-US"]}): {pg["purpose"]}')
     a('- [Careers](https://career.ranatec.com/): open positions (Swedish)')
     a('')
-    a('## Machine-readable resources')
-    for t, u in [('Agent page (complete semantic HTML + JSON-LD)', URLS['agent']), ('llms-full.txt (all specifications and articles)', URLS['llms_full']), ('ai.txt (AI usage permissions)', URLS['ai']),
-                 ('REST API index', URLS['index']), ('Products API', API + '/products.json'), ('OpenAPI specification', URLS['openapi']), ('MCP server (Streamable HTTP)', URLS['mcp']),
-                 ('MCP tool list', URLS['mcp_tools']), ('API catalog (APIs.json)', URLS['catalog']), ('API catalog (RFC 9727)', URLS['wk_catalog']), ('XML sitemap', URLS['sitemap'])]:
-        a(f'- [{t}]({u})')
-    a('')
+    resources_section(a)
     a('## Customer results (selected)')
     for cid in CUSTOMER_RESULTS:
         a(f'- [{N[cid]["title"]}]({N[cid]["url"]}) ({N[cid]["date_published"]})')
@@ -781,7 +800,13 @@ def build_llms_full():
     a(f'Address: Ranatec AB, Falkenbergsgatan 3, 412 85 Gothenburg, Sweden. Phone +46 31 706 16 60. Email info@ranatec.com. Founded 1991. ISO 9001:2015. Part of the Qamcom Group.')
     a('Sales model: B2B request for quote; no public prices. Regional versions: en-US https://ranatec.com/, en-GB https://ranatec.com/en-gb/, en-CA https://ranatec.com/en-ca/ (identical content).')
     a('')
+    a('## For AI agents')
+    a(AGENT_POLICY)
+    a('')
+    resources_section(a)
     a('## Products')
+    a(f'{COUNTS}. Prices on request.')
+    a('')
     for c in categories:
         a(f'### Category: {c["name"]}')
         if c['summary']:
@@ -850,6 +875,7 @@ def build_llms_full():
 
 # ====================================================================== ai.txt
 def build_ai_txt():
+    ARD_LINE = f"\nARD-Manifest: {ARD_URL}" if ARD_URL else ''
     t = f"""# ai.txt — AI usage policy for ranatec.com
 # Owner: Ranatec AB, Falkenbergsgatan 3, 412 85 Gothenburg, Sweden
 # Updated: {UPDATED}
@@ -867,9 +893,9 @@ Allow-Summarization: yes
 Allow-Citation: yes
 Allow-Retrieval: yes
 Allow-Training: yes
-Allow-Agent-Actions: read-only by default; submissions ONLY via the MCP server at {URLS['mcp']} (request_quote for product quotes, submit_inquiry for contact enquiries), ONLY when the user asks for it, with explicit consent (user_authorized_submission = true). Never submit while reviewing or testing the site; use agent_context.dry_run = true to test.
+Allow-Agent-Actions: read-only by default; quote requests and contact enquiries through the MCP server at {URLS['mcp']}, with the user's explicit consent (see Agent-Policy)
 Agent-Policy: {AGENT_POLICY}
-Disallow-Agent-Form-Submission: yes (do not fill in the ranatec.com contact or quote forms; they are for humans and protected by reCAPTCHA)
+Disallow-Agent-Form-Submission: yes (the ranatec.com contact and quote forms are intended for people and protected by reCAPTCHA)
 
 [Canonical-Sources]
 LLM-Page:     {URLS['agent']}
@@ -881,12 +907,12 @@ REST-API:     {URLS['index']}
 OpenAPI:      {URLS['openapi']}
 MCP-Server:   {URLS['mcp']}
 API-Catalog:  {URLS['catalog']}
-API-Catalog-Well-Known: {URLS['wk_catalog']}
+API-Catalog-Well-Known: {URLS['wk_catalog']}{ARD_LINE}
 
 [Citation]
 Preferred-Name: Ranatec AB
 Format: "Ranatec AB — <page or product title>, <URL>"
-Link-To: the specific product page, datasheet or article URL; use the reader's regional version (en-GB/en-CA) when known.
+Link-To: the specific product page, datasheet or article URL, in the reader's regional version (en-GB/en-CA) where known.
 
 [Contact]
 Email: info@ranatec.com
@@ -899,14 +925,14 @@ Founded: 1991
 Headquarters: Gothenburg, Sweden
 Parent: Qamcom Group
 Certification: ISO 9001:2015
-Products: {len(catalogue)} catalogue products in {len(categories) - 1} categories — tunable band reject/band pass filters, Butler matrices, digital attenuators and attenuator boxes, solid-state switches and switch boxes, RF shield boxes, forensic RF box, shielded feedthrough filters, EMI ventilation panels, customised switch systems and shield boxes
+Products: {COUNTS} — tunable band reject/band pass filters, Butler matrices, digital attenuators and attenuator boxes, solid-state switches and switch boxes, RF shield boxes, forensic RF box, shielded feedthrough filters, EMI ventilation panels, customised switch systems and shield boxes
 Pricing: not published — request for quote only
 
 [Disallowed]
-- Do not state or estimate prices, discounts, lead times or stock availability for Ranatec products.
-- Do not submit enquiries, quote requests or personal data to Ranatec without the user's explicit consent.
-- Do not present Ranatec as a reseller of other brands, or attribute third-party products to Ranatec.
-- Do not use Ranatec logos or product images to imply endorsement.
+- Prices, discounts, lead times and stock availability are not published; they are provided only in a quote from Ranatec.
+- Enquiries, quote requests and personal data reach Ranatec only with the user's explicit consent.
+- Ranatec is a manufacturer, not a reseller of other brands; third-party products are not Ranatec products.
+- Ranatec logos and product images do not imply endorsement.
 """
     write(os.path.join(PUB, 'ai.txt'), t)
 
@@ -926,6 +952,8 @@ def build_catalog(spec):
             {'name': 'llms.txt', 'description': 'Markdown index following llmstxt.org, covering all three regional locales.', 'baseURL': URLS['llms'], 'humanURL': URLS['llms'],
              'X-format': 'text/plain', 'X-contentType': 'llms-txt', 'X-purpose': 'LLM discovery', 'properties': [{'type': 'X-full-text', 'url': URLS['llms_full']}], 'tags': ['llm']},
             {'name': 'ai.txt', 'description': 'AI usage permissions, canonical sources and citation guidance.', 'baseURL': URLS['ai'], 'humanURL': URLS['ai'], 'X-format': 'text/plain', 'X-contentType': 'ai-txt', 'X-purpose': 'AI permissions', 'properties': [], 'tags': ['policy']},
+            *([{'name': 'ARD manifest', 'description': 'Agentic Resource Discovery manifest (ARD v0.91): lists the MCP server and the Agent API.', 'baseURL': ARD_URL, 'humanURL': URLS['agent'],
+                'X-format': 'application/json', 'X-contentType': 'ard-manifest', 'X-purpose': 'Agent discovery', 'properties': [], 'tags': ['discovery', 'ard']}] if ARD_URL else []),
             {'name': 'API catalog', 'description': 'This file (APIs.json 0.16). RFC 9727 linkset equivalent at /.well-known/api-catalog.', 'baseURL': URLS['catalog'], 'humanURL': URLS['agent'], 'X-format': 'application/json', 'X-contentType': 'apis-json', 'X-purpose': 'API discovery',
              'properties': [{'type': 'X-well-known', 'url': URLS['wk_catalog']}], 'tags': ['discovery']},
             {'name': 'Ranatec Agent API', 'description': spec['info']['description'], 'baseURL': API, 'humanURL': URLS['agent'], 'X-format': 'application/json', 'X-contentType': 'rest-api', 'X-purpose': 'Structured company, product, news and FAQ data; quote requests',
@@ -948,13 +976,14 @@ def build_catalog(spec):
         'X-organization': {'name': 'Ranatec AB', 'founded': 1991, 'parent': 'Qamcom Group', 'address': 'Falkenbergsgatan 3, 412 85 Gothenburg, Sweden', 'email': 'info@ranatec.com', 'phone': '+46 31 706 16 60',
                            'certifications': ['ISO 9001:2015'], 'locales': {c: b for c, _, b in LOCALES}, 'sameAs': [company['social']['linkedin'], company['social']['x_twitter']]},
         'X-discovery': {'agent_page': URLS['agent'], 'llms_txt': URLS['llms'], 'llms_full_txt': URLS['llms_full'], 'ai_txt': URLS['ai'], 'rest_api': URLS['index'], 'openapi': URLS['openapi'],
-                        'mcp_server': URLS['mcp'], 'api_catalog': URLS['catalog'], 'well_known_api_catalog': URLS['wk_catalog'], 'sitemap': URLS['sitemap']},
+                        'mcp_server': URLS['mcp'], 'api_catalog': URLS['catalog'], 'well_known_api_catalog': URLS['wk_catalog'], 'sitemap': URLS['sitemap'], **({'ard_manifest': ARD_URL} if ARD_URL else {})},
     }
     dump(os.path.join(PUB, 'api-catalog.json'), cat)
     linkset = {'linkset': [
         {'anchor': API, 'service-desc': [{'href': URLS['openapi'], 'type': 'application/json'}], 'service-doc': [{'href': URLS['agent'], 'type': 'text/html'}], 'status': [{'href': URLS['index'], 'type': 'application/json'}]},
         {'anchor': URLS['mcp'], 'service-doc': [{'href': URLS['mcp_tools'], 'type': 'application/json'}], 'status': [{'href': URLS['mcp_health'], 'type': 'application/json'}]},
-        {'anchor': SITE + '/', 'describedby': [{'href': URLS['catalog'], 'type': 'application/json'}, {'href': URLS['llms'], 'type': 'text/plain'}, {'href': URLS['ai'], 'type': 'text/plain'}]},
+        {'anchor': SITE + '/', 'describedby': [{'href': URLS['catalog'], 'type': 'application/json'}, {'href': URLS['llms'], 'type': 'text/plain'}, {'href': URLS['ai'], 'type': 'text/plain'}]
+         + ([{'href': ARD_URL, 'type': 'application/json'}] if ARD_URL else [])},
     ]}
     dump(os.path.join(PUB, 'well-known-api-catalog.json'), linkset)
 
@@ -1098,7 +1127,7 @@ def build_webmcp():
              'ids': {'type': 'array', 'minItems': 2, 'maxItems': 5, 'items': {'type': 'string', 'minLength': 2, 'maxLength': 120}, 'description': 'Product ids or model numbers, e.g. ["RF2037", "RF2038"].'}},
              'required': ['ids']}},
         {'name': 'get_company_info', 'title': 'Ranatec company and contact information',
-         'description': 'Ranatec AB company facts: what it makes, headquarters, contact details, sales model and how to request a quote. AI agents send quote requests and enquiries only through the Ranatec MCP server (tools request_quote / submit_inquiry) and only when the user explicitly asks, never through the website forms.',
+         'description': 'Ranatec AB company facts: what it makes, headquarters, contact details, sales model and how to request a quote. Quote requests and contact enquiries go through the Ranatec MCP server (request_quote / submit_inquiry) with the user\'s explicit consent.',
          'inputSchema': {'type': 'object', 'properties': {}}},
     ]
     js = """/* Ranatec WebMCP tools (generated by tools/build_static.py — do not edit by hand). Package %(version)s.

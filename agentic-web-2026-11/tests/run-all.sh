@@ -204,6 +204,35 @@ python3 tools/ard.py validate "$TMP/ard.json" >"$TMP/ard-validate.log" 2>&1 && g
 sed "s#https://ranatec.com#http://127.0.0.1:$PHP_PORT#g" "$TMP/ard.json" > "$TMP/ard-local.json"
 python3 tools/ard.py validate "$TMP/ard-local.json" --check-urls >"$TMP/ard-urls.log" 2>&1 && ok "every advertised ARD url resolves (HTTP 200)" || { cat "$TMP/ard-urls.log"; bad "ARD urls"; }
 
+echo "== Counts, ARD references, Product schema, alt text, static files"
+counts=$(php -r 'require "tests/wp-stubs.php"; require "ranatec-api/ranatec-api.php"; $b=Ranatec_Agent_API::count_breakdown(); echo $b["summary"], "\n"; foreach (["llms.txt","llms-full.txt","ai.txt","agent-page"] as $e) { echo $e, "=", substr_count(Ranatec_Agent_API::render_static($e), $b["summary"]), "\n"; }' </dev/null)
+sum=$(head -1 <<<"$counts")
+[[ $sum == "49 catalogue products in 11 categories, plus 20 accessories and options; 82 shop listings in total, including 13 additional listings of catalogue products" ]] && ok "count wording computed from the API data ($sum)" || bad "count wording: $sum"
+for e in llms.txt llms-full.txt ai.txt agent-page; do n=$(grep "^$e=" <<<"$counts" | cut -d= -f2); [[ ${n:-0} -ge 1 ]] && ok "$e carries the live count wording ($n×)" || bad "$e count wording missing"; done
+idx=$(php tests/wp-stub-harness.php index '' GET </dev/null)
+python3 -c "import json,sys; d=json.loads(sys.stdin.read().split('\n',1)[1] if sys.stdin else ''); c=d['counts']; assert c['summary']==sys.argv[1] and c['products']==82 and c['catalogue_products']==49 and c['product_categories']==11 and c['accessories_and_options']==20" "$sum" <<<"$idx" 2>/dev/null \
+  || python3 -c "import json,sys,re; t=sys.stdin.read(); d=json.loads(t[t.index('{'):t.rindex('}')+1]); c=d['counts']; assert c['summary']==sys.argv[1] and c['products']==82 and c['catalogue_products']==49 and c['product_categories']==11 and c['accessories_and_options']==20" "$sum" <<<"$idx" \
+  && ok "index.json counts: same numbers and sentence as the text files" || bad "index.json counts"
+# render_static swaps in the live numbers when the data changes after the build
+fake=$(php -r 'require "tests/wp-stubs.php"; require "ranatec-api/ranatec-api.php"; echo preg_replace(Ranatec_Agent_API::COUNT_RE, Ranatec_Agent_API::count_sentence(["catalogue_products"=>50,"product_categories"=>11,"accessories_and_options"=>21,"product_listings"=>84,"additional_listings"=>13]), "x 49 catalogue products in 11 categories, plus 20 accessories and options; 82 shop listings in total, including 13 additional listings of catalogue products y");' </dev/null)
+[[ $fake == "x 50 catalogue products in 11 categories, plus 21 accessories and options; 84 shop listings in total, including 13 additional listings of catalogue products y" ]] && ok "served files take the numbers from the live data, not the build" || bad "count substitution: $fake"
+grep -q '^- \[ARD manifest\](https://ranatec.com/.well-known/ard.json): lists the MCP server and Agent API$' ranatec-api/public/llms.txt && grep -q '^- \[ARD manifest\](https://ranatec.com/.well-known/ard.json): lists the MCP server and Agent API$' ranatec-api/public/llms-full.txt && ok "llms.txt and llms-full.txt list the ARD manifest" || bad "ARD line in llms files"
+sed -n '/^\[Canonical-Sources\]/,/^\[/p' ranatec-api/public/ai.txt | grep -q '^ARD-Manifest: https://ranatec.com/.well-known/ard.json$' && ok "ai.txt [Canonical-Sources] has ARD-Manifest" || bad "ai.txt ARD-Manifest"
+python3 -c "
+import json; w=json.load(open('ranatec-api/public/well-known-api-catalog.json')); a=json.load(open('ranatec-api/public/api-catalog.json'))
+root=[l for l in w['linkset'] if l['anchor']=='https://ranatec.com/'][0]
+assert {'href':'https://ranatec.com/.well-known/ard.json','type':'application/json'} in root['describedby']
+assert a['X-discovery']['ard_manifest']=='https://ranatec.com/.well-known/ard.json' and any(x['baseURL']=='https://ranatec.com/.well-known/ard.json' for x in a['apis'])" && ok "API catalogs reference the ARD manifest (describedby on https://ranatec.com/, APIs.json entry)" || bad "API catalog ARD links"
+for f in llms.txt llms-full.txt ai.txt agent-page.html; do
+  n=$(grep -cE '[Ss]hould use|use ONLY|ONLY (via|through|the MCP)|AI agents must|[Nn]ever (fill|mix|submit|invent|guess)|do not (state|submit|present|use|fill)|ask the user for' ranatec-api/public/$f || true)
+  [[ $n -eq 0 ]] && ok "$f: agent text is descriptive (no commands)" || bad "$f: $n imperative agent lines"
+  [[ $(grep -o "An MCP server is available for quote requests" ranatec-api/public/$f | wc -l) -le 1 ]] && ok "$f: the MCP/consent block appears once" || bad "$f: repeated MCP block"
+done
+sch=$(php tests/schema-test.php tests/fixtures/homepage-sample.html </dev/null 2>&1)
+while IFS= read -r line; do case $line in PASS\ *) ok "schema/alt: ${line#PASS }";; FAIL\ *) bad "schema/alt: ${line#FAIL }";; *) [[ -n $line ]] && bad "schema test output: $line";; esac; done <<<"$sch"
+rules=$(php -r 'require "tests/wp-stubs.php"; require "ranatec-api/ranatec-api.php"; foreach (Ranatec_Agent_Static_Files::rules() as $f => $l) echo basename(dirname($f)), "/", basename($f), ":", implode("|", $l), "\n";' </dev/null)
+has 'ForceType "text/plain; charset=utf-8"' <<<"$rules" && has 'ForceType "application/linkset+json; charset=utf-8"' <<<"$rules" && has 'Header set Access-Control-Allow-Origin "\*"' <<<"$rules" && has 'Header set Cache-Control "public, max-age=3600"' <<<"$rules" && ok "static-file .htaccess rules carry the same headers as the plugin" || bad "static rules: $rules"
+
 echo "== WebMCP"
 node --check ranatec-api/public/webmcp.js && ok "webmcp.js is valid JavaScript" || bad "webmcp.js syntax"
 head=$(php -r 'require "tests/wp-stubs.php"; require "ranatec-api/ranatec-api.php"; Ranatec_Agent_WebMCP::head();' </dev/null)

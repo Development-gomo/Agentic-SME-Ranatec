@@ -3,7 +3,7 @@
  * Plugin Name:       Ranatec Agent API
  * Plugin URI:        https://ranatec.com/agent/
  * Description:       Agentic Web package for ranatec.com — serves the machine-readable agent page (/agent/), clean JSON endpoints (/agent/v1/*.json), the OpenAPI spec (/openapi.json), llms.txt, ai.txt, the API catalog and the ARD manifest (/.well-known/ard.json), plus agent-safe product-quote and contact endpoints.
- * Version:           1.3.7
+ * Version:           1.4.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            GO MO Group for Ranatec AB
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('RANATEC_API_VERSION', '1.3.7');
+define('RANATEC_API_VERSION', '1.4.0');
 define('RANATEC_API_DIR', plugin_dir_path(__FILE__));
 define('RANATEC_API_DATA', RANATEC_API_DIR . 'data/');
 define('RANATEC_API_PUBLIC', RANATEC_API_DIR . 'public/');
@@ -28,6 +28,9 @@ require_once RANATEC_API_DIR . 'includes/class-contact.php';
 require_once RANATEC_API_DIR . 'includes/class-sync.php';
 require_once RANATEC_API_DIR . 'includes/class-ard.php';
 require_once RANATEC_API_DIR . 'includes/class-webmcp.php';
+require_once RANATEC_API_DIR . 'includes/class-static-files.php';
+require_once RANATEC_API_DIR . 'includes/class-product-schema.php';
+require_once RANATEC_API_DIR . 'includes/class-alt-text.php';
 
 final class Ranatec_Agent_API
 {
@@ -68,6 +71,8 @@ final class Ranatec_Agent_API
         Ranatec_Agent_Sync::init();
         Ranatec_Agent_ARD::init();
         Ranatec_Agent_WebMCP::init();
+        Ranatec_Agent_Product_Schema::init();
+        Ranatec_Agent_Alt_Text::init();
     }
 
     public static function add_rewrite_rules()
@@ -235,6 +240,75 @@ final class Ranatec_Agent_API
 
     // ------------------------------------------------------------------ handlers
 
+    /**
+     * The product numbers behind the one count wording used everywhere (llms.txt, llms-full.txt, ai.txt, /agent/,
+     * index.json), computed from the same data files the API serves. tools/build_static.py count_sentence() builds
+     * the same sentence at build time; render_static() swaps in the live numbers when a file is served or published.
+     */
+    public static function count_breakdown()
+    {
+        $products = self::load('products')['products'];
+        $categories = self::load('categories')['categories'];
+        $acc = [];
+        $n_cat = 0;
+        foreach ($categories as $c) {
+            if ($c['id'] === 'accessories') {
+                $acc = array_merge($c['product_ids'], isset($c['additional_listing_ids']) ? $c['additional_listing_ids'] : []);
+            } else {
+                $n_cat++;
+            }
+        }
+        $acc = array_flip($acc);
+        $catalogue = $accessories = 0;
+        foreach ($products as $p) {
+            if ($p['listing'] === 'catalogue') {
+                $catalogue++;
+            }
+            if (isset($acc[$p['id']])) {
+                $accessories++;
+            }
+        }
+        $total = count($products);
+        $b = [
+            'catalogue_products' => $catalogue,
+            'product_categories' => $n_cat,
+            'accessories_and_options' => $accessories,
+            'additional_listings' => $total - $catalogue - $accessories,
+            'product_listings' => $total,
+        ];
+        $b['summary'] = self::count_sentence($b);
+        return $b;
+    }
+
+    public static function count_sentence(array $b)
+    {
+        return "{$b['catalogue_products']} catalogue products in {$b['product_categories']} categories, plus {$b['accessories_and_options']} accessories and options; "
+            . "{$b['product_listings']} shop listings in total, including {$b['additional_listings']} additional listings of catalogue products";
+    }
+
+    const COUNT_RE = '/\\d+ catalogue products in \\d+ categories, plus \\d+ accessories and options; \\d+ shop listings in total, including \\d+ additional listings of catalogue products/';
+
+    /** A prebuilt public file with the live product numbers (and, for /agent/, this site's ARD link and WebMCP tag). */
+    public static function render_static($endpoint)
+    {
+        list($file) = self::STATIC_FILES[$endpoint];
+        $path = $endpoint === 'openapi' ? RANATEC_API_DIR . 'openapi.json' : RANATEC_API_PUBLIC . $file;
+        if (!is_readable($path)) {
+            return null;
+        }
+        $body = (string) file_get_contents($path);
+        if (in_array($endpoint, ['llms.txt', 'llms-full.txt', 'ai.txt', 'agent-page'], true)) {
+            $body = preg_replace(self::COUNT_RE, self::count_breakdown()['summary'], $body);
+        }
+        if ($endpoint === 'agent-page') {
+            if (Ranatec_Agent_ARD::page_variant() !== '') {
+                $body = Ranatec_Agent_ARD::filter_page($body);
+            }
+            $body = Ranatec_Agent_WebMCP::filter_page($body);
+        }
+        return $body;
+    }
+
     public static function get_index()
     {
         $c = self::load('company');
@@ -254,7 +328,7 @@ final class Ranatec_Agent_API
             'name' => 'Ranatec Agent API',
             'description' => 'Read-only JSON API describing Ranatec AB (Gothenburg, Sweden): RF test and measurement products, categories, solutions, news, pages and FAQ — plus two consent-gated POST endpoints: product quote requests and contact enquiries.',
             'locales' => ['en-US' => RANATEC_API_SITE . '/', 'en-GB' => RANATEC_API_SITE . '/en-gb/', 'en-CA' => RANATEC_API_SITE . '/en-ca/'],
-            'counts' => $counts,
+            'counts' => $counts + self::count_breakdown(),
             'endpoints' => [
                 ['method' => 'GET', 'url' => RANATEC_API_BASE . '/index.json', 'description' => 'This index'],
                 ['method' => 'GET', 'url' => RANATEC_API_BASE . '/schema.json', 'description' => 'Field reference for every entity'],
@@ -505,8 +579,8 @@ final class Ranatec_Agent_API
     private static function serve_static($endpoint)
     {
         list($file, $type) = self::STATIC_FILES[$endpoint];
-        $path = $endpoint === 'openapi' ? RANATEC_API_DIR . 'openapi.json' : RANATEC_API_PUBLIC . $file;
-        if (!is_readable($path)) {
+        $body = self::render_static($endpoint);
+        if ($body === null) {
             status_header(404);
             exit;
         }
@@ -515,22 +589,12 @@ final class Ranatec_Agent_API
         }
         header('Content-Type: ' . $type);
         header('X-Content-Type-Options: nosniff');
-        // The /agent/ page carries a build-time <link rel="ard"> to the configured site: point it at this site's
-        // own manifest (staging, alternate domains) and drop it while ARD is switched off.
-        // It also gets the WebMCP script tag (it is served outside the theme, so wp_head does not add it).
-        $ard_variant = $endpoint === 'agent-page' ? Ranatec_Agent_ARD::page_variant() : '';
-        $webmcp_variant = $endpoint === 'agent-page' ? Ranatec_Agent_WebMCP::page_variant() : '';
-        self::cache_headers($path, $ard_variant . $webmcp_variant);
+        // The ETag follows the served bytes: the /agent/ page varies with this site's ARD link and WebMCP tag, and the
+        // text files carry the live product numbers.
+        $path = $endpoint === 'openapi' ? RANATEC_API_DIR . 'openapi.json' : RANATEC_API_PUBLIC . $file;
+        self::cache_headers($path, md5($body));
         status_header(200);
-        if ($endpoint === 'agent-page') {
-            $html = (string) file_get_contents($path);
-            if ($ard_variant !== '') {
-                $html = Ranatec_Agent_ARD::filter_page($html);
-            }
-            echo Ranatec_Agent_WebMCP::filter_page($html);
-        } else {
-            readfile($path);
-        }
+        echo $body;
         exit;
     }
 
@@ -569,6 +633,7 @@ register_activation_hook(__FILE__, function () {
 });
 
 register_deactivation_hook(__FILE__, function () {
+    Ranatec_Agent_Static_Files::remove();   // the web-root copies and their .htaccess rules
     flush_rewrite_rules();
     Ranatec_Agent_Sync::unschedule();
 });
