@@ -20,9 +20,9 @@ All component versions come from the repo `VERSION` file (1.3.0) and are checked
 
 ## SHA-256
 ```
-9f174d5a7921795ea25f971bad8d008b777f6760c0879b512a6217a614d3caf1  ranatec-api-1.3.0.zip
-803d5f69d1bdacf7610690f78e855d6faf187098f62dffa0c6e7cadc6c3017a9  ranatec-mcp-1.3.0-cpanel.zip
-26b59d427192d1081136e6bbcafca1866a36da651e144c1b5c4cd96ece6dbb49  ranatec-agentic-web-package-1.3.0.zip
+820878d0509f9a2df689ab582ee438a0dc9125fe0943bc87aff5985139ada0e6  ranatec-api-1.3.0.zip
+1f9b8ee853c931fb9c8cda00bc1130e70db48dacd5f8412fed0dca8de26ce8d3  ranatec-mcp-1.3.0-cpanel.zip
+6314a72c26fe674ff739377b3d29a9c9e6a7ee1d23e6868d2308a4c57f872e89  ranatec-agentic-web-package-1.3.0.zip
 ```
 
 

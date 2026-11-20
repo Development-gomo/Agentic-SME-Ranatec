@@ -9,7 +9,8 @@ A complete, deployable package rebuilt from a new crawl of https://ranatec.com/ 
 - **Crawl:** Yoast sitemaps in all three locales (en-US `/`, en-GB `/en-gb/`, en-CA `/en-ca/`) → 445 URLs, plus a Firecrawl site map (269 links) to find pages outside the sitemaps. Every URL was downloaded (445 pages, 0 empty). A Firecrawl batch scrape of all 445 URLs plus the careers site was used to cross-check product specifications.
 - **Status check:** all 456 URLs in the previous package or the new crawl were requested without following redirects.
 - **Content check:** the new crawl was run through the same extraction and data pipeline, and every entity (company, 82 products, 12 categories, 44 news items, 12 pages, 3 solutions, 12 FAQ) was compared field by field with 1.2.4. Every difference was verified against the live HTML.
-- Contact details, the main menu and the Organization structured data (JSON-LD) were checked separately on the live pages.
+- Contact details, the main menu, the footer, robots.txt and the Organization structured data (JSON-LD) were checked separately on the live pages.
+- **Second review:** every URL's Yoast sitemap `lastmod` was compared with the previous crawl date (71 URLs edited since), the full page text of every en-GB / en-CA product page was compared with en-US, and every internal link on all 445 pages was checked for pages outside the sitemaps.
 
 ### Pages added
 
@@ -33,7 +34,49 @@ Content is identical in all three locales, so each change applies to all three U
 | Solid State Switch RI 2582 | https://ranatec.com/product/solid-state-switch-ri-2582/ · https://ranatec.com/en-gb/product/solid-state-switch-ri-2582/ · https://ranatec.com/en-ca/product/solid-state-switch-ri-2582/ | Product edited 2026-10-07: the feature bullet "Insertion loss < 4.8 dB up to 3 GHz • Isolation > 70 dB" is now two bullets. Specifications unchanged. | `features` and `date_modified` (2026-09-11 → 2026-10-07) in `products.json`; feature list in `agent-page.html` and `llms-full.txt` |
 | News: New management at Ranatec | https://ranatec.com/new-management-at-ranatec/ · https://ranatec.com/en-gb/new-management-at-ranatec/ · https://ranatec.com/en-ca/new-management-at-ranatec/ | Re-saved 2026-11-17. Text unchanged. | `date_modified` 2019-10-09 → 2026-11-17 in `news.json` |
 
-All other pages are unchanged in every field the package uses: 9 pages, 81 products, 12 categories, 3 solutions and 43 news items, in each locale.
+All other pages are unchanged in every field the package uses: 9 pages, 81 products, 12 categories, 3 solutions and 43 news items, in each locale. Some of them were re-saved without content changes (see the next section).
+
+### Pages re-saved with no content change
+
+These URLs have a newer date in the Yoast sitemaps, but their visible text, specifications, category assignments, breadcrumbs and structured data are identical to 1.2.4 and to the en-US version. Verified by comparing the full page text of all 164 en-GB / en-CA product pages with en-US, and the product lists of the categories, the shop and the "Uncategorized" archives in all three locales. The package data is unchanged for them.
+
+**2026-11-18, en-GB and en-CA only** (a WPML re-save on the same day the en-GB / en-CA "Uncategorized" archives appeared; en-US was not touched, except `/shop/`):
+
+- 24 products, en-GB and en-CA URLs (`/en-gb/product/<slug>/`, `/en-ca/product/<slug>/`):
+  - Digital Attenuator Box RF2035 (`digital-attenuator-box-rf2035`)
+  - Digital Attenuator Box RF2036 (`digital-attenuator-box-rf2036`)
+  - Feedthrough Filter RI 4171 (`feedthrough-filter-ri-4171`)
+  - Feedthrough Filter RI 4182 (`feedthrough-filter-ri-4182`)
+  - Feedthrough Filter RI 4184 (`feedthrough-filter-ri-4184`)
+  - Feedthrough Filter RI 4185 (`feedthrough-filter-ri-4185`)
+  - Feedthrough Filter RI 4188 (`feedthrough-filter-ri-4188`)
+  - Feedthrough Filter RI 4192 (`feedthrough-filter-ri-4192`)
+  - Feedthrough Filter RI 4193 (`feedthrough-filter-ri-4193`)
+  - Feedthrough Filter RI 4194 (`feedthrough-filter-ri-4194`)
+  - Feedthrough Filter RI 4197 (`feedthrough-filter-ri-4197`)
+  - Feedthrough Filter RI 4199 (`feedthrough-filter-ri-4199`)
+  - Feedthrough Filter RI 4201 (`feedthrough-filter-ri-4201`)
+  - Feedthrough Filter RI 4205 (`feedthrough-filter-ri-4205`)
+  - Feedthrough Filter RI 4206 (`feedthrough-filter-ri-4206`)
+  - Filtered Terminal Block RI 4198 (`filtered-terminal-block-ri-4198`)
+  - Frequency Extension Box RI 4273 (`frequency-extension-box-ri-4273`)
+  - Frequency Extension Box RI 4274 (`frequency-extension-box-ri-4274`)
+  - Frequency Extension Box RI 4276 (`frequency-extension-box-ri-4276`)
+  - Frequency Extension Box RI 4278 (`frequency-extension-box-ri-4278`)
+  - Optical Fiber Feedthrough RI 4196 (`optical-fiber-feedthrough-ri-4196`)
+  - RI 181-11 Internal shielding wall (`ri-181-11-internal-shielding-wall`)
+  - RI 4205 110/230 VAC Feedthru Filter (`ri-4205-110-230-vac-feedthru-filter`)
+  - Switch Box (`switch-box-2`)
+- Categories: `https://ranatec.com/en-ca/product-category/digital-step-attenuator/`, `https://ranatec.com/en-ca/product-category/shielded-feedthrough-filters/`, `https://ranatec.com/en-gb/product-category/digital-step-attenuator/`, `https://ranatec.com/en-gb/product-category/shielded-feedthrough-filters/`
+- Shop: `https://ranatec.com/en-ca/shop/`, `https://ranatec.com/en-gb/shop/`, `https://ranatec.com/shop/`
+
+**2026-10-07, en-US:** `https://ranatec.com/product-category/rf-coaxial-switch/` (Switch Modules), saved together with the RI 2582 edit. Category content unchanged.
+
+### Site-wide changes (not tied to a single page)
+
+- **Footer, all pages, all three locales:** new **"For AI agents"** link to `https://ranatec.com/agent`, between the contact details and the address. It is now linked from all 445 crawled pages. The other footer links (phone, email, address, X, LinkedIn, Cookie policy, Career) are unchanged.
+- **Homepage (all three locales) and Contact Us:** the new AI-agent notice links `https://ranatec.com/agent` and `https://ranatec.com/llms.txt` (see *Pages updated*).
+- **robots.txt:** now ends with `Agentmap: https://ranatec.com/.well-known/ard.json` (added 2026-11-11 for the ARD manifest), after an "AI-readable resources" comment block and the `Sitemap:` line.
 
 ### Pages removed or redirecting
 
@@ -44,7 +87,7 @@ All other pages are unchanged in every field the package uses: 9 pages, 81 produ
 
 ### Navigation, services, products, contact details, structured data
 
-- **Navigation:** unchanged. The product menu lists 49 catalogue products in 11 categories; top level: Products, News, About Us, Contact Us, RFQ.
+- **Navigation:** main menu unchanged (the product menu lists 49 catalogue products in 11 categories; top level: Products, News, About Us, Contact Us, RFQ). **Footer: new "For AI agents" link to /agent** (see *Site-wide changes*).
 - **Services / solutions:** unchanged (3: wireless test automation, RF shielded enclosures, customised RF test equipment).
 - **Products:** unchanged (82 listings = 49 catalogue products + accessories and duplicate listings). Only RI 2582's feature list changed (see above).
 - **Contact details:** unchanged. Falkenbergsgatan 3, 412 85 Gothenburg, Sweden · +46 31 706 16 60 · info@ranatec.com.

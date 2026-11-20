@@ -164,7 +164,7 @@ A notification email also goes to info@ranatec.com; you can switch it off.
     is the most common cause right after deployment.
 
 22. **Google Search Console:** use URL inspection, then request indexing for `https://ranatec.com/agent/` and `https://ranatec.com/llms.txt`. Do the same in Bing Webmaster Tools.
-23. **Optional footer link:** add "For AI agents" → `/agent/` in the site footer, so crawlers discover the page.
+23. **Footer link:** done. Since November 2026 every page has a "For AI agents" link to `/agent` in the footer, so crawlers discover the page.
 24. **Share `docs/FINDINGS.md` with Ranatec's web team.** Start with the swapped RF2037/RF2038 specs, the 13 duplicate product listings and the en-GB/en-CA legacy articles.
 25. **When content changes:** news posts and products update the API automatically every day, or immediately via **Sync now**. To refresh the agent page and llms files as well, run `python3 tools/build_static.py` then `bash tools/release.sh`, and upload the new plugin zip: WordPress asks to **replace** the current version, which you should confirm.
 

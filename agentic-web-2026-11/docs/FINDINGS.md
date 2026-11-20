@@ -78,6 +78,8 @@ These issues came up while building the agent package. None of them blocks deplo
 
 ## Already good
 
+- **Footer link to the agent page (added after the 2026-10-06 crawl):** every page now has a "For AI agents" link to https://ranatec.com/agent in the footer, and robots.txt has the ARD `Agentmap:` line.
+
 - robots.txt already allows GPTBot, ClaudeBot, Claude-User, Claude-SearchBot, PerplexityBot, Google-Extended and others.
 - Pages and posts carry correct `hreflang` (en-US / en-GB / en-CA, x-default en-US).
 - Yoast sitemaps are complete and current.
