@@ -437,6 +437,22 @@ const methodNotAllowed = (_req: Request, res: Response) => {
 app.get(MCP_PATHS, methodNotAllowed);
 app.delete(MCP_PATHS, methodNotAllowed);
 
+// Unknown paths and request errors always answer in JSON — never Express's HTML error page, which prints the
+// stack trace and server file paths whenever NODE_ENV is not "production".
+app.use((_req: Request, res: Response) => {
+  res.status(404).json({ error: "not_found", message: "Unknown path. MCP endpoint: POST /mcp · tool list: GET /mcp/tools · health: GET /mcp/health" });
+});
+app.use((err: { type?: string; status?: number; statusCode?: number }, _req: Request, res: Response, _next: () => void) => {
+  const status = err.status ?? err.statusCode ?? 500;
+  const [code, message] =
+    err.type === "entity.parse.failed" ? [-32700, "Parse error: the request body is not valid JSON"]
+    : err.type === "entity.too.large" ? [-32600, "Invalid request: the body is larger than 100 KB"]
+    : status < 500 ? [-32600, "Invalid request"]
+    : [-32603, "Internal MCP server error"];
+  if (status >= 500) console.error("MCP request error:", err);
+  if (!res.headersSent) res.status(status).json({ jsonrpc: "2.0", error: { code, message }, id: null });
+});
+
 app.listen(PORT, () => {
   console.log(`${NAME} ${VERSION} listening on :${PORT} (API ${API_BASE})`);
 });

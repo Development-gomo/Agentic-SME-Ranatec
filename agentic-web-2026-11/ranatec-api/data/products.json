@@ -2,7 +2,7 @@
   "meta": {
     "source": "https://ranatec.com/agent/v1/products.json",
     "endpoint": "products",
-    "version": "1.3.1",
+    "version": "1.3.2",
     "last_updated": "2026-11-20",
     "publisher": "Ranatec AB",
     "canonical_site": "https://ranatec.com/",

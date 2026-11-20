@@ -13,6 +13,8 @@ services:
     healthCheckPath: /live     # liveness only; /health also checks the WordPress API and returns 503 until the plugin is live
     autoDeploy: true
     envVars:
+      - key: NODE_ENV
+        value: production
       - key: NODE_VERSION
         value: "22"
       - key: RANATEC_API_BASE

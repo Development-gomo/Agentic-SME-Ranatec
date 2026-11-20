@@ -168,10 +168,10 @@ final class Ranatec_Agent_Sync
             $created = $wc->get_date_created();
             $modified = $wc->get_date_modified();
             if ($created && empty($item['date_published'])) {
-                $item['date_published'] = $created->date('c');
+                $item['date_published'] = gmdate('c', $created->getTimestamp());   // WC_DateTime::date() prints local time labelled +00:00
             }
             if ($modified) {
-                $item['date_modified'] = $modified->date('c');
+                $item['date_modified'] = gmdate('c', $modified->getTimestamp());
             }
             $out[$slug] = $item;
         }

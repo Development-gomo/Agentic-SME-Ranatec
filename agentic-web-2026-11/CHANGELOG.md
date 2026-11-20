@@ -1,5 +1,15 @@
 # Changelog — Ranatec Agentic Web package
 
+## 1.3.2 — 2026-11-20 (`agentic-web-2026-11`)
+
+Bug-fix release on top of 1.3.1 (deployed on ranatec.com 2026-11-20); same crawl and content.
+
+- **Medium — the daily sync wrote product dates 2 hours wrong.** `class-sync.php` formatted WooCommerce dates with `WC_DateTime::date('c')`, which prints the site's local time (Europe/Stockholm) labelled `+00:00`. After the sync ran on ranatec.com, every product's `date_modified` read e.g. `2026-09-11T07:34:54+00:00` instead of the real `05:34:54+00:00` (confirmed against WooCommerce's source and the pages' own structured data). The sync now writes real UTC; the next daily run (or **Tools → Ranatec Agent API → Sync now**) corrects the live data. A test fails if the old pattern returns. Present since 1.0.x.
+- **Medium — the MCP server leaked stack traces.** A malformed or oversized request got Express's HTML error page, which includes the stack trace and server file paths whenever `NODE_ENV` is not `production` (`render.yaml` did not set it). The server now always answers with a JSON-RPC error (`-32700` parse error, `-32600` request too large or invalid) and a JSON 404 for unknown paths; `render.yaml` also sets `NODE_ENV=production`. 3 new smoke-test checks.
+- Also verified in this review, no change needed: the daily sync otherwise reproduces the release data (only product order within categories and full-size image URLs differ); plugin files block direct access; admin actions check permission and nonce; the agent page escapes all text, has no script/iframe/event-handler injection points and parses with 0 HTML5 errors; MCP unknown tools/methods and wrong HTTP methods return proper JSON-RPC errors.
+
+Deploy: WordPress → upload `release/ranatec-api-1.3.2.zip` → Replace current → **Tools → Ranatec Agent API → Sync now** → LiteSpeed Purge All. Render: copy `ranatec-mcp/src/index.ts`, `package.json`, `package-lock.json` and set `NODE_ENV=production` in the service's environment (or apply `render.yaml`).
+
 ## 1.3.1 — 2026-11-20 (`agentic-web-2026-11`)
 
 Bug-fix release on top of 1.3.0; same crawl and content. Released under a new version number because the first 1.3.0 build was already deployed on ranatec.com and later 1.3.0 builds could not be told apart from it: the new number also makes the plugin refresh its URL rules on upgrade by itself (needed for the `/agent/v1` fix), so no manual "Flush rewrite rules" is required.

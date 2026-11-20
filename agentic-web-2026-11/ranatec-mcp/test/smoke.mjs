@@ -104,6 +104,15 @@ check("request_quote dry_run validates and sends nothing", !dry.isError && parse
 const badCfg = await client.callTool({ name: "request_quote", arguments: { agent_context: CTX, customer: CUSTOMER, products: [{ id: "RI 181", quantity: 1, configuration: [{ id: "RI 3101", quantity: 1 }] }] } });
 check("configuration rejects an option that is not on the product", badCfg.isError === true, txt(badCfg));
 
+// Malformed requests get JSON-RPC errors, never an HTML page with a stack trace.
+for (const [label, body] of [["invalid JSON", "{oops"], ["body over 100 KB", JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list", pad: "x".repeat(200000) })]]) {
+  const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body });
+  const text = await r.text();
+  check(`${label} → JSON-RPC error without stack trace`, r.headers.get("content-type")?.includes("json") && !/\bat \S+ \(|node_modules|<pre>/.test(text) && JSON.parse(text).error, `HTTP ${r.status} ${text.slice(0, 80)}`);
+}
+const nf = await fetch(new URL("/nonexistent", url));
+check("unknown path → JSON 404", nf.status === 404 && nf.headers.get("content-type")?.includes("json"), `HTTP ${nf.status}`);
+
 await client.close();
 console.log(failures ? `\n${failures} FAILED` : "\nALL PASSED");
 process.exit(failures ? 1 : 0);

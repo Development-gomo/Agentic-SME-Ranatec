@@ -104,6 +104,8 @@ grep -q '<tr data-ard><th>ARD manifest</th><td><a href="https://ranatec.com/.wel
 page=$(WP_OPTION_home=https://staging.example.org php tests/wp-stub-harness.php agent-page '' GET </dev/null); grep -q '<link rel="ard" type="application/json" href="https://staging.example.org/.well-known/ard.json">' <<<"$page" && grep -q '<li data-ard><a href="https://staging.example.org/.well-known/ard.json">' <<<"$page" && grep -q '<tr data-ard><th>ARD manifest</th><td><a href="https://staging.example.org/.well-known/ard.json">https://staging.example.org/.well-known/ard.json</a>' <<<"$page" && ok "/agent/ page links this site's own manifest (staging domain)" || bad "/agent/ rel=ard on staging"
 page=$(WP_OPTION_ranatec_api_ard_enabled=0 php tests/wp-stub-harness.php agent-page '' GET </dev/null); grep -qE 'rel="ard"|data-ard|ard.json</a>' <<<"$page" && bad "ARD off → /agent/ still links it" || ok "ARD off → /agent/ page link removed"
 
+grep -q "->date('c')" ranatec-api/includes/class-sync.php && bad "class-sync.php formats WooCommerce dates with ->date('c') (local time labelled UTC)" || ok "sync writes WooCommerce dates as real UTC (no WC_DateTime::date('c'))"
+
 echo "== Versions"
 python3 tools/check_versions.py >"$TMP/versions.log" 2>&1 && ok "all component versions match VERSION ($(tr -d '[:space:]' < VERSION))" || { cat "$TMP/versions.log"; bad "version mismatch"; }
 
