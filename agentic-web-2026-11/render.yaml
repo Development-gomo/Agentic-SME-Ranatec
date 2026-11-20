@@ -1,9 +1,19 @@
-# Render Blueprint for the Ranatec MCP server.
-# Render → New → Blueprint → connect this repository/branch → Apply.
-# Public URL: https://agentic-mcp-sme-ranatec.onrender.com (MCP endpoint https://agentic-mcp-sme-ranatec.onrender.com/mcp). See docs/DEPLOYMENT-ODERLAND.md, Part C.
+# Render Blueprint for the Ranatec MCP server. See docs/DEPLOYMENT-ODERLAND.md, Part C.
+#
+# The live service is "agentic-mcp-sme-ranatec" (https://agentic-mcp-sme-ranatec.onrender.com/mcp — the URL the
+# plugin, ARD manifest, llms.txt and OpenAPI advertise). It builds from the GitHub repo
+# Development-gomo/agentic-mcp-sme-ranatec, whose root holds the contents of ranatec-mcp/ (rootDir empty), and
+# deploys automatically on every push there. To update it, copy ranatec-mcp/ (src/, package.json,
+# package-lock.json, tsconfig.json) to that repo and push; this file is not needed for that.
+#
+# Use this Blueprint only to (re)create the service from this package's layout (ranatec-mcp/ next to this file).
+# rootDir is relative to the repository root: if this package sits in a sub-folder of a repo (as in
+# Agentic-SME-Ranatec, where it is agentic-web-2026-11/), set rootDir to <sub-folder>/ranatec-mcp and the
+# Blueprint path to <sub-folder>/render.yaml. Do NOT apply the older render.yaml at the root of
+# Agentic-SME-Ranatec: it builds the previous package's server.
 services:
   - type: web
-    name: ranatec-mcp
+    name: agentic-mcp-sme-ranatec   # must stay this name: it gives the advertised onrender.com address
     runtime: node
     rootDir: ranatec-mcp
     region: frankfurt          # closest to the Oderland servers in Sweden
@@ -23,5 +33,7 @@ services:
         value: "1"             # Render runs one proxy hop in front of the app; needed for per-client rate limiting
       - key: RATE_LIMIT_PER_MIN
         value: "100"
+      - key: MCP_ALLOWED_ORIGINS   # browser origins allowed to call /mcp (MCP Origin check); clients without an Origin header are unaffected
+        value: https://ranatec.com,https://www.ranatec.com
       - key: RANATEC_MCP_KEY     # optional: same value as "MCP server key" in WordPress → Tools → Ranatec Agent API
         sync: false              # entered in the Render dashboard, never stored in git

@@ -1,13 +1,14 @@
 # Deploying on Oderland (cPanel + LiteSpeed): step by step
 
-ranatec.com is hosted on Oderland. It runs **LiteSpeed** and **PHP 8.2**, managed through **cPanel**. The WordPress plugin goes on Oderland. The **MCP server runs on Render** at `https://agentic-mcp-sme-ranatec.onrender.com/mcp` (`render.yaml` in the repo root). Ignore `ranatec-mcp/nginx-mcp.conf`.
+ranatec.com is hosted on Oderland. It runs **LiteSpeed** and **PHP 8.4** (8.4.28 in November 2026), managed through **cPanel**. The WordPress plugin goes on Oderland. The **MCP server runs on Render** at `https://agentic-mcp-sme-ranatec.onrender.com/mcp` (built from the GitHub repo `Development-gomo/agentic-mcp-sme-ranatec`). Ignore `ranatec-mcp/nginx-mcp.conf`.
 
 Files you need, all in `release/`:
 
 | File | Used in |
 |---|---|
 | `ranatec-api-<version>.zip` | Part A (WordPress plugin) |
-| `render.yaml` (repo root) | Part C (MCP server on Render) |
+| `ranatec-mcp/` (inside the package) | Part C (MCP server on Render) |
+| `render.yaml` (inside the package) | Part C, only to recreate the Render service |
 | `ranatec-mcp-<version>-cpanel.zip` | Only for the cPanel alternative at the end of Part C |
 | `web-root/robots-addition.txt` (inside the package) | Part B |
 
@@ -89,23 +90,32 @@ Expect about 30–45 minutes. Do it in a quiet hour, and keep the **Before you s
 
 ## Part C: MCP server on Render (~15 min)
 
-15. In Render, go to **New → Blueprint**, connect `Development-gomo/Agentic-SME-Ranatec` and pick the release branch, then click **Apply**. `render.yaml` sets everything:
-    - root folder `ranatec-mcp`
-    - build `npm ci --include=dev && npm run build`, start `npm start`
-    - Node 22, Frankfurt, health check `/live`
-    - environment variables `RANATEC_API_BASE=https://ranatec.com/agent/v1` and `TRUST_PROXY=1`
-16. Keep the **Starter** plan. The free plan sleeps when idle, so the first agent call after a quiet period is slow.
-17. The service must be named **`agentic-mcp-sme-ranatec`** so its address is `https://agentic-mcp-sme-ranatec.onrender.com`. That address is what the plugin, agent page, llms.txt, ai.txt, OpenAPI and API catalogs advertise.
-18. Build command: `npm ci --include=dev && npm run build` (plain `npm run build` fails because the dependencies aren't installed). Start command: `npm start`.
-19. If you leave the Root Directory empty, the repo root must contain `package.json`, `package-lock.json`, `tsconfig.json` and `src/`. Otherwise set Root Directory to `ranatec-mcp`.
-20. **Test it:**
-    - `https://agentic-mcp-sme-ranatec.onrender.com/mcp/tools` should list 13 tools, including `request_quote` and `submit_inquiry`.
-    - `https://agentic-mcp-sme-ranatec.onrender.com/mcp/health` should return `"status":"ok"` and `"upstream":"ok"`. Part A must be live for this.
-    - Opening `https://agentic-mcp-sme-ranatec.onrender.com/mcp` in a browser returning **405** is correct; MCP clients use POST.
-21. **End-to-end test** from your machine, using the unzipped package. The last check sends one real quote-request email:
+15. **Updating the existing service (the normal case).** The live service **`agentic-mcp-sme-ranatec`** builds from the GitHub repo `Development-gomo/agentic-mcp-sme-ranatec` and deploys automatically on every push. That repo's root holds the contents of this package's `ranatec-mcp/` folder. To update it, copy `src/`, `package.json`, `package-lock.json` and `tsconfig.json` from `ranatec-mcp/` into the repo root, commit and push, and wait for the deploy to finish in Render's **Events** tab.
+16. **Check the environment** in Render → the service → **Environment**:
+    - `NODE_ENV=production`
+    - `NODE_VERSION=22`
+    - `RANATEC_API_BASE=https://ranatec.com/agent/v1`
+    - `TRUST_PROXY=1`
+    - `RATE_LIMIT_PER_MIN=100`
+    - optional `RANATEC_MCP_KEY` (the same value as **MCP server key** in WordPress → Tools → Ranatec Agent API)
+    - optional `MCP_ALLOWED_ORIGINS`: browser origins allowed to call `/mcp`; the default is `https://ranatec.com,https://www.ranatec.com`. MCP clients and server-side agents send no `Origin` header and are not affected.
+17. **Recreating the service (only if it was deleted).** Use **New → Blueprint** with `render.yaml` from this package. It names the service `agentic-mcp-sme-ranatec`, which gives the advertised address `https://agentic-mcp-sme-ranatec.onrender.com`; that address is what the plugin, agent page, llms.txt, ai.txt, OpenAPI, ARD and API catalogs advertise. Read the comment at the top of `render.yaml` first: `rootDir` is relative to the repository root. **Don't** apply the older `render.yaml` at the root of `Development-gomo/Agentic-SME-Ranatec`: it builds the previous package's server. Keep the **Starter** plan; the free plan sleeps when idle, so the first agent call after a quiet period is slow. Build command `npm ci --include=dev && npm run build` (plain `npm run build` fails because the dependencies aren't installed), start command `npm start`, health check `/live`.
+18. **Check the version.** `https://agentic-mcp-sme-ranatec.onrender.com/mcp/health` must show the package version (e.g. `"version":"1.3.4"`), `"status":"ok"` and `"upstream":"ok"`; Part A must be live for the last one. `/mcp/tools` should list 13 tools, including `request_quote` and `submit_inquiry`. Opening `/mcp` in a browser returns **405**, which is correct: MCP clients use POST.
+19. **Read-only test against production** from your machine, using the unzipped package. It reads data and sends both submission tools as **dry runs**: nothing is stored, ordered or emailed.
     ```bash
     cd ranatec-mcp && npm ci && MCP_URL=https://agentic-mcp-sme-ranatec.onrender.com/mcp npm test
     ```
+    The first line says `SMOKE_MODE=readonly`. Don't set `SMOKE_MODE=staging` or `stub` against production: those modes send real enquiries and quote orders.
+20. **Real submissions are tested on staging, not production.** On a staging copy of ranatec.com with the same plugins (WooCommerce, YITH Request a Quote, Advanced CF7 DB, Contact Form 7) and outgoing email captured (for example with a mail-logging plugin that stops delivery), run the MCP server against staging and then the full test:
+    ```bash
+    RANATEC_API_BASE=https://<staging-host>/agent/v1 PORT=3000 npm start      # in one terminal
+    SMOKE_MODE=staging MCP_URL=http://127.0.0.1:3000/mcp npm test             # in another
+    ```
+    Then check on staging that:
+    - one contact enquiry appears in **Advanced CF7 DB** under the contact form;
+    - two quote orders appear in **WooCommerce → Orders** with status *New Quote Request*, the checkout fields and the configured option lines;
+    - the captured emails went to the contact recipient.
+21. If a real submission ever has to be checked in production, make it one deliberate enquiry agreed with Ranatec, then delete the lead or order afterwards.
 22. **Optional:** connect it in an MCP client, e.g. a custom connector with URL `https://agentic-mcp-sme-ranatec.onrender.com/mcp`.
 
 **Where agent leads go** (no reCAPTCHA or form is touched):
@@ -152,7 +162,13 @@ A notification email also goes to info@ranatec.com; you can switch it off.
 
 ## Part D: after go-live
 
-21. **Check ARD (the Lighthouse "ARD manifest is valid" audit).** Run these from any computer with Python 3, in the
+23. **Check that everything reports the intended version** (replace 1.3.4 with the version you deployed):
+    ```bash
+    for u in .well-known/ard.json agent/v1/index.json; do curl -s "https://ranatec.com/$u?nocache=$RANDOM" | grep -o '"version": *"[^"]*"' | head -1; done
+    curl -s https://agentic-mcp-sme-ranatec.onrender.com/mcp/health        # "version":"1.3.4"
+    ```
+    The plugin version is also on **Plugins** in WordPress. If `ard.json` shows an older version, a hand-uploaded copy in `public_html/.well-known/` is overriding the plugin: replace or delete it.
+24. **Check ARD (the Lighthouse "ARD manifest is valid" audit).** Run these from any computer with Python 3, in the
     package folder:
     ```bash
     curl -sI https://ranatec.com/.well-known/ard.json | grep -iE "^HTTP|content-type"   # 200, application/json
@@ -163,15 +179,17 @@ A notification email also goes to info@ranatec.com; you can switch it off.
     If it doesn't, see the troubleshooting table in `docs/ARD.md`. Purge LiteSpeed first, because an old cached 404
     is the most common cause right after deployment.
 
-22. **Google Search Console:** use URL inspection, then request indexing for `https://ranatec.com/agent/` and `https://ranatec.com/llms.txt`. Do the same in Bing Webmaster Tools.
-23. **Footer link:** done. Since November 2026 every page has a "For AI agents" link to `/agent` in the footer, so crawlers discover the page.
-24. **Share `docs/FINDINGS.md` with Ranatec's web team.** Start with the swapped RF2037/RF2038 specs, the 13 duplicate product listings and the en-GB/en-CA legacy articles.
-25. **When content changes:** news posts and products update the API automatically every day, or immediately via **Sync now**. To refresh the agent page and llms files as well, run `python3 tools/build_static.py` then `bash tools/release.sh`, and upload the new plugin zip: WordPress asks to **replace** the current version, which you should confirm.
+25. **Google Search Console:** use URL inspection, then request indexing for `https://ranatec.com/agent/` and `https://ranatec.com/llms.txt`. Do the same in Bing Webmaster Tools.
+26. **Footer link:** done. Since November 2026 every page has a "For AI agents" link to `/agent` in the footer, so crawlers discover the page.
+27. **Share `docs/FINDINGS.md` with Ranatec's web team.** Start with the swapped RF2037/RF2038 specs, the 13 duplicate product listings and the en-GB/en-CA legacy articles.
+28. **When content changes:** news posts and products update the API automatically every day, or immediately via **Sync now**. To refresh the agent page and llms files as well, run `python3 tools/build_static.py` then `bash tools/release.sh`, and upload the new plugin zip: WordPress asks to **replace** the current version, which you should confirm. If a file was uploaded to `public_html` by hand (for example `public_html/.well-known/ard.json`), replace it with the new `web-root/` copy in the same update, because the web server serves it instead of the plugin. Tools → Ranatec Agent API warns when such a copy is older than the plugin.
 
 ## Rollback
 
 - **Plugin:** go to **Plugins → Ranatec Agent API → Deactivate**, then **Settings → Permalinks → Save**. The site goes back to exactly how it was. The plugin doesn't change any WordPress content.
-- **MCP server:** suspend the Render service.
+- **MCP server:** in Render → the service → **Events**, use **Rollback** on the previous deploy, or suspend the service.
 - **robots.txt:** remove the pasted block.
+- **Files uploaded to `public_html` by hand** (for example `public_html/.well-known/ard.json`): the web server serves these instead of the plugin, so deactivating the plugin or unticking the ARD switch does **not** remove them. Delete them in cPanel → File Manager (or put back the previous version's copy from that version's `web-root/`), then purge LiteSpeed. Tools → Ranatec Agent API lists every such file and whether it matches the plugin.
 - **ARD only:** untick **Tools → Ranatec Agent API → Publish the ARD manifest** and save. The URL, `<link rel="ard">` and
-  the virtual-robots `Agentmap:` line disappear; remove a pasted `Agentmap:` line by hand, then purge LiteSpeed.
+  the virtual-robots `Agentmap:` line disappear; remove a pasted `Agentmap:` line by hand, delete
+  `public_html/.well-known/ard.json` if it was uploaded by hand, then purge LiteSpeed.

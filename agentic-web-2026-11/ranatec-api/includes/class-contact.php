@@ -70,7 +70,7 @@ final class Ranatec_Agent_Contact
         $title = self::text(isset($person['job_title']) ? $person['job_title'] : '', 120);
         $cname = self::text(isset($company['name']) ? $company['name'] : '', 160);
         $country = self::text(isset($company['country']) ? $company['country'] : '', 80);
-        $site = esc_url_raw(isset($company['website']) ? $company['website'] : '');
+        $site = esc_url_raw(isset($company['website']) && is_scalar($company['website']) ? (string) $company['website'] : '');
         $message = self::textarea(isset($inq['message']) ? $inq['message'] : '', 5000);
         $application = self::text(isset($inq['application']) ? $inq['application'] : '', 300);
         $timeline = self::text(isset($inq['timeline']) ? $inq['timeline'] : '', 120);
@@ -84,6 +84,7 @@ final class Ranatec_Agent_Contact
         if ($cname === '') $errors['company.name'] = 'required (contact form field "Company Name")';
         if (!in_array($type, self::TYPES, true)) $errors['inquiry.type'] = 'one of: ' . implode(', ', self::TYPES);
         if (Ranatec_Agent_API::str_len($message) < 10) $errors['inquiry.message'] = 'required (min 10 characters)';
+        if (isset($company['website']) && !is_scalar($company['website'])) $errors['company.website'] = 'must be a URL string';
         $errors += self::sample_data_errors($body, $email, $ctx);
         if ($errors) {
             return [400, self::err('validation_failed', 'One or more fields are invalid.', $errors)];
@@ -275,6 +276,10 @@ final class Ranatec_Agent_Contact
         // Consent gate.
         if ((isset($body['agent_context']['user_authorized_submission']) ? $body['agent_context']['user_authorized_submission'] : null) !== true) {
             return [null, [403, self::err('not_authorized', 'agent_context.user_authorized_submission must be true. Only submit after the user has explicitly confirmed that this request, including their contact details, may be sent to Ranatec.')]];
+        }
+        // dry_run must be a real boolean: "true", 1 or "yes" must never turn a test into a real submission.
+        if (array_key_exists('dry_run', $body['agent_context']) && !is_bool($body['agent_context']['dry_run'])) {
+            return [null, [400, self::err('validation_failed', 'One or more fields are invalid.', ['agent_context.dry_run' => 'must be true or false (JSON boolean), not a string or number. Nothing was stored or sent.'])]];
         }
         return [$body, null];
     }

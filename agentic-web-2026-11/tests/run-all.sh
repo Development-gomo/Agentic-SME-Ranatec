@@ -10,6 +10,9 @@ ok()  { echo "PASS $*"; pass=$((pass+1)); }
 bad() { echo "FAIL $*"; fail=$((fail+1)); }
 cleanup() { [[ -n "${PHP_PID:-}" ]] && kill "$PHP_PID" 2>/dev/null || true; [[ -n "${MCP_PID:-}" ]] && kill "$MCP_PID" 2>/dev/null || true; rm -rf "$TMP"; rm -f "$(php -r 'echo sys_get_temp_dir();')"/rl-ranatec_api_rl_* "$(php -r 'echo sys_get_temp_dir();')"/ranatec-mail.txt; }
 trap cleanup EXIT
+# Match a pattern against ALL of stdin. A plain "cmd | grep -q" lets grep exit at the first match; under pipefail the
+# writer then dies of SIGPIPE and the check fails at random.
+has() { local o; o=$(cat); grep -q "$@" <<<"$o"; }
 cleanup_rl() { rm -f "$(php -r 'echo sys_get_temp_dir();')"/rl-ranatec_api_rl_*; }
 
 echo "== PHP"
@@ -18,32 +21,41 @@ for f in ranatec-api/data/*.json ranatec-api/openapi.json ranatec-api/public/*.j
 
 # --- contact-form enquiry (contact.json / submit_inquiry) → Advanced CF7 DB only
 BODY='{"agent_context":{"user_authorized_submission":true,"user_request_summary":"QA: user asked whether the RI 181 can get a USB-C feedthrough"},"person":{"name":"Jörg Ångström","email":"qa@gomogroup.com","phone":"+46 31 000 00 00"},"company":{"name":"Prüf GmbH"},"inquiry":{"type":"custom_solution","message":"Kann die RI 181 mit USB-C-Durchführung geliefert werden?"}}'
-cleanup_rl; echo "$BODY" | php tests/wp-stub-harness.php contact '' POST | grep -q '"status": "received"' && ok "contact enquiry (mbstring on)" || bad "contact enquiry (mbstring on)"
-if ! php -n -m | grep -qi mbstring; then
-  cleanup_rl; echo "$BODY" | php -n tests/wp-stub-harness.php contact '' POST | grep -q '"status": "received"' && ok "contact enquiry (mbstring OFF)" || bad "contact enquiry (mbstring OFF)"
+QBODY='{"agent_context":{"user_authorized_submission":true,"user_request_summary":"QA: user asked for a quote for two configured RI 181 shield boxes"},"customer":{"first_name":"Jörg","last_name":"Ångström","email":"qa@gomogroup.com","phone":"+46 31 000 00 00","company":"Prüf GmbH","country":"Germany","address_1":"Teststraße 1","city":"München","postcode":"80331","state":"Bavaria (Bayern)"},"products":[{"id":"shield-box-ri-181","quantity":2,"configuration":[{"id":"feedthrough-filter-ri-4182","quantity":2}]}],"note":"Lieferung Q1"}'
+cleanup_rl; echo "$BODY" | php tests/wp-stub-harness.php contact '' POST | has '"status": "received"' && ok "contact enquiry (mbstring on)" || bad "contact enquiry (mbstring on)"
+if ! php -n -m | has -i mbstring; then
+  cleanup_rl; echo "$BODY" | php -n tests/wp-stub-harness.php contact '' POST | has '"status": "received"' && ok "contact enquiry (mbstring OFF)" || bad "contact enquiry (mbstring OFF)"
 fi
-cleanup_rl; echo "${BODY/true/false}" | php tests/wp-stub-harness.php contact '' POST | grep -q 'STATUS 403' && ok "contact without consent → 403" || bad "contact without consent → 403"
+cleanup_rl; echo "${BODY/true/false}" | php tests/wp-stub-harness.php contact '' POST | has 'STATUS 403' && ok "contact without consent → 403" || bad "contact without consent → 403"
 TMPD=$(php -r 'echo sys_get_temp_dir();')
 cleanup_rl; rm -f "$TMPD/ranatec-acf7db.jsonl" "$TMPD/ranatec-wc-orders.jsonl"; out=$(echo "$BODY" | TEST_ACF7DB=1 php tests/wp-stub-harness.php contact '' POST)
-if echo "$out" | grep -q '"entry_id": 101' && grep -q '"name":"your-name","value":"J' "$TMPD/ranatec-acf7db.jsonl" && grep -q '"name":"tel-882"' "$TMPD/ranatec-acf7db.jsonl" && grep -q '"name":"text-863","value":"Pr' "$TMPD/ranatec-acf7db.jsonl" && [[ ! -e "$TMPD/ranatec-wc-orders.jsonl" ]]; then ok "contact enquiry stored in Advanced CF7 DB (form 50 fields), no order created"; else echo "$out"; bad "Advanced CF7 DB storage"; fi
+if echo "$out" | has '"entry_id": 101' && grep -q '"name":"your-name","value":"J' "$TMPD/ranatec-acf7db.jsonl" && grep -q '"name":"tel-882"' "$TMPD/ranatec-acf7db.jsonl" && grep -q '"name":"text-863","value":"Pr' "$TMPD/ranatec-acf7db.jsonl" && [[ ! -e "$TMPD/ranatec-wc-orders.jsonl" ]]; then ok "contact enquiry stored in Advanced CF7 DB (form 50 fields), no order created"; else echo "$out"; bad "Advanced CF7 DB storage"; fi
 for f in name email phone; do
   case $f in name) b="${BODY/\"name\":\"Jörg Ångström\",/}";; email) b="${BODY/\"email\":\"qa@gomogroup.com\",/}";; phone) b="${BODY/,\"phone\":\"+46 31 000 00 00\"/}";; esac
-  cleanup_rl; echo "$b" | php tests/wp-stub-harness.php contact '' POST | grep -q "person.$f" && ok "contact: $f required" || bad "contact: $f required"
+  cleanup_rl; echo "$b" | php tests/wp-stub-harness.php contact '' POST | has "person.$f" && ok "contact: $f required" || bad "contact: $f required"
 done
-cleanup_rl; echo "${BODY/\"name\":\"Prüf GmbH\"/\"name\":\"\"}" | php tests/wp-stub-harness.php contact '' POST | grep -q 'company.name' && ok "contact: company required" || bad "contact: company required"
-cleanup_rl; echo "${BODY/\"type\":\"custom_solution\"/\"type\":\"quote_request\"}" | php tests/wp-stub-harness.php contact '' POST | grep -q 'use_request_quote' && ok "contact refuses quote_request → use_request_quote" || bad "contact refuses quote_request"
+cleanup_rl; echo "${BODY/\"name\":\"Prüf GmbH\"/\"name\":\"\"}" | php tests/wp-stub-harness.php contact '' POST | has 'company.name' && ok "contact: company required" || bad "contact: company required"
+cleanup_rl; echo "${BODY/\"type\":\"custom_solution\"/\"type\":\"quote_request\"}" | php tests/wp-stub-harness.php contact '' POST | has 'use_request_quote' && ok "contact refuses quote_request → use_request_quote" || bad "contact refuses quote_request"
 b=$(python3 -c "import json,sys; d=json.loads(sys.argv[1]); d['inquiry'].update(type='general', products=[{'id': 'ri-268'}]); print(json.dumps(d))" "$BODY")
-cleanup_rl; echo "$b" | php tests/wp-stub-harness.php contact '' POST | grep -q 'use_request_quote' && ok "contact refuses products → use_request_quote" || bad "contact refuses products"
+cleanup_rl; echo "$b" | php tests/wp-stub-harness.php contact '' POST | has 'use_request_quote' && ok "contact refuses products → use_request_quote" || bad "contact refuses products"
 rm -f "$TMPD/ranatec-acf7db.jsonl"
-cleanup_rl; echo "${BODY/\"user_authorized_submission\":true/\"user_authorized_submission\":true,\"dry_run\":true}" | php tests/wp-stub-harness.php contact '' POST | grep -q '"submitted": false' && ok "contact dry run validates without submitting" || bad "contact dry run"
-cleanup_rl; echo "${BODY/qa@gomogroup.com/john.doe@example.com}" | php tests/wp-stub-harness.php contact '' POST | grep -q 'example/test addresses' && ok "example.com address rejected" || bad "example.com address"
-cleanup_rl; echo "${BODY/QA: user asked whether the RI 181 can get a USB-C feedthrough/}" | php tests/wp-stub-harness.php contact '' POST | grep -q 'user_request_summary' && ok "missing user request summary rejected" || bad "user request summary"
-cleanup_rl; echo "${BODY/Jörg Ångström/<full name>}" | php tests/wp-stub-harness.php contact '' POST | grep -q 'placeholders' && ok "unfilled <placeholder> rejected" || bad "placeholder"
+cleanup_rl; echo "${BODY/\"user_authorized_submission\":true/\"user_authorized_submission\":true,\"dry_run\":true}" | php tests/wp-stub-harness.php contact '' POST | has '"submitted": false' && ok "contact dry run validates without submitting" || bad "contact dry run"
+cleanup_rl; echo "${BODY/qa@gomogroup.com/john.doe@example.com}" | php tests/wp-stub-harness.php contact '' POST | has 'example/test addresses' && ok "example.com address rejected" || bad "example.com address"
+cleanup_rl; echo "${BODY/QA: user asked whether the RI 181 can get a USB-C feedthrough/}" | php tests/wp-stub-harness.php contact '' POST | has 'user_request_summary' && ok "missing user request summary rejected" || bad "user request summary"
+cleanup_rl; echo "${BODY/Jörg Ångström/<full name>}" | php tests/wp-stub-harness.php contact '' POST | has 'placeholders' && ok "unfilled <placeholder> rejected" || bad "placeholder"
+# dry_run must be a JSON boolean: "true"/1/"yes" are rejected, never treated as a real submission (contact and quote)
+for v in '"true"' '1' '"yes"' 'null'; do
+  cleanup_rl; rm -f "$TMPD/ranatec-acf7db.jsonl" "$TMPD/ranatec-wc-orders.jsonl"
+  out=$(echo "${BODY/\"user_authorized_submission\":true/\"user_authorized_submission\":true,\"dry_run\":$v}" | TEST_ACF7DB=1 php tests/wp-stub-harness.php contact '' POST 2>&1)
+  qout=$(echo "${QBODY/\"user_authorized_submission\":true/\"user_authorized_submission\":true,\"dry_run\":$v}" | TEST_ACF7DB=1 php tests/wp-stub-harness.php quote '' POST 2>&1)
+  grep -q 'STATUS 400' <<<"$out" && grep -q 'agent_context.dry_run' <<<"$out" && grep -q 'STATUS 400' <<<"$qout" && grep -q 'agent_context.dry_run' <<<"$qout" && [[ ! -s "$TMPD/ranatec-acf7db.jsonl" && ! -s "$TMPD/ranatec-wc-orders.jsonl" ]] && ok "dry_run $v → 400, nothing stored (contact + quote)" || bad "dry_run $v not rejected"
+done
+cleanup_rl; out=$(echo "${BODY/\"name\":\"Prüf GmbH\"/\"name\":\"Prüf GmbH\",\"website\":[\"https://a.example\"]}" | php tests/wp-stub-harness.php contact '' POST 2>&1)
+grep -q 'STATUS 400' <<<"$out" && grep -q 'company.website' <<<"$out" && ! grep -qiE 'warning|fatal|deprecated' <<<"$out" && ok "contact: array company.website → 400 without PHP error" || bad "contact: array website ($out)"
 
 # --- product quote (quote.json / request_quote) → WooCommerce order only, checkout fields required
-QBODY='{"agent_context":{"user_authorized_submission":true,"user_request_summary":"QA: user asked for a quote for two configured RI 181 shield boxes"},"customer":{"first_name":"Jörg","last_name":"Ångström","email":"qa@gomogroup.com","phone":"+46 31 000 00 00","company":"Prüf GmbH","country":"Germany","address_1":"Teststraße 1","city":"München","postcode":"80331","state":"Bavaria (Bayern)"},"products":[{"id":"shield-box-ri-181","quantity":2,"configuration":[{"id":"feedthrough-filter-ri-4182","quantity":2}]}],"note":"Lieferung Q1"}'
 cleanup_rl; rm -f "$TMPD/ranatec-wc-orders.jsonl" "$TMPD/ranatec-acf7db.jsonl"; out=$(echo "$QBODY" | TEST_ACF7DB=1 php tests/wp-stub-harness.php quote '' POST)
-if echo "$out" | grep -q '"flow": "product_quote"' && echo "$out" | grep -q '"order_number": "4242"' && [[ ! -e "$TMPD/ranatec-acf7db.jsonl" ]] \
+if echo "$out" | has '"flow": "product_quote"' && echo "$out" | has '"order_number": "4242"' && [[ ! -e "$TMPD/ranatec-acf7db.jsonl" ]] \
    && python3 -c "
 import json,sys; o=json.loads(open(sys.argv[1]).readline())
 assert o['args']['status']=='ywraq-new' and o['payment_method']=='yith-request-a-quote', o
@@ -53,20 +65,20 @@ assert o['meta']['_wc_other/custom-checkout/additional-note']=='Lieferung Q1' an
 " "$TMPD/ranatec-wc-orders.jsonl"; then ok "quote → WooCommerce order with checkout fields (billing+shipping, state code, Additional Note, RFQ payment, configured option line), not a contact lead"; else echo "$out"; cat "$TMPD/ranatec-wc-orders.jsonl" 2>/dev/null; bad "quote order"; fi
 for f in first_name last_name email phone company country address_1 city postcode; do
   b=$(python3 -c "import json,sys; d=json.loads(sys.argv[1]); del d['customer'][sys.argv[2]]; print(json.dumps(d))" "$QBODY" "$f")
-  cleanup_rl; echo "$b" | php tests/wp-stub-harness.php quote '' POST | grep -q "customer.$f" && ok "quote: $f required" || bad "quote: $f required"
+  cleanup_rl; echo "$b" | php tests/wp-stub-harness.php quote '' POST | has "customer.$f" && ok "quote: $f required" || bad "quote: $f required"
 done
 b=$(python3 -c "import json,sys; d=json.loads(sys.argv[1]); d['customer'].update(country='US', state='', postcode='94105'); print(json.dumps(d))" "$QBODY")
-cleanup_rl; echo "$b" | php tests/wp-stub-harness.php quote '' POST | grep -q 'customer.state' && ok "quote: state required for US" || bad "quote: state required for US"
+cleanup_rl; echo "$b" | php tests/wp-stub-harness.php quote '' POST | has 'customer.state' && ok "quote: state required for US" || bad "quote: state required for US"
 b=$(python3 -c "import json,sys; d=json.loads(sys.argv[1]); d['customer'].update(country='SE', postcode='41250'); d['customer'].pop('state'); print(json.dumps(d))" "$QBODY")
-cleanup_rl; echo "$b" | php tests/wp-stub-harness.php quote '' POST | grep -q '"status": "received"' && ok "quote: no state needed for Sweden" || bad "quote: Sweden without state"
+cleanup_rl; echo "$b" | php tests/wp-stub-harness.php quote '' POST | has '"status": "received"' && ok "quote: no state needed for Sweden" || bad "quote: Sweden without state"
 b=$(python3 -c "import json,sys; d=json.loads(sys.argv[1]); d['customer'].update(country='Narnia'); print(json.dumps(d))" "$QBODY")
-cleanup_rl; echo "$b" | php tests/wp-stub-harness.php quote '' POST | grep -q 'customer.country' && ok "quote: unknown country rejected" || bad "quote: unknown country"
+cleanup_rl; echo "$b" | php tests/wp-stub-harness.php quote '' POST | has 'customer.country' && ok "quote: unknown country rejected" || bad "quote: unknown country"
 b=$(python3 -c "import json,sys; d=json.loads(sys.argv[1]); d['products']=[]; print(json.dumps(d))" "$QBODY")
-cleanup_rl; echo "$b" | php tests/wp-stub-harness.php quote '' POST | grep -q '"products"' && ok "quote: at least one product required" || bad "quote: products required"
-cleanup_rl; rm -f "$TMPD/ranatec-wc-orders.jsonl"; echo "${QBODY/\"user_authorized_submission\":true/\"user_authorized_submission\":true,\"dry_run\":true}" | php tests/wp-stub-harness.php quote '' POST | grep -q '"submitted": false' && [[ ! -e "$TMPD/ranatec-wc-orders.jsonl" ]] && ok "quote dry run validates without creating an order" || bad "quote dry run"
-cleanup_rl; echo "$QBODY" | TEST_WC_MISSING=feedthrough-filter-ri-4182 php tests/wp-stub-harness.php quote '' POST | grep -q 'product_not_in_shop' && ok "quote: product missing in shop → 409, nothing half-built" || bad "quote: missing product"
-cleanup_rl; rm -f "$TMPD/ranatec-acf7db.jsonl"; out=$(echo "$QBODY" | TEST_WC=0 TEST_ACF7DB=1 php tests/wp-stub-harness.php quote '' POST); echo "$out" | grep -q 'quotes_unavailable' && [[ ! -e "$TMPD/ranatec-acf7db.jsonl" ]] && ok "quote without WooCommerce → 503, never stored as a contact lead" || { echo "$out"; bad "quote without WooCommerce"; }
-cleanup_rl; echo "${QBODY/true/false}" | php tests/wp-stub-harness.php quote '' POST | grep -q 'STATUS 403' && ok "quote without consent → 403" || bad "quote without consent"
+cleanup_rl; echo "$b" | php tests/wp-stub-harness.php quote '' POST | has '"products"' && ok "quote: at least one product required" || bad "quote: products required"
+cleanup_rl; rm -f "$TMPD/ranatec-wc-orders.jsonl"; echo "${QBODY/\"user_authorized_submission\":true/\"user_authorized_submission\":true,\"dry_run\":true}" | php tests/wp-stub-harness.php quote '' POST | has '"submitted": false' && [[ ! -e "$TMPD/ranatec-wc-orders.jsonl" ]] && ok "quote dry run validates without creating an order" || bad "quote dry run"
+cleanup_rl; echo "$QBODY" | TEST_WC_MISSING=feedthrough-filter-ri-4182 php tests/wp-stub-harness.php quote '' POST | has 'product_not_in_shop' && ok "quote: product missing in shop → 409, nothing half-built" || bad "quote: missing product"
+cleanup_rl; rm -f "$TMPD/ranatec-acf7db.jsonl"; out=$(echo "$QBODY" | TEST_WC=0 TEST_ACF7DB=1 php tests/wp-stub-harness.php quote '' POST); echo "$out" | has 'quotes_unavailable' && [[ ! -e "$TMPD/ranatec-acf7db.jsonl" ]] && ok "quote without WooCommerce → 503, never stored as a contact lead" || { echo "$out"; bad "quote without WooCommerce"; }
+cleanup_rl; echo "${QBODY/true/false}" | php tests/wp-stub-harness.php quote '' POST | has 'STATUS 403' && ok "quote without consent → 403" || bad "quote without consent"
 rm -f "$TMPD/ranatec-wc-orders.jsonl"
 
 # --- malformed submissions: must give a clean 400, with no PHP warning/notice (a list where text is expected crashed WordPress on PHP 8 before 1.3.0)
@@ -80,31 +92,39 @@ done
 q=$(php -d error_reporting=-1 -d display_errors=stdout tests/wp-stub-harness.php products '' GET 'model[]=x&q[]=y' </dev/null 2>&1); grep -qE 'Warning|Notice' <<<"$q" && bad "array query params" || ok "array query parameters (?model[]=…) ignored without PHP warning"
 
 LOCK=lock-key-0123456789abcdefghijkl
-cleanup_rl; echo "$BODY" | WP_OPTION_ranatec_api_mcp_key=$LOCK php tests/wp-stub-harness.php contact '' POST | grep -q 'use_mcp_submit_inquiry' && ok "MCP-only lock: direct contact call without key → 403 use_mcp_submit_inquiry" || bad "MCP-only lock (no key)"
-cleanup_rl; echo "$QBODY" | WP_OPTION_ranatec_api_mcp_key=$LOCK php tests/wp-stub-harness.php quote '' POST | grep -q 'use_mcp_request_quote' && ok "MCP-only lock: direct quote call without key → 403 use_mcp_request_quote" || bad "MCP-only lock quote (no key)"
-cleanup_rl; echo "$BODY" | WP_OPTION_ranatec_api_mcp_key=$LOCK HTTP_X_RANATEC_MCP_KEY=$LOCK php tests/wp-stub-harness.php contact '' POST | grep -q '"status": "received"' && ok "MCP-only lock: call with MCP key → received" || bad "MCP-only lock (with key)"
+cleanup_rl; echo "$BODY" | WP_OPTION_ranatec_api_mcp_key=$LOCK php tests/wp-stub-harness.php contact '' POST | has 'use_mcp_submit_inquiry' && ok "MCP-only lock: direct contact call without key → 403 use_mcp_submit_inquiry" || bad "MCP-only lock (no key)"
+cleanup_rl; echo "$QBODY" | WP_OPTION_ranatec_api_mcp_key=$LOCK php tests/wp-stub-harness.php quote '' POST | has 'use_mcp_request_quote' && ok "MCP-only lock: direct quote call without key → 403 use_mcp_request_quote" || bad "MCP-only lock quote (no key)"
+cleanup_rl; echo "$BODY" | WP_OPTION_ranatec_api_mcp_key=$LOCK HTTP_X_RANATEC_MCP_KEY=$LOCK php tests/wp-stub-harness.php contact '' POST | has '"status": "received"' && ok "MCP-only lock: call with MCP key → received" || bad "MCP-only lock (with key)"
 
 echo "== ARD (Agentic Resource Discovery)"
 if python3 -W error::ResourceWarning -m unittest tests/test_ard.py >"$TMP/ard-unit.log" 2>&1; then ok "ARD core + generated manifest: $(grep -o 'Ran [0-9]* tests' "$TMP/ard-unit.log") (official JSON Schema, conformance tool, any domain, disabled, missing metadata, no secrets)"; else cat "$TMP/ard-unit.log"; bad "ARD unit tests"; fi
 out=$(php tests/wp-stub-harness.php ard '' GET </dev/null)
-echo "$out" | grep -q 'STATUS 200' && echo "$out" | sed '$d' | python3 -c "import json,sys; d=json.load(sys.stdin); assert d['entries']" && ok "/.well-known/ard.json served (200, JSON with entries)" || { echo "$out" | tail -3; bad "ARD route"; }
-WP_OPTION_ranatec_api_ard_enabled=0 php tests/wp-stub-harness.php ard '' GET </dev/null | grep -q 'STATUS 404' && ok "ARD switched off → /.well-known/ard.json 404" || bad "ARD off → 404"
+echo "$out" | has 'STATUS 200' && echo "$out" | sed '$d' | python3 -c "import json,sys; d=json.load(sys.stdin); assert d['entries']" && ok "/.well-known/ard.json served (200, JSON with entries)" || { echo "$out" | tail -3; bad "ARD route"; }
+WP_OPTION_ranatec_api_ard_enabled=0 php tests/wp-stub-harness.php ard '' GET </dev/null | has 'STATUS 404' && ok "ARD switched off → /.well-known/ard.json 404" || bad "ARD off → 404"
 headlinks() { php -r 'require "tests/wp-stubs.php"; require "ranatec-api/ranatec-api.php"; Ranatec_Agent_API::head_links();'; }
-WP_OPTION_home=https://staging.example.org headlinks | grep -q '<link rel="ard" type="application/json" href="https://staging.example.org/.well-known/ard.json" />' && ok "<link rel=\"ard\"> in page head, on the site's own domain" || bad "ARD head link"
-WP_OPTION_ranatec_api_ard_enabled=0 headlinks | grep -q 'rel="ard"' && bad "ARD off → head link still present" || ok "ARD off → no <link rel=\"ard\">"
+WP_OPTION_home=https://staging.example.org headlinks | has '<link rel="ard" type="application/json" href="https://staging.example.org/.well-known/ard.json" />' && ok "<link rel=\"ard\"> in page head, on the site's own domain" || bad "ARD head link"
+WP_OPTION_ranatec_api_ard_enabled=0 headlinks | has 'rel="ard"' && bad "ARD off → head link still present" || ok "ARD off → no <link rel=\"ard\">"
 robots() { php -r 'require "tests/wp-stubs.php"; require "ranatec-api/ranatec-api.php"; echo Ranatec_Agent_ARD::robots_txt("User-agent: *\nDisallow: /wp-admin/\n", "1");'; }
-WP_OPTION_home=https://example.org robots | grep -qx 'Agentmap: https://example.org/.well-known/ard.json' && ok "virtual robots.txt gets Agentmap:" || bad "robots Agentmap"
-WP_OPTION_ranatec_api_ard_enabled=0 robots | grep -q 'Agentmap' && bad "ARD off → robots still has Agentmap" || ok "ARD off → no Agentmap in robots.txt"
-php -r 'require "tests/wp-stubs.php"; require "ranatec-api/ranatec-api.php"; echo Ranatec_Agent_ARD::robots_txt("Agentmap: https://x.example/a.json\n", "1");' | grep -c Agentmap | grep -qx 1 && ok "existing Agentmap line not duplicated" || bad "Agentmap duplicated"
-php tests/wp-stub-harness.php index '' GET </dev/null | grep -q '"ard_manifest": "https://ranatec.com/.well-known/ard.json"' && ok "index.json discovery lists ard_manifest" || bad "index.json ard_manifest"
-WP_OPTION_ranatec_api_ard_enabled=0 php tests/wp-stub-harness.php index '' GET </dev/null | grep -q 'ard_manifest' && bad "ARD off → index.json still lists it" || ok "ARD off → index.json has no ard_manifest"
+WP_OPTION_home=https://example.org robots | has -x 'Agentmap: https://example.org/.well-known/ard.json' && ok "virtual robots.txt gets Agentmap:" || bad "robots Agentmap"
+WP_OPTION_ranatec_api_ard_enabled=0 robots | has 'Agentmap' && bad "ARD off → robots still has Agentmap" || ok "ARD off → no Agentmap in robots.txt"
+php -r 'require "tests/wp-stubs.php"; require "ranatec-api/ranatec-api.php"; echo Ranatec_Agent_ARD::robots_txt("Agentmap: https://x.example/a.json\n", "1");' | grep -c Agentmap | has -x 1 && ok "existing Agentmap line not duplicated" || bad "Agentmap duplicated"
+php tests/wp-stub-harness.php index '' GET </dev/null | has '"ard_manifest": "https://ranatec.com/.well-known/ard.json"' && ok "index.json discovery lists ard_manifest" || bad "index.json ard_manifest"
+WP_OPTION_ranatec_api_ard_enabled=0 php tests/wp-stub-harness.php index '' GET </dev/null | has 'ard_manifest' && bad "ARD off → index.json still lists it" || ok "ARD off → index.json has no ard_manifest"
 page=$(php tests/wp-stub-harness.php agent-page '' GET </dev/null); grep -q 'rel="ard"' <<<"$page" && ok "/agent/ page links the manifest" || bad "/agent/ rel=ard"
 grep -q '<li data-ard><a href="https://ranatec.com/.well-known/ard.json">ard.json</a>' <<<"$page" && ok "/agent/ LLM Discovery list has a visible ard.json link" || bad "/agent/ visible ARD link"
 grep -q '<tr data-ard><th>ARD manifest</th><td><a href="https://ranatec.com/.well-known/ard.json">' <<<"$page" && ok "/agent/ Metadata table has an ARD manifest row" || bad "/agent/ Metadata ard.json row"
 page=$(WP_OPTION_home=https://staging.example.org php tests/wp-stub-harness.php agent-page '' GET </dev/null); grep -q '<link rel="ard" type="application/json" href="https://staging.example.org/.well-known/ard.json">' <<<"$page" && grep -q '<li data-ard><a href="https://staging.example.org/.well-known/ard.json">' <<<"$page" && grep -q '<tr data-ard><th>ARD manifest</th><td><a href="https://staging.example.org/.well-known/ard.json">https://staging.example.org/.well-known/ard.json</a>' <<<"$page" && ok "/agent/ page links this site's own manifest (staging domain)" || bad "/agent/ rel=ard on staging"
 page=$(WP_OPTION_ranatec_api_ard_enabled=0 php tests/wp-stub-harness.php agent-page '' GET </dev/null); grep -qE 'rel="ard"|data-ard|ard.json</a>' <<<"$page" && bad "ARD off → /agent/ still links it" || ok "ARD off → /agent/ page link removed"
 
-grep -q "->date('c')" ranatec-api/includes/class-sync.php && bad "class-sync.php formats WooCommerce dates with ->date('c') (local time labelled UTC)" || ok "sync writes WooCommerce dates as real UTC (no WC_DateTime::date('c'))"
+# Daily sync against WooCommerce's real WC_DateTime (UTC dates, protected content excluded, lock released, no temp files)
+ST=$(mktemp -d); cp -r ranatec-api "$ST/"; sync_out=$(php tests/sync-test.php "$ST/ranatec-api" </dev/null 2>&1)
+while IFS= read -r line; do case $line in PASS\ *) ok "sync: ${line#PASS }";; FAIL\ *) bad "sync: ${line#FAIL }";; *) bad "sync test output: $line";; esac; done <<<"$sync_out"
+[[ $(grep -c '^PASS' <<<"$sync_out") -eq 9 ]] || bad "sync test: expected 9 checks"
+# a second run while one holds the lock is skipped and leaves the other run's lock alone
+lock_out=$(WP_OPTION_ranatec_api_sync_lock=$(date +%s) php -r 'require "tests/wp-stubs.php"; function add_option($k,$v="",$d="",$a="yes"){return getenv("WP_OPTION_".$k)===false;} function delete_option($k){echo "LOCK-DELETED";} require $argv[1]."/ranatec-api.php"; echo json_encode(Ranatec_Agent_Sync::run("test"));' "$ST/ranatec-api" 2>&1)
+grep -q '"skipped"' <<<"$lock_out" && ! grep -q 'LOCK-DELETED' <<<"$lock_out" && ok "sync: overlapping run is skipped, other run's lock kept" || bad "sync lock ($lock_out)"
+rm -rf "$ST"
+grep -qF -e "->date('c')" ranatec-api/includes/class-sync.php && bad "class-sync.php formats WooCommerce dates with ->date('c') (local time labelled UTC)" || ok "class-sync.php has no WC_DateTime::date('c')"
 
 # --- manually uploaded copies in the web root: detected, and flagged when older than the plugin
 WR=$(mktemp -d); mkdir -p "$WR/.well-known"; cp ranatec-api/public/llms.txt "$WR/llms.txt"; echo '{"entries":[]}' > "$WR/.well-known/ard.json"
@@ -129,7 +149,7 @@ done
 
 for b in agent/v1 agent/v1/; do loc=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' "http://127.0.0.1:$PHP_PORT/$b"); [[ $loc == "301 https://ranatec.com/agent/v1/index.json" ]] && ok "API base /$b → 301 index.json" || bad "API base /$b ($loc)"; done
 hdr=$(curl -s -D - -o "$TMP/ard.json" "http://127.0.0.1:$PHP_PORT/.well-known/ard.json")
-echo "$hdr" | grep -qi '^content-type: application/json' && echo "$hdr" | grep -qi '^access-control-allow-origin: \*' && ok "ARD over HTTP: application/json + CORS" || { echo "$hdr"; bad "ARD headers"; }
+echo "$hdr" | has -i '^content-type: application/json' && echo "$hdr" | has -i '^access-control-allow-origin: \*' && ok "ARD over HTTP: application/json + CORS" || { echo "$hdr"; bad "ARD headers"; }
 python3 tools/ard.py validate "$TMP/ard.json" >"$TMP/ard-validate.log" 2>&1 && grep -q 'VALID: 2 entries, 0 errors, 0 warnings' "$TMP/ard-validate.log" && ok "served manifest: official conformance PASS, 0 errors, 0 warnings" || { cat "$TMP/ard-validate.log"; bad "served ARD manifest validation"; }
 # Every advertised url must resolve on the site that serves the manifest (production host swapped for the test server).
 sed "s#https://ranatec.com#http://127.0.0.1:$PHP_PORT#g" "$TMP/ard.json" > "$TMP/ard-local.json"
@@ -145,10 +165,19 @@ curl -s "http://127.0.0.1:$MCP_PORT/mcp/tools" | python3 -c "
 import json,sys; live=[t['name'] for t in json.load(sys.stdin)['tools']]; m=json.load(open('ranatec-api/public/ard.json'))
 mcp=next(e for e in m['entries'] if e['type']=='application/mcp-server-card+json')
 assert mcp['capabilities']==live, (mcp['capabilities'], live); assert mcp['data']['version']==json.load(open('ranatec-mcp/package.json'))['version']" && ok "ARD MCP entry matches the running MCP server (tools, version)" || bad "ARD MCP entry drifted from the MCP server"
-if ( cd ranatec-mcp && MCP_URL="http://127.0.0.1:$MCP_PORT/mcp" npm test --silent ) >"$TMP/smoke.log" 2>&1; then
+if ( cd ranatec-mcp && SMOKE_MODE=stub MCP_URL="http://127.0.0.1:$MCP_PORT/mcp" npm test --silent ) >"$TMP/smoke.log" 2>&1; then
   cat "$TMP/smoke.log"; ok "MCP smoke test"
 else
   cat "$TMP/smoke.log"; echo "--- mcp server log:"; tail -20 "$TMP/mcp.log"; bad "MCP smoke test"
+fi
+
+# Default (production-safe) smoke mode: everything passes, and nothing is stored, ordered or emailed.
+cleanup_rl; rm -f "$TMPD/ranatec-acf7db.jsonl" "$TMPD/ranatec-wc-orders.jsonl" "$TMPD/ranatec-mail.txt"
+if ( cd ranatec-mcp && MCP_URL="http://127.0.0.1:$MCP_PORT/mcp" npm test --silent ) >"$TMP/smoke-ro.log" 2>&1 && grep -q 'SMOKE_MODE=readonly' "$TMP/smoke-ro.log" \
+   && [[ ! -e "$TMPD/ranatec-acf7db.jsonl" && ! -e "$TMPD/ranatec-wc-orders.jsonl" && ! -e "$TMPD/ranatec-mail.txt" ]]; then
+  ok "MCP smoke test, default read-only mode: all checks pass, nothing stored, ordered or emailed"
+else
+  cat "$TMP/smoke-ro.log"; ls "$TMPD"/ranatec-* 2>/dev/null; bad "MCP smoke test read-only mode"
 fi
 
 echo; echo "$pass passed, $fail failed"; [[ $fail -eq 0 ]]

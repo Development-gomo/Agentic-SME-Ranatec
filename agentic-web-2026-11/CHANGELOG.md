@@ -1,5 +1,30 @@
 # Changelog — Ranatec Agentic Web package
 
+## 1.3.4 — 2026-11-20 (`agentic-web-2026-11`)
+
+Fixes from an external review (Codex) of 1.3.3. Every point was checked before changing anything; all four held up. Same crawl and content.
+
+- **High — a malformed `company.website` crashed WordPress (HTTP 500).** An array value reached WordPress's URL sanitizer, which fails on PHP 8. Reproduced on a real WordPress install with 1.3.3. It is now rejected with a 400 validation error before anything is stored or emailed.
+- **High — `"dry_run": "true"` (a string) sent a real enquiry.** Only the JSON boolean `true` counted as a dry run, so a string, `1` or `"yes"` became a real submission once the other fields passed. Reproduced on real WordPress with 1.3.3: a real enquiry email was sent. Any `dry_run` that is not a JSON boolean is now rejected with a 400 on both the contact and quote endpoints, and nothing is stored or sent.
+- **Medium — the daily sync could publish password-protected posts and products.** It read the full text of every published post, including password-protected ones. Those posts and products are now left out. Tested on real WordPress: the protected post and its text are not in `news.json`.
+- **Medium — overlapping syncs could corrupt a data file.** "Sync now" and the daily cron wrote to the same temporary file names. Runs are now serialized with a lock (a second run is skipped with "Sync not started: another sync is already running"; a lock left by a crashed run expires after 10 minutes), and every write uses its own temporary file.
+- **Medium — the UTC test reported PASS without testing anything.** `grep` read the pattern `->date('c')` as an option, failed, and the failure counted as a pass. The new test runs the sync against WooCommerce's real `WC_DateTime` class (vendored in `tests/vendor/woocommerce/`), in both the time-zone and UTC-offset modes, and checks the UTC output. It fails if the old formatting is put back (checked).
+- **Medium — the deployment guides ran real submissions against production.** The documented `npm test` sent one contact enquiry and two quote orders, and expected the test stub's order number 4242. The smoke test is now **read-only by default**: it reads data and sends both submission tools as dry runs, so nothing is stored, ordered or emailed. Real submissions need `SMOKE_MODE=staging`, run against a staging site with the real plugins and captured email. `docs/DEPLOYMENT-ODERLAND.md` describes that staging check (Advanced CF7 DB lead, WooCommerce/YITH quote orders, emails).
+- **Medium — the MCP server did not check the `Origin` header,** which the MCP Streamable HTTP specification requires against DNS rebinding. Requests from browser origins other than ranatec.com now get HTTP 403. MCP clients and server-side agents, which send no `Origin` header, are unaffected. Configure the allowed list with `MCP_ALLOWED_ORIGINS`.
+- **Render deployment corrected.**
+  - `render.yaml` named the service `ranatec-mcp`, not the advertised `agentic-mcp-sme-ranatec`. It now uses the advertised name and sets `NODE_ENV=production` and `MCP_ALLOWED_ORIGINS`.
+  - `render.yaml` is now in the complete-package zip.
+  - The guide no longer says to apply the Blueprint from `Agentic-SME-Ranatec`, whose root `render.yaml` builds the previous package's server. The live service builds from `Development-gomo/agentic-mcp-sme-ranatec`, and the guide explains how to update it.
+- **Hand-uploaded files in update and rollback steps.** A physical `public_html/.well-known/ard.json` overrides the plugin, and the WordPress ARD switch cannot remove it. The update and rollback steps now cover it, and a post-deployment step checks that `ard.json`, `index.json` and the MCP server report the intended version.
+- Guide correction: ranatec.com runs PHP 8.4, not 8.2.
+- 17 new tests (118 in total). The test runner also no longer fails at random: under `pipefail`, `php … | grep -q` could kill PHP with SIGPIPE when grep stopped reading early.
+
+Deploy:
+1. Upload `release/ranatec-api-1.3.4.zip` in WordPress and choose **Replace current**.
+2. Replace `public_html/.well-known/ard.json` with `web-root/.well-known/ard.json`.
+3. Run LiteSpeed **Purge All**.
+4. Update the MCP server by copying `ranatec-mcp/src`, `package.json` and `package-lock.json` to `Development-gomo/agentic-mcp-sme-ranatec`. Render deploys automatically. Then set `NODE_ENV=production` in the service's environment.
+
 ## 1.3.3 — 2026-11-20 (`agentic-web-2026-11`)
 
 Review release on top of 1.3.2; same crawl and content.

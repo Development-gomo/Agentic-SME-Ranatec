@@ -20,6 +20,8 @@ final class Ranatec_Agent_Sync
     const OPTION_REPORT = 'ranatec_api_last_sync';
     const OPTION_RECIPIENT = 'ranatec_api_contact_recipient';
     const OPTION_MCP_KEY = 'ranatec_api_mcp_key';
+    const OPTION_LOCK = 'ranatec_api_sync_lock';
+    const LOCK_TTL = 600;
     const MODEL_RE = '/\b(RI ?\d{3,4}(?:-\d{2})?B?|RF ?\d{4}B?)\b/i';
     const LOCALE_PREFIX_RE = '#^/(en-gb|en-ca)(/|$)#';
 
@@ -49,6 +51,25 @@ final class Ranatec_Agent_Sync
     public static function run($trigger = 'cron')
     {
         $report = ['time' => gmdate('c'), 'trigger' => is_string($trigger) ? $trigger : 'cron', 'news' => null, 'products' => null, 'errors' => []];
+        // One sync at a time: "Sync now" and the daily cron both read, rebuild and rewrite the same files.
+        // add_option() is an INSERT on a unique key, so only one run can take the lock; a lock older than
+        // LOCK_TTL is left over from a crashed run and is taken over.
+        if (!add_option(self::OPTION_LOCK, time(), '', 'no')) {
+            if ((int) get_option(self::OPTION_LOCK) > time() - self::LOCK_TTL) {
+                $report['skipped'] = 'another sync is already running — try again in a minute';
+                return $report;
+            }
+            update_option(self::OPTION_LOCK, time(), false);
+        }
+        try {
+            return self::run_locked($report);
+        } finally {
+            delete_option(self::OPTION_LOCK);
+        }
+    }
+
+    private static function run_locked(array $report)
+    {
         try {
             $report['news'] = self::sync_news();
         } catch (Throwable $e) {
@@ -73,7 +94,7 @@ final class Ranatec_Agent_Sync
         $products = self::catalogue_models();
         $out = [];
         $added = 0;
-        $posts = get_posts(['post_type' => 'post', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'date', 'order' => 'DESC', 'suppress_filters' => false]);
+        $posts = get_posts(['post_type' => 'post', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'date', 'order' => 'DESC', 'has_password' => false, 'suppress_filters' => false]);   // password-protected posts are private content
         foreach ($posts as $post) {
             $slug = $post->post_name;
             if (isset($out[$slug])) {
@@ -129,6 +150,9 @@ final class Ranatec_Agent_Sync
         $out = [];
         $added = 0;
         foreach (wc_get_products(['status' => 'publish', 'limit' => -1]) as $wc) {
+            if ($wc->get_post_password() !== '') {
+                continue;   // password-protected product: not public
+            }
             $slug = $wc->get_slug();
             $terms = wp_get_post_terms($wc->get_id(), 'product_cat', ['fields' => 'slugs']);
             $cats = is_wp_error($terms) ? [] : array_values(array_diff($terms, ['uncategorized']));
@@ -243,8 +267,9 @@ final class Ranatec_Agent_Sync
             throw new RuntimeException("Could not encode {$name}.json");
         }
         $target = RANATEC_API_DATA . $name . '.json';
-        $tmp = $target . '.tmp';
+        $tmp = $target . '.' . getmypid() . '-' . bin2hex(random_bytes(4)) . '.tmp';   // unique per run: never shared
         if (file_put_contents($tmp, $json . "\n") === false || !rename($tmp, $target)) {
+            @unlink($tmp);
             throw new RuntimeException("Could not write {$target} — check that the data/ directory is writable by PHP.");
         }
     }
@@ -435,7 +460,7 @@ final class Ranatec_Agent_Sync
     {
         self::guard('ranatec_api_sync');
         $r = self::run('manual');
-        $msg = $r['errors'] ? 'Sync finished with errors: ' . implode('; ', $r['errors']) : 'Sync complete.';
+        $msg = !empty($r['skipped']) ? 'Sync not started: ' . $r['skipped'] . '.' : ($r['errors'] ? 'Sync finished with errors: ' . implode('; ', $r['errors']) : 'Sync complete.');
         wp_safe_redirect(add_query_arg('ranatec_msg', rawurlencode($msg), admin_url('tools.php?page=ranatec-agent-api')));
         exit;
     }

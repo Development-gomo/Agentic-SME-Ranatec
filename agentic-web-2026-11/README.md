@@ -1,6 +1,6 @@
 # Ranatec — Agentic Web package
 
-An AI-agent-ready layer for **[ranatec.com](https://ranatec.com/)** (WordPress + WooCommerce, Avada theme, Yoast SEO), built by GO MO Group from a full crawl on **2026-10-06**, refreshed from a new crawl on **2026-11-20** (package 1.3.3, folder `agentic-web-2026-11`; see `CHANGELOG.md`). It lets LLMs, AI search engines and tool-calling agents read Ranatec's complete product catalogue, company facts and news, and send consent-gated quote requests.
+An AI-agent-ready layer for **[ranatec.com](https://ranatec.com/)** (WordPress + WooCommerce, Avada theme, Yoast SEO), built by GO MO Group from a full crawl on **2026-10-06**, refreshed from a new crawl on **2026-11-20** (package 1.3.4, folder `agentic-web-2026-11`; see `CHANGELOG.md`). It lets LLMs, AI search engines and tool-calling agents read Ranatec's complete product catalogue, company facts and news, and send consent-gated quote requests.
 
 **Coverage:** all three regional English versions of the site: **en-US** (default, `/`), **en-GB** (`/en-gb/`) and **en-CA** (`/en-ca/`). The crawl showed their content is identical, so each entity is modelled once and carries all three URLs.
 
@@ -71,7 +71,7 @@ To cut a new release: edit `VERSION`, run `bash tools/release.sh`, commit.
 One command runs everything (PHP lint, JSON, the contact and quote endpoints with and without `mbstring`, the ARD manifest and its routes, HTTP endpoints and the MCP end-to-end test). It runs `npm ci` itself if `node_modules` is missing. Strict ARD schema validation needs the Python `jsonschema` package:
 
 ```bash
-bash tests/run-all.sh      # 101 checks
+bash tests/run-all.sh      # 118 checks
 python3 -m unittest tests/test_ard.py              # ARD only (17 tests)
 python3 tools/ard.py validate https://ranatec.com/.well-known/ard.json --check-urls   # live check after deployment
 ```
@@ -86,5 +86,5 @@ php -S 127.0.0.1:8088 tests/php-router.php        # full HTTP behaviour incl. co
 # MCP end-to-end against the local plugin
 cd ranatec-mcp && npm install && npm run build
 RANATEC_API_BASE=http://127.0.0.1:8088/agent/v1 PORT=3077 npm start &
-MCP_URL=http://127.0.0.1:3077/mcp npm test        # 14 checks
+MCP_URL=http://127.0.0.1:3077/mcp npm test        # read-only by default (dry runs); SMOKE_MODE=staging|stub sends real submissions
 ```

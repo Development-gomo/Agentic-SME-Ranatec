@@ -66,7 +66,7 @@ curl -s -X POST https://ranatec.com/agent/v1/quote.json -H "Content-Type: applic
 
 ## 2. Static files (optional)
 
-The plugin already serves `/agent/`, `/llms.txt`, `/llms-full.txt`, `/ai.txt`, `/api-catalog.json`, `/.well-known/api-catalog` and `/.well-known/ard.json`. Upload the files in `web-root/` only if the host serves the web root before WordPress and you want physical files. A physical file always takes precedence, so remember to re-upload it after every rebuild.
+The plugin already serves `/agent/`, `/llms.txt`, `/llms-full.txt`, `/ai.txt`, `/api-catalog.json`, `/.well-known/api-catalog` and `/.well-known/ard.json`. Upload the files in `web-root/` only if the host serves the web root before WordPress and you want physical files. A physical file always takes precedence, so re-upload it with every plugin update and delete it when rolling back (deactivating the plugin or turning ARD off does not remove it). Tools → Ranatec Agent API warns when such a copy is older than the plugin.
 
 ## 3. robots.txt
 
@@ -87,7 +87,9 @@ PORT=3000 RANATEC_API_BASE=https://ranatec.com/agent/v1 npm start      # or: doc
 ```bash
 curl -s https://ranatec.com/mcp/health   # {"status":"ok", … "upstream":"ok"}
 curl -s https://ranatec.com/mcp/tools    # 13 tools
-MCP_URL=https://ranatec.com/mcp npm test # end-to-end. NOTE: the last check sends a real quote request email
+MCP_URL=https://ranatec.com/mcp npm test # read-only: reads data, submissions as dry runs (nothing stored or emailed)
+# Real submissions only on staging with captured email: SMOKE_MODE=staging MCP_URL=<staging MCP URL> npm test
+# (1 contact enquiry → Advanced CF7 DB, 2 quote orders → WooCommerce/YITH, emails). Never use SMOKE_MODE=staging/stub on production.
 ```
 
 - [ ] Optional: add the server to an MCP client, e.g. Claude Desktop / Claude Code → `https://ranatec.com/mcp` (Streamable HTTP).

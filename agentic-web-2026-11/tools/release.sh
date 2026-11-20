@@ -86,18 +86,21 @@ $( [[ $1 == yes ]] || echo '(The checksum of the complete-package zip cannot be 
 MD
 }
 write_manifest no
-zip -qr "release/ranatec-agentic-web-package-$V.zip" VERSION README.md CHANGELOG.md ard.config.example.json docs ranatec-api ranatec-mcp web-root tools tests "release/ranatec-api-$V.zip" "release/ranatec-mcp-$V-cpanel.zip" release/MANIFEST.md \
+zip -qr "release/ranatec-agentic-web-package-$V.zip" VERSION README.md CHANGELOG.md render.yaml ard.config.example.json docs ranatec-api ranatec-mcp web-root tools tests "release/ranatec-api-$V.zip" "release/ranatec-mcp-$V-cpanel.zip" release/MANIFEST.md \
   -x 'ranatec-mcp/node_modules/*' 'ranatec-mcp/dist/*' 'tools/.work/*' '*/__pycache__/*' '*.DS_Store'
 write_manifest yes
 
-# verify the archives
-unzip -l "release/ranatec-agentic-web-package-$V.zip" | grep -q "release/ranatec-api-$V.zip" || { echo "plugin zip missing from package"; exit 1; }
-unzip -l "release/ranatec-agentic-web-package-$V.zip" | grep -qE "node_modules|/dist/" && { echo "build output leaked into package"; exit 1; }
-unzip -p "release/ranatec-api-$V.zip" ranatec-api/ranatec-api.php | grep -q "Version:           $V" || { echo "plugin zip has wrong version"; exit 1; }
-unzip -p "release/ranatec-mcp-$V-cpanel.zip" package.json | grep -q "\"version\": \"$V\"" || { echo "MCP bundle has wrong version"; exit 1; }
-unzip -l "release/ranatec-mcp-$V-cpanel.zip" | grep -q "dist/index.js" || { echo "MCP bundle missing dist/index.js"; exit 1; }
+# verify the archives (listings are read in full before matching: "unzip | grep -q" can die of SIGPIPE under pipefail)
+PKG_LIST=$(unzip -l "release/ranatec-agentic-web-package-$V.zip"); PLUGIN_LIST=$(unzip -l "release/ranatec-api-$V.zip"); MCP_LIST=$(unzip -l "release/ranatec-mcp-$V-cpanel.zip")
+PLUGIN_MAIN=$(unzip -p "release/ranatec-api-$V.zip" ranatec-api/ranatec-api.php); MCP_PKG=$(unzip -p "release/ranatec-mcp-$V-cpanel.zip" package.json)
+grep -q "release/ranatec-api-$V.zip" <<<"$PKG_LIST" || { echo "plugin zip missing from package"; exit 1; }
+grep -qE " render.yaml$" <<<"$PKG_LIST" || { echo "render.yaml missing from package"; exit 1; }
+grep -qE "node_modules|/dist/" <<<"$PKG_LIST" && { echo "build output leaked into package"; exit 1; }
+grep -q "Version:           $V" <<<"$PLUGIN_MAIN" || { echo "plugin zip has wrong version"; exit 1; }
+grep -q "\"version\": \"$V\"" <<<"$MCP_PKG" || { echo "MCP bundle has wrong version"; exit 1; }
+grep -q "dist/index.js" <<<"$MCP_LIST" || { echo "MCP bundle missing dist/index.js"; exit 1; }
 if [[ -f ranatec-api/public/ard.json ]]; then
-  unzip -l "release/ranatec-api-$V.zip" | grep -q "ranatec-api/public/ard.json" || { echo "ARD manifest missing from plugin zip"; exit 1; }
+  grep -q "ranatec-api/public/ard.json" <<<"$PLUGIN_LIST" || { echo "ARD manifest missing from plugin zip"; exit 1; }
   python3 tools/ard.py validate ranatec-api/public/ard.json >/dev/null || { python3 tools/ard.py validate ranatec-api/public/ard.json; echo "ARD manifest invalid"; exit 1; }
 fi
 echo "== release/"; ls -la release

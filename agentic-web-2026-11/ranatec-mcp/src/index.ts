@@ -27,6 +27,10 @@ const PORT = parseInt(process.env.PORT ?? "3000", 10);
 const API_TIMEOUT = parseInt(process.env.API_TIMEOUT_MS ?? "10000", 10);
 const CACHE_TTL = parseInt(process.env.CACHE_TTL_MS ?? "300000", 10);
 const RATE_LIMIT = parseInt(process.env.RATE_LIMIT_PER_MIN ?? "100", 10);
+// Browser origins allowed to call the MCP endpoint (MCP Streamable HTTP: servers MUST validate Origin, against DNS
+// rebinding). Requests without an Origin header (MCP clients, curl, server-side agents) are not affected.
+// Comma-separated; "*" allows every origin.
+const ALLOWED_ORIGINS = new Set((process.env.MCP_ALLOWED_ORIGINS ?? "https://ranatec.com,https://www.ranatec.com").split(",").map((o) => o.trim().replace(/\/+$/, "").toLowerCase()).filter(Boolean));
 
 // ----------------------------------------------------------------------------- types (subset of the API)
 
@@ -373,6 +377,12 @@ const limiter = rateLimit({ windowMs: 60 * 1000, limit: RATE_LIMIT, standardHead
 // The MCP endpoint answers on /mcp (reverse proxy keeps the path) AND on / (cPanel "Setup Node.js App" /
 // Phusion Passenger mounted at ranatec.com/mcp strips the /mcp prefix).
 const MCP_PATHS = ["/mcp", "/"];
+// Origin check first, so a rejected browser request never reaches the rate limiter, the body parser or a tool.
+app.all(MCP_PATHS, (req: Request, res: Response, next: () => void) => {
+  const origin = req.headers.origin;
+  if (origin === undefined || ALLOWED_ORIGINS.has("*") || ALLOWED_ORIGINS.has(String(origin).replace(/\/+$/, "").toLowerCase())) return next();
+  res.status(403).json({ jsonrpc: "2.0", error: { code: -32000, message: `Forbidden: requests from origin ${String(origin).slice(0, 100)} are not allowed. Call this MCP server from an MCP client or server-side code (no Origin header).` }, id: null });
+});
 app.use(MCP_PATHS, limiter);
 app.use(MCP_PATHS, express.json({ limit: "100kb" }));
 

@@ -1,11 +1,21 @@
 // Smoke test: connects to a running ranatec-mcp server with the official MCP client and exercises every tool.
-// Usage: MCP_URL=http://127.0.0.1:3000/mcp node test/smoke.mjs
+// Usage: MCP_URL=https://agentic-mcp-sme-ranatec.onrender.com/mcp node test/smoke.mjs
+//
+// SMOKE_MODE decides whether anything is submitted:
+//   readonly (default) — safe against production: read tools + submissions as dry runs only (nothing stored, no email).
+//   staging            — REAL submissions (1 contact enquiry, 2 WooCommerce quote orders, emails). Only against a
+//                        staging site with real WooCommerce/YITH/Advanced CF7 DB and captured email.
+//   stub               — REAL submissions against the local test harness (tests/run-all.sh), which returns order 4242.
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { readFileSync } from "node:fs";
 
 const PKG_VERSION = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")).version;
 
+const MODE = process.env.SMOKE_MODE ?? "readonly";
+if (!["readonly", "staging", "stub"].includes(MODE)) { console.error(`SMOKE_MODE must be readonly, staging or stub (got ${MODE})`); process.exit(2); }
+const SUBMIT = MODE !== "readonly";
+console.log(`SMOKE_MODE=${MODE}: ${SUBMIT ? "REAL submissions (enquiry + quote orders + emails)" : "read-only, submissions are dry runs (nothing stored or sent)"}`);
 const url = new URL(process.env.MCP_URL ?? "http://127.0.0.1:3000/mcp");
 const client = new Client({ name: "ranatec-smoke", version: "1.0.0" });
 await client.connect(new StreamableHTTPClientTransport(url));
@@ -65,7 +75,7 @@ check("get_faq", f.faq.length >= 10);
 const pg = parse(await client.callTool({ name: "list_pages", arguments: {} }));
 check("list_pages has 3 locale URLs", pg.pages.every((p) => p.urls["en-GB"] && p.urls["en-CA"]));
 
-const CTX = { user_authorized_submission: true, agent_name: "smoke-test", user_request_summary: "Smoke test: user asked for this" };
+const CTX = { user_authorized_submission: true, agent_name: "smoke-test", user_request_summary: "Smoke test: user asked for this", ...(SUBMIT ? {} : { dry_run: true }) };
 const CUSTOMER = { first_name: "Smoke", last_name: "Test", email: "smoke@gomogroup.com", phone: "+46 31 000 00 00", company: "Example Labs",
   country: "SE", address_1: "Testgatan 1", city: "Göteborg", postcode: "41250" };
 const txt = (r) => r.content[0].text.slice(0, 110).replace(/\n/g, " ");
@@ -80,7 +90,7 @@ check("submit_inquiry description: contact form only, never while reviewing/test
 const enq = await client.callTool({ name: "submit_inquiry", arguments: {
   agent_context: CTX, person: { name: "Smoke Test", email: "smoke@gomogroup.com", phone: "+46 31 000 00 00" }, company: { name: "Example Labs" },
   inquiry: { type: "technical_question", message: "Is the RI 181 available with a USB-C feedthrough?" } } });
-check("submit_inquiry → contact-form enquiry", !enq.isError && parse(enq).status === "received" && parse(enq).flow === "contact_form", parse(enq).lead_id);
+check(SUBMIT ? "submit_inquiry → contact-form enquiry" : "submit_inquiry dry run → valid, nothing sent", !enq.isError && parse(enq).flow === "contact_form" && (SUBMIT ? parse(enq).status === "received" : parse(enq).submitted === false), parse(enq).lead_id ?? parse(enq).status);
 const enqProducts = await client.callTool({ name: "submit_inquiry", arguments: {
   agent_context: CTX, person: { name: "Smoke Test", email: "smoke@gomogroup.com", phone: "+46 31 000 00 00" }, company: { name: "Example Labs" },
   inquiry: { type: "quote_request", message: "Please quote one RI 3101.", products: [{ id: "RI 3101", quantity: 1 }] } } });
@@ -90,7 +100,8 @@ check("submit_inquiry refuses products → points to request_quote", enqProducts
 const qDesc = tools.find((t) => t.name === "request_quote")?.description ?? "";
 check("request_quote description lists the checkout fields and the policy", /first_name, last_name, email, phone, company, country/.test(qDesc) && /NEVER a reason to submit/.test(qDesc) && /ASK THE USER/.test(qDesc));
 const q = await client.callTool({ name: "request_quote", arguments: { agent_context: CTX, customer: CUSTOMER, products: [{ id: "RI 3101", quantity: 1 }], note: "Smoke test" } });
-check("request_quote → WooCommerce quote order (resolves model number)", !q.isError && parse(q).flow === "product_quote" && parse(q).order_number === "4242", parse(q).quote_id);
+const qOk = !q.isError && parse(q).flow === "product_quote" && (MODE === "stub" ? parse(q).order_number === "4242" : MODE === "staging" ? /^\d+$/.test(String(parse(q).order_number ?? "")) : parse(q).submitted === false);
+check(SUBMIT ? "request_quote → WooCommerce quote order (resolves model number)" : "request_quote dry run (model number) → valid, nothing sent", qOk, parse(q).quote_id ?? parse(q).status ?? txt(q));
 const { address_1, ...noAddress } = CUSTOMER;
 const qMissing = await client.callTool({ name: "request_quote", arguments: { agent_context: CTX, customer: noAddress, products: [{ id: "RI 268" }] } }).catch((e) => ({ isError: true, content: [{ text: String(e) }] }));
 check("request_quote requires the checkout address", qMissing.isError === true && /address_1/.test(qMissing.content[0].text), txt(qMissing));
@@ -109,6 +120,13 @@ for (const [label, body] of [["invalid JSON", "{oops"], ["body over 100 KB", JSO
   const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body });
   const text = await r.text();
   check(`${label} → JSON-RPC error without stack trace`, r.headers.get("content-type")?.includes("json") && !/\bat \S+ \(|node_modules|<pre>/.test(text) && JSON.parse(text).error, `HTTP ${r.status} ${text.slice(0, 80)}`);
+}
+// Origin validation (MCP Streamable HTTP): foreign browser origins → 403, ranatec.com and no Origin → allowed.
+const LIST = JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list" });
+for (const [origin, want] of [["https://evil.example", 403], ["null", 403], ["https://ranatec.com", 200]]) {
+  const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json", Origin: origin }, body: LIST });
+  const text = await r.text();
+  check(`Origin ${origin} → HTTP ${want}`, r.status === want && (want !== 403 || (JSON.parse(text).error && !/"tools"/.test(text))), `HTTP ${r.status}`);
 }
 const nf = await fetch(new URL("/nonexistent", url));
 check("unknown path → JSON 404", nf.status === 404 && nf.headers.get("content-type")?.includes("json"), `HTTP ${nf.status}`);
