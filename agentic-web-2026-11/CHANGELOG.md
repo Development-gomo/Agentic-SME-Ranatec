@@ -1,5 +1,27 @@
 # Changelog — Ranatec Agentic Web package
 
+## 1.3.5 — 2026-11-20 (`agentic-web-2026-11`)
+
+Fixes from a second external review (Codex) of 1.3.4. All three points held up when checked. Same crawl and content.
+
+- **Medium — two syncs could run at once.** Codex found that two runs could take over the same expired lock together. The problem was wider: WordPress's `add_option()` runs `INSERT … ON DUPLICATE KEY UPDATE`, so even a free lock could be "taken" by two runs. The lock now uses atomic database statements:
+  - `INSERT IGNORE` takes it for exactly one run;
+  - an expired lock is taken over by an `UPDATE` that matches only the value just read, so exactly one run wins;
+  - a run releases only its own lock, so a run that outlived the 10-minute limit can't free a newer run's lock.
+
+  Tested in the suite and on a real WordPress install. A 1.3.4-style lock left over during the upgrade is handled too.
+- **Medium — the smoke test could submit to production.** `SMOKE_MODE=staging` and `stub` now refuse to start (exit 2, `REFUSED`, nothing sent) when the MCP server under test uses the live `ranatec.com` API. The US-state check is now always a dry run, so the staging test creates exactly the two quote orders the guide promises, whatever the site's checkout requires.
+- **Medium — content made private could stay public.**
+  - **All items protected:** when every post or every product is password-protected, the sync now writes an empty list. Before, it treated that as "nothing published" and kept serving the previous JSON. Nothing published at all is still treated as a site problem, and the last good file is kept.
+  - **Static files:** `llms.txt`, `llms-full.txt` and the `/agent/` page are built offline and can't be rewritten by the sync. WordPress now shows administrators a warning naming every item that is no longer public but still appears in those files, and which files. The warning clears when the item is public again, or when a rebuilt plugin no longer contains it. The guide explains the rebuild.
+- 18 new tests (136 in total).
+
+Deploy:
+1. Upload `release/ranatec-api-1.3.5.zip` in WordPress and choose **Replace current**.
+2. Replace `public_html/.well-known/ard.json` with `web-root/.well-known/ard.json`.
+3. Run LiteSpeed **Purge All**.
+4. The MCP server code is unchanged. Only its version number changes, so the ARD manifest and the running server report the same version: update `package.json` and `package-lock.json` in `Development-gomo/agentic-mcp-sme-ranatec`.
+
 ## 1.3.4 — 2026-11-20 (`agentic-web-2026-11`)
 
 Fixes from an external review (Codex) of 1.3.3. Every point was checked before changing anything; all four held up. Same crawl and content.

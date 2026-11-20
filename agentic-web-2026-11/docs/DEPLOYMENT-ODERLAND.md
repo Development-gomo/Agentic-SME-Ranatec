@@ -105,7 +105,7 @@ Expect about 30–45 minutes. Do it in a quiet hour, and keep the **Before you s
     ```bash
     cd ranatec-mcp && npm ci && MCP_URL=https://agentic-mcp-sme-ranatec.onrender.com/mcp npm test
     ```
-    The first line says `SMOKE_MODE=readonly`. Don't set `SMOKE_MODE=staging` or `stub` against production: those modes send real enquiries and quote orders.
+    The first line says `SMOKE_MODE=readonly`. Don't set `SMOKE_MODE=staging` or `stub` against production: those modes send real enquiries and quote orders. As a safety net they refuse to start (`REFUSED`, nothing sent) when the MCP server under test uses the live `ranatec.com` API.
 20. **Real submissions are tested on staging, not production.** On a staging copy of ranatec.com with the same plugins (WooCommerce, YITH Request a Quote, Advanced CF7 DB, Contact Form 7) and outgoing email captured (for example with a mail-logging plugin that stops delivery), run the MCP server against staging and then the full test:
     ```bash
     RANATEC_API_BASE=https://<staging-host>/agent/v1 PORT=3000 npm start      # in one terminal
@@ -113,7 +113,7 @@ Expect about 30–45 minutes. Do it in a quiet hour, and keep the **Before you s
     ```
     Then check on staging that:
     - one contact enquiry appears in **Advanced CF7 DB** under the contact form;
-    - two quote orders appear in **WooCommerce → Orders** with status *New Quote Request*, the checkout fields and the configured option lines;
+    - exactly two quote orders appear in **WooCommerce → Orders** with status *New Quote Request*, the checkout fields and the configured option lines (every other quote check is a dry run);
     - the captured emails went to the contact recipient.
 21. If a real submission ever has to be checked in production, make it one deliberate enquiry agreed with Ranatec, then delete the lead or order afterwards.
 22. **Optional:** connect it in an MCP client, e.g. a custom connector with URL `https://agentic-mcp-sme-ranatec.onrender.com/mcp`.
@@ -183,6 +183,7 @@ A notification email also goes to info@ranatec.com; you can switch it off.
 26. **Footer link:** done. Since November 2026 every page has a "For AI agents" link to `/agent` in the footer, so crawlers discover the page.
 27. **Share `docs/FINDINGS.md` with Ranatec's web team.** Start with the swapped RF2037/RF2038 specs, the 13 duplicate product listings and the en-GB/en-CA legacy articles.
 28. **When content changes:** news posts and products update the API automatically every day, or immediately via **Sync now**. To refresh the agent page and llms files as well, run `python3 tools/build_static.py` then `bash tools/release.sh`, and upload the new plugin zip: WordPress asks to **replace** the current version, which you should confirm. If a file was uploaded to `public_html` by hand (for example `public_html/.well-known/ard.json`), replace it with the new `web-root/` copy in the same update, because the web server serves it instead of the plugin. Tools → Ranatec Agent API warns when such a copy is older than the plugin.
+29. **When a post or product is password-protected, unpublished or deleted:** the next sync removes it from the data API (`/agent/v1/…`). `llms.txt`, `llms-full.txt` and the `/agent/` page are built into the plugin, so they keep it until the package is rebuilt. WordPress shows an admin warning naming each such item and file. Rebuild the package as in step 28 and upload the new plugin to remove them. If every post or product is protected, the sync writes an empty list; if nothing at all is published, it keeps the last good file and reports an error.
 
 ## Rollback
 

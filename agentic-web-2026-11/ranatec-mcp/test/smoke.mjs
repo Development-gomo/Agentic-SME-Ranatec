@@ -18,12 +18,22 @@ const SUBMIT = MODE !== "readonly";
 console.log(`SMOKE_MODE=${MODE}: ${SUBMIT ? "REAL submissions (enquiry + quote orders + emails)" : "read-only, submissions are dry runs (nothing stored or sent)"}`);
 const url = new URL(process.env.MCP_URL ?? "http://127.0.0.1:3000/mcp");
 const client = new Client({ name: "ranatec-smoke", version: "1.0.0" });
-await client.connect(new StreamableHTTPClientTransport(url));
 const parse = (r) => JSON.parse(r.content[0].text);
 let failures = 0;
 const check = (name, cond, info = "") => { console.log(`${cond ? "PASS" : "FAIL"} ${name}${info ? " — " + info : ""}`); if (!cond) failures++; };
 
 const health = await (await fetch(new URL("/mcp/health", url))).json();
+// Real submissions must never reach the live site: refuse when the server under test talks to ranatec.com itself
+// (e.g. MCP_URL pointing at the Render server, or RANATEC_API_BASE left at its production default).
+if (SUBMIT) {
+  let apiHost = "";
+  try { apiHost = new URL(String(health.api_base)).hostname.toLowerCase(); } catch { /* reported below */ }
+  if (!apiHost || apiHost === "ranatec.com" || apiHost === "www.ranatec.com") {
+    console.error(`REFUSED: SMOKE_MODE=${MODE} sends real enquiries and quote orders, but the MCP server at ${url} uses the API ${health.api_base ?? "(unknown)"}. Point it at a staging site (RANATEC_API_BASE=https://<staging-host>/agent/v1) or use the default read-only mode.`);
+    process.exit(2);
+  }
+}
+await client.connect(new StreamableHTTPClientTransport(url));
 check("health reports package version", health.version === PKG_VERSION, `${health.version} (package.json ${PKG_VERSION})`);
 check("server info reports package version", client.getServerVersion()?.version === PKG_VERSION, client.getServerVersion()?.version);
 
@@ -105,11 +115,13 @@ check(SUBMIT ? "request_quote → WooCommerce quote order (resolves model number
 const { address_1, ...noAddress } = CUSTOMER;
 const qMissing = await client.callTool({ name: "request_quote", arguments: { agent_context: CTX, customer: noAddress, products: [{ id: "RI 268" }] } }).catch((e) => ({ isError: true, content: [{ text: String(e) }] }));
 check("request_quote requires the checkout address", qMissing.isError === true && /address_1/.test(qMissing.content[0].text), txt(qMissing));
-const qUS = await client.callTool({ name: "request_quote", arguments: { agent_context: CTX, customer: { ...CUSTOMER, country: "US", postcode: "94105" }, products: [{ id: "RI 268" }] } });
+// Always a dry run: validation runs before the dry-run exit, so a state error still shows, and a site whose checkout
+// makes state optional gets no extra quote order.
+const qUS = await client.callTool({ name: "request_quote", arguments: { agent_context: { ...CTX, dry_run: true }, customer: { ...CUSTOMER, country: "US", postcode: "94105" }, products: [{ id: "RI 268" }] } });
 // Whether a US state is required depends on the site's checkout settings (the plugin follows them): WooCommerce's
 // default (the test stub) requires it; ranatec.com's checkout makes state optional for every country.
 if (MODE === "stub") check("request_quote requires state for US (plugin layer)", qUS.isError === true && /customer\.state/.test(qUS.content[0].text), txt(qUS));
-else check("request_quote US without state follows the site's checkout (state error or valid)", (qUS.isError === true && /customer\.state/.test(qUS.content[0].text)) || (!qUS.isError && parse(qUS).status === (SUBMIT ? "received" : "valid")), txt(qUS));
+else check("request_quote US without state follows the site's checkout (state error or valid)", (qUS.isError === true && /customer\.state/.test(qUS.content[0].text)) || (!qUS.isError && parse(qUS).status === "valid" && parse(qUS).submitted === false), txt(qUS));
 const cfg = await client.callTool({ name: "request_quote", arguments: { agent_context: CTX, customer: CUSTOMER,
   products: [{ id: "RI 181", quantity: 2, configuration: [{ id: "RI 4182", quantity: 2 }, { id: "RI 4205", quantity: 1 }] }] } });
 check("request_quote with per-unit configuration (RI 181 + RI 4182 ×2 + RI 4205 ×1)", !cfg.isError && parse(cfg).products?.[0]?.configuration?.length === 2, JSON.stringify(parse(cfg).products?.[0]?.configuration?.map((c) => `${c.quantity_per_unit}x ${c.id}`)));

@@ -21,6 +21,7 @@ final class Ranatec_Agent_Sync
     const OPTION_RECIPIENT = 'ranatec_api_contact_recipient';
     const OPTION_MCP_KEY = 'ranatec_api_mcp_key';
     const OPTION_LOCK = 'ranatec_api_sync_lock';
+    const OPTION_STALE_STATIC = 'ranatec_api_unpublished_in_static';
     const LOCK_TTL = 600;
     const MODEL_RE = '/\b(RI ?\d{3,4}(?:-\d{2})?B?|RF ?\d{4}B?)\b/i';
     const LOCALE_PREFIX_RE = '#^/(en-gb|en-ca)(/|$)#';
@@ -29,6 +30,7 @@ final class Ranatec_Agent_Sync
     {
         add_action(self::HOOK, [__CLASS__, 'run']);
         add_action('admin_menu', [__CLASS__, 'admin_menu']);
+        add_action('admin_notices', [__CLASS__, 'stale_static_notice']);
         add_action('admin_post_ranatec_api_sync', [__CLASS__, 'handle_sync']);
         add_action('admin_post_ranatec_api_flush', [__CLASS__, 'handle_flush']);
         add_action('admin_post_ranatec_api_settings', [__CLASS__, 'handle_settings']);
@@ -52,20 +54,118 @@ final class Ranatec_Agent_Sync
     {
         $report = ['time' => gmdate('c'), 'trigger' => is_string($trigger) ? $trigger : 'cron', 'news' => null, 'products' => null, 'errors' => []];
         // One sync at a time: "Sync now" and the daily cron both read, rebuild and rewrite the same files.
-        // add_option() is an INSERT on a unique key, so only one run can take the lock; a lock older than
-        // LOCK_TTL is left over from a crashed run and is taken over.
-        if (!add_option(self::OPTION_LOCK, time(), '', 'no')) {
-            if ((int) get_option(self::OPTION_LOCK) > time() - self::LOCK_TTL) {
-                $report['skipped'] = 'another sync is already running — try again in a minute';
-                return $report;
-            }
-            update_option(self::OPTION_LOCK, time(), false);
+        $token = self::acquire_lock();
+        if ($token === null) {
+            $report['skipped'] = 'another sync is already running — try again in a minute';
+            return $report;
         }
         try {
             return self::run_locked($report);
         } finally {
-            delete_option(self::OPTION_LOCK);
+            self::release_lock($token);
         }
+    }
+
+    /**
+     * Takes the sync lock atomically; returns this run's token, or null when another run holds it.
+     * add_option() is not usable here: it runs INSERT … ON DUPLICATE KEY UPDATE, so two runs could both "add" it.
+     * INSERT IGNORE inserts for exactly one run; an expired lock (crashed run) is taken over with an UPDATE that
+     * only matches the value just read, so only one run can win the takeover too. Public for the tests only.
+     */
+    public static function acquire_lock()
+    {
+        global $wpdb;
+        $token = time() . ':' . bin2hex(random_bytes(8));
+        $name = self::OPTION_LOCK;
+        if ((int) $wpdb->query($wpdb->prepare("INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, 'no')", $name, $token)) === 1) {
+            self::forget_lock_cache();
+            return $token;
+        }
+        $current = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $name));
+        if ($current === null || (int) $current > time() - self::LOCK_TTL) {
+            return null;   // held by a live run (or released this instant: the next run will pick it up)
+        }
+        $won = (int) $wpdb->query($wpdb->prepare("UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s AND option_value = %s", $token, $name, $current)) === 1;
+        self::forget_lock_cache();
+        return $won ? $token : null;
+    }
+
+    /** Releases the lock only if this run still owns it (a run that outlived LOCK_TTL must not free a newer run's lock). */
+    public static function release_lock($token)
+    {
+        global $wpdb;
+        $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name = %s AND option_value = %s", self::OPTION_LOCK, $token));
+        self::forget_lock_cache();
+    }
+
+    private static function forget_lock_cache()
+    {
+        if (function_exists('wp_cache_delete')) {
+            wp_cache_delete(self::OPTION_LOCK, 'options');
+            wp_cache_delete('notoptions', 'options');
+            wp_cache_delete('alloptions', 'options');
+        }
+    }
+
+    /**
+     * llms.txt, llms-full.txt and the /agent/ page are built offline (tools/build_static.py) and cannot be rewritten
+     * by the sync. When an item leaves the API (password-protected, unpublished or deleted) but those files still
+     * contain its URL, it is remembered here until the files no longer contain it (a rebuilt plugin), or the item
+     * is public again. stale_static() lists them for the admin notice and the Tools page.
+     */
+    private static function track_unpublished(array $existing, array $out)
+    {
+        $list = get_option(self::OPTION_STALE_STATIC, []);
+        $list = is_array($list) ? $list : [];
+        foreach (array_diff_key($existing, $out) as $id => $item) {
+            $urls = array_values(array_filter(array_merge([isset($item['url']) ? $item['url'] : ''], isset($item['urls']) && is_array($item['urls']) ? array_values($item['urls']) : [])));
+            $list[$id] = ['title' => isset($item['title']) ? $item['title'] : (isset($item['name']) ? $item['name'] : $id), 'urls' => array_values(array_unique($urls))];
+        }
+        foreach (array_keys($out) as $id) {
+            unset($list[$id]);   // public again
+        }
+        update_option(self::OPTION_STALE_STATIC, $list, false);
+    }
+
+    /** Items no longer public whose URL is still in a static file: [id => ['title' => …, 'files' => [...]]]. */
+    public static function stale_static()
+    {
+        $list = get_option(self::OPTION_STALE_STATIC, []);
+        if (!is_array($list) || !$list) {
+            return [];
+        }
+        $files = [];
+        foreach (['llms.txt', 'llms-full.txt', 'agent-page.html'] as $f) {
+            $files[$f] = is_readable(RANATEC_API_PUBLIC . $f) ? (string) file_get_contents(RANATEC_API_PUBLIC . $f) : '';
+        }
+        $stale = [];
+        foreach ($list as $id => $it) {
+            $in = [];
+            foreach ($files as $f => $text) {
+                foreach ((array) $it['urls'] as $u) {
+                    if ($u !== '' && strpos($text, $u) !== false) {   // site URLs end in "/", so one never matches inside another
+                        $in[] = $f === 'agent-page.html' ? '/agent/' : '/' . $f;
+                        break;
+                    }
+                }
+            }
+            if ($in) {
+                $stale[$id] = ['title' => $it['title'], 'files' => $in];
+            }
+        }
+        return $stale;
+    }
+
+    public static function stale_static_notice()
+    {
+        if (!current_user_can('manage_options') || !($stale = self::stale_static())) {
+            return;
+        }
+        echo '<div class="notice notice-warning"><p><strong>Ranatec Agent API:</strong> ' . count($stale) . ' item(s) are no longer public on the site (password-protected, unpublished or deleted) but still appear in the AI-agent files built into the plugin:</p><ul style="list-style:disc;margin-left:2em">';
+        foreach ($stale as $id => $it) {
+            echo '<li>' . esc_html($it['title']) . ' <code>' . esc_html($id) . '</code> — ' . esc_html(implode(', ', $it['files'])) . '</li>';
+        }
+        echo '</ul><p>The data API already leaves them out. To remove them from these files, rebuild the package (<code>python3 tools/build_static.py</code>, then <code>bash tools/release.sh</code>) and upload the new plugin. Replace any copies of these files uploaded to <code>public_html</code> by hand too.</p></div>';
     }
 
     private static function run_locked(array $report)
@@ -123,14 +223,17 @@ final class Ranatec_Agent_Sync
             $item['url'] = isset($item['url_status']) ? $item['urls']['en-GB'] : $item['urls']['en-US'];
             $out[$slug] = self::order_keys($item, ['id', 'title', 'seo_title', 'type', 'date_published', 'date_modified', 'summary', 'body', 'related_product_ids', 'image', 'url', 'urls']);
         }
-        if (!$out) {
+        if (!$out && !get_posts(['post_type' => 'post', 'post_status' => 'publish', 'numberposts' => 1, 'fields' => 'ids', 'has_password' => true, 'suppress_filters' => false])) {
+            // Nothing published at all usually means a broken query or a site problem: keep the last good file.
             throw new RuntimeException('No published posts found — refusing to write an empty news.json.');
         }
+        // (Published posts that are all password-protected: an empty list is correct — none of them is public.)
         $items = array_values($out);
         usort($items, function ($a, $b) {
             return strcmp((string) $b['date_published'], (string) $a['date_published']);
         });
         $removed = count(array_diff(array_keys($existing), array_keys($out)));
+        self::track_unpublished($existing, $out);
         $types = array_values(array_unique(array_column($items, 'type')));
         sort($types);
         self::write('news', ['meta' => self::meta('news', count($items), ['filters' => ['type', 'year', 'product', 'q'], 'types' => $types]), 'news' => $items]);
@@ -149,8 +252,10 @@ final class Ranatec_Agent_Sync
         }
         $out = [];
         $added = 0;
+        $protected = 0;
         foreach (wc_get_products(['status' => 'publish', 'limit' => -1]) as $wc) {
             if ($wc->get_post_password() !== '') {
+                $protected++;
                 continue;   // password-protected product: not public
             }
             $slug = $wc->get_slug();
@@ -199,11 +304,13 @@ final class Ranatec_Agent_Sync
             }
             $out[$slug] = $item;
         }
-        if (!$out) {
+        if (!$out && !$protected) {
+            // Nothing published at all usually means a broken query or a site problem: keep the last good file.
             throw new RuntimeException('No published products found — refusing to write an empty products.json.');
         }
         $items = array_values($out);
         $removed = count(array_diff(array_keys($existing), array_keys($out)));
+        self::track_unpublished($existing, $out);
         self::write('products', ['meta' => self::meta('products', count($items), ['filters' => ['category', 'domain', 'listing', 'q', 'model']]), 'products' => $items]);
 
         // keep category membership consistent

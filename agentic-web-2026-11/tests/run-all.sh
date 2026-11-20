@@ -8,7 +8,7 @@ PHP_PORT=${PHP_PORT:-8095}; MCP_PORT=${MCP_PORT:-3095}
 TMP=$(mktemp -d); pass=0; fail=0
 ok()  { echo "PASS $*"; pass=$((pass+1)); }
 bad() { echo "FAIL $*"; fail=$((fail+1)); }
-cleanup() { [[ -n "${PHP_PID:-}" ]] && kill "$PHP_PID" 2>/dev/null || true; [[ -n "${MCP_PID:-}" ]] && kill "$MCP_PID" 2>/dev/null || true; rm -rf "$TMP"; rm -f "$(php -r 'echo sys_get_temp_dir();')"/rl-ranatec_api_rl_* "$(php -r 'echo sys_get_temp_dir();')"/ranatec-mail.txt; }
+cleanup() { [[ -n "${PHP_PID:-}" ]] && kill "$PHP_PID" 2>/dev/null || true; [[ -n "${MCP_PID:-}" ]] && kill "$MCP_PID" 2>/dev/null || true; [[ -n "${GUARD_PID:-}" ]] && kill "$GUARD_PID" 2>/dev/null || true; rm -rf "$TMP"; rm -f "$(php -r 'echo sys_get_temp_dir();')"/rl-ranatec_api_rl_* "$(php -r 'echo sys_get_temp_dir();')"/ranatec-mail.txt; }
 trap cleanup EXIT
 # Match a pattern against ALL of stdin. A plain "cmd | grep -q" lets grep exit at the first match; under pipefail the
 # writer then dies of SIGPIPE and the check fails at random.
@@ -119,10 +119,7 @@ page=$(WP_OPTION_ranatec_api_ard_enabled=0 php tests/wp-stub-harness.php agent-p
 # Daily sync against WooCommerce's real WC_DateTime (UTC dates, protected content excluded, lock released, no temp files)
 ST=$(mktemp -d); cp -r ranatec-api "$ST/"; sync_out=$(php tests/sync-test.php "$ST/ranatec-api" </dev/null 2>&1)
 while IFS= read -r line; do case $line in PASS\ *) ok "sync: ${line#PASS }";; FAIL\ *) bad "sync: ${line#FAIL }";; *) bad "sync test output: $line";; esac; done <<<"$sync_out"
-[[ $(grep -c '^PASS' <<<"$sync_out") -eq 9 ]] || bad "sync test: expected 9 checks"
-# a second run while one holds the lock is skipped and leaves the other run's lock alone
-lock_out=$(WP_OPTION_ranatec_api_sync_lock=$(date +%s) php -r 'require "tests/wp-stubs.php"; function add_option($k,$v="",$d="",$a="yes"){return getenv("WP_OPTION_".$k)===false;} function delete_option($k){echo "LOCK-DELETED";} require $argv[1]."/ranatec-api.php"; echo json_encode(Ranatec_Agent_Sync::run("test"));' "$ST/ranatec-api" 2>&1)
-grep -q '"skipped"' <<<"$lock_out" && ! grep -q 'LOCK-DELETED' <<<"$lock_out" && ok "sync: overlapping run is skipped, other run's lock kept" || bad "sync lock ($lock_out)"
+[[ $(grep -c '^PASS' <<<"$sync_out") -eq 26 ]] || bad "sync test: expected 26 checks"
 rm -rf "$ST"
 grep -qF -e "->date('c')" ranatec-api/includes/class-sync.php && bad "class-sync.php formats WooCommerce dates with ->date('c') (local time labelled UTC)" || ok "class-sync.php has no WC_DateTime::date('c')"
 
@@ -170,6 +167,24 @@ if ( cd ranatec-mcp && SMOKE_MODE=stub MCP_URL="http://127.0.0.1:$MCP_PORT/mcp" 
 else
   cat "$TMP/smoke.log"; echo "--- mcp server log:"; tail -20 "$TMP/mcp.log"; bad "MCP smoke test"
 fi
+
+# Modes that really submit refuse to run when the server under test uses the live ranatec.com API. A stand-in
+# server answers only /mcp/health (api_base = production) and counts every other request: none may arrive.
+GUARD_PORT=$((MCP_PORT + 1))
+node -e '
+const http = require("http"); let other = 0;
+http.createServer((q, r) => {
+  if (q.url === "/mcp/health") { r.setHeader("Content-Type", "application/json"); return r.end(JSON.stringify({ status: "ok", version: "x", api_base: process.argv[2] })); }
+  if (q.url === "/count") return r.end(String(other));
+  other++; r.statusCode = 500; r.end();
+}).listen(+process.argv[1]);' "$GUARD_PORT" "https://ranatec.com/agent/v1" & GUARD_PID=$!
+for i in $(seq 1 40); do curl -s -o /dev/null "http://127.0.0.1:$GUARD_PORT/mcp/health" && break; sleep 0.1; done
+[[ $(curl -s "http://127.0.0.1:$GUARD_PORT/count") == 0 ]] || bad "guard stand-in server did not start on :$GUARD_PORT (port in use?)"
+for m in staging stub; do
+  grc=0; gout=$( cd ranatec-mcp && SMOKE_MODE=$m MCP_URL="http://127.0.0.1:$GUARD_PORT/mcp" node test/smoke.mjs 2>&1 ) || grc=$?
+  [[ $grc -eq 2 ]] && has 'REFUSED' <<<"$gout" && [[ $(curl -s "http://127.0.0.1:$GUARD_PORT/count") == 0 ]] && ok "smoke SMOKE_MODE=$m refuses a server that uses the live ranatec.com API (nothing sent)" || bad "smoke production guard ($m): rc=$grc $gout"
+done
+kill $GUARD_PID 2>/dev/null || true; wait $GUARD_PID 2>/dev/null || true
 
 # Default (production-safe) smoke mode: everything passes, and nothing is stored, ordered or emailed.
 cleanup_rl; rm -f "$TMPD/ranatec-acf7db.jsonl" "$TMPD/ranatec-wc-orders.jsonl" "$TMPD/ranatec-mail.txt"

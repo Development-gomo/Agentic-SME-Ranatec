@@ -23,17 +23,39 @@ function get_transient($k) { $f = sys_get_temp_dir() . "/rl-$k"; return is_file(
 function set_transient($k, $v, $t) { file_put_contents(sys_get_temp_dir() . "/rl-$k", $v); }
 function apply_filters($h, $v) { return $v; }
 function do_action(...$a) {}
-function get_option($k, $d = false) { $e = getenv('WP_OPTION_' . $k); return $e !== false ? $e : $d; }
+/** Options: values written in this process (update_option / the fake options table) win over WP_OPTION_<name> env vars. */
+$GLOBALS['wp_options'] = [];
+function get_option($k, $d = false) { if (array_key_exists($k, $GLOBALS['wp_options'])) return $GLOBALS['wp_options'][$k]; $e = getenv('WP_OPTION_' . $k); return $e !== false ? $e : $d; }
 function current_time($t) { return gmdate('Y-m-d H:i:s'); }
 function wp_strip_all_tags($s) { return strip_tags((string) $s); }
 function untrailingslashit($s) { return rtrim((string) $s, '/\\'); }
-function flush_rewrite_rules($hard = true) {} function update_option(...$a) { return true; }
+function flush_rewrite_rules($hard = true) {} function update_option($k, $v, $a = null) { $GLOBALS['wp_options'][$k] = $v; return true; }
 /** Fake $wpdb: Advanced CF7 DB tables "exist" when TEST_ACF7DB=1; inserts are appended to $TMPDIR/ranatec-acf7db.jsonl */
 class Fake_WPDB {
-    public $prefix = 'wp_'; public $insert_id = 0;
+    public $prefix = 'wp_'; public $insert_id = 0; public $options = 'wp_options';
+    /** The wp_options statements the sync lock uses, with MySQL's affected-row semantics (a single process: no real concurrency). */
+    public function query($q) {
+        $o = &$GLOBALS['wp_options'];
+        if (preg_match("/^INSERT IGNORE INTO wp_options \\(option_name, option_value, autoload\\) VALUES \\('([^']*)', '([^']*)', 'no'\\)$/", $q, $m)) {
+            if (array_key_exists($m[1], $o)) return 0;
+            $o[$m[1]] = $m[2]; return 1;
+        }
+        if (preg_match("/^UPDATE wp_options SET option_value = '([^']*)' WHERE option_name = '([^']*)' AND option_value = '([^']*)'$/", $q, $m)) {
+            if (!array_key_exists($m[2], $o) || (string) $o[$m[2]] !== $m[3]) return 0;
+            $o[$m[2]] = $m[1]; return 1;
+        }
+        if (preg_match("/^DELETE FROM wp_options WHERE option_name = '([^']*)' AND option_value = '([^']*)'$/", $q, $m)) {
+            if (!array_key_exists($m[1], $o) || (string) $o[$m[1]] !== $m[2]) return 0;
+            unset($o[$m[1]]); return 1;
+        }
+        throw new RuntimeException("Fake_WPDB: unsupported query: $q");
+    }
     public function esc_like($s) { return addcslashes($s, '_%\\'); }
     public function prepare($q, ...$a) { return vsprintf(str_replace(['%s', '%d'], ["'%s'", '%d'], $q), $a); }
     public function get_var($q) {
+        if (preg_match("/^SELECT option_value FROM wp_options WHERE option_name = '([^']*)'$/", $q, $m)) {
+            return array_key_exists($m[1], $GLOBALS['wp_options']) ? (string) $GLOBALS['wp_options'][$m[1]] : null;
+        }
         if (!getenv('TEST_ACF7DB')) return null;
         return preg_match("/LIKE '(.+)'/", $q, $m) ? stripslashes($m[1]) : null;
     }
