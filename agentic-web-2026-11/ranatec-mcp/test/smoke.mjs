@@ -48,6 +48,9 @@ const sol = parse(await client.callTool({ name: "list_solutions", arguments: {} 
 check("list_solutions", sol.solutions.length === 3);
 
 const ln = parse(await client.callTool({ name: "list_news", arguments: { type: "event" } }));
+const lnYear = await client.callTool({ name: "list_news", arguments: { year: 2025 } });
+const lnYearStr = await client.callTool({ name: "list_news", arguments: { year: "2025" } });
+check("list_news accepts year as number and string", !lnYear.isError && !lnYearStr.isError && parse(lnYear).count === parse(lnYearStr).count && parse(lnYear).count > 0, `${parse(lnYear).count} items`);
 check("list_news type filter", ln.count === 3);
 
 const ni = parse(await client.callTool({ name: "get_news_item", arguments: { id: "ranatec-delivers-5g-test-system-to-faang-client" } }));

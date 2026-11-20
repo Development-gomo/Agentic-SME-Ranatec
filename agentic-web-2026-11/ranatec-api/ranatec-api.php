@@ -319,7 +319,7 @@ final class Ranatec_Agent_API
         }
         $out = [];
         foreach ($allowed[$endpoint] as $k) {
-            if (isset($_GET[$k]) && $_GET[$k] !== '') {
+            if (isset($_GET[$k]) && is_scalar($_GET[$k]) && $_GET[$k] !== '') {   // ?model[]=… etc. are ignored
                 $out[$k] = sanitize_text_field(wp_unslash($_GET[$k]));
             }
         }

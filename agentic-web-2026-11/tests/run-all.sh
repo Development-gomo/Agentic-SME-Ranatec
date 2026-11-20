@@ -69,6 +69,16 @@ cleanup_rl; rm -f "$TMPD/ranatec-acf7db.jsonl"; out=$(echo "$QBODY" | TEST_WC=0 
 cleanup_rl; echo "${QBODY/true/false}" | php tests/wp-stub-harness.php quote '' POST | grep -q 'STATUS 403' && ok "quote without consent → 403" || bad "quote without consent"
 rm -f "$TMPD/ranatec-wc-orders.jsonl"
 
+# --- malformed submissions: must give a clean 400, with no PHP warning/notice (a list where text is expected crashed WordPress on PHP 8 before 1.3.0)
+for case in 'contact|{"agent_context":{"user_authorized_submission":true},"person":{"name":"A","email":["a@b.c"],"phone":"+46 1 23"},"company":{"name":"X"},"inquiry":{"message":"hello there friend"}}' \
+            'contact|{"agent_context":{"user_authorized_submission":true},"person":{"name":"A","email":"a@gomogroup.com","phone":"+46 1 23"},"company":{"name":"X"},"inquiry":{"type":["x"],"message":"hello there friend"}}' \
+            'quote|{"agent_context":{"user_authorized_submission":true,"dry_run":true},"customer":{"first_name":"A","last_name":"B","email":{"x":1},"phone":"+46 1 23","company":"X","country":["SE"],"address_1":"a","city":"b","postcode":"1"},"products":[{"id":["x"],"configuration":[{"id":{"a":1}}]}]}'; do
+  ep=${case%%|*}; body=${case#*|}
+  out=$(cleanup_rl; echo "$body" | php -d error_reporting=-1 -d display_errors=stdout tests/wp-stub-harness.php "$ep" '' POST 2>&1)
+  if grep -qE 'Warning|Notice|Deprecated|Fatal' <<<"$out" || ! grep -q 'STATUS 400' <<<"$out"; then echo "$out" | grep -E 'Warning|Notice|Fatal|STATUS' | head -3; bad "malformed $ep body → clean 400"; else ok "malformed $ep body (list/object instead of text) → clean 400, no PHP warning"; fi
+done
+q=$(php -d error_reporting=-1 -d display_errors=stdout tests/wp-stub-harness.php products '' GET 'model[]=x&q[]=y' </dev/null 2>&1); grep -qE 'Warning|Notice' <<<"$q" && bad "array query params" || ok "array query parameters (?model[]=…) ignored without PHP warning"
+
 LOCK=lock-key-0123456789abcdefghijkl
 cleanup_rl; echo "$BODY" | WP_OPTION_ranatec_api_mcp_key=$LOCK php tests/wp-stub-harness.php contact '' POST | grep -q 'use_mcp_submit_inquiry' && ok "MCP-only lock: direct contact call without key → 403 use_mcp_submit_inquiry" || bad "MCP-only lock (no key)"
 cleanup_rl; echo "$QBODY" | WP_OPTION_ranatec_api_mcp_key=$LOCK php tests/wp-stub-harness.php quote '' POST | grep -q 'use_mcp_request_quote' && ok "MCP-only lock: direct quote call without key → 403 use_mcp_request_quote" || bad "MCP-only lock quote (no key)"

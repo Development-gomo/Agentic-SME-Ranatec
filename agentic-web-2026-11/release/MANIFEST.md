@@ -20,13 +20,13 @@ All component versions come from the repo `VERSION` file (1.3.0) and are checked
 
 ## SHA-256
 ```
-878687cd3779c27cf6d94bef7ca656a427c2809907e1c670160a8485fb35c924  ranatec-api-1.3.0.zip
-0fa3b5dc0942450f9d825477b9eb226a5cf9f93a943f6faba1130b4dfed30ac1  ranatec-mcp-1.3.0-cpanel.zip
-2b206dba00058cda0e166dbbd49778c0e2f79ec73d70bf45311267af610db96e  ranatec-agentic-web-package-1.3.0.zip
+79c760910e867f0701065cb983e3b6543703e04fad9a49dfbdfa779fc2d13f92  ranatec-api-1.3.0.zip
+0fe5f0fc849d7d26aacafed2bbefa7229f1a90151ccda137677291feba45d6b4  ranatec-mcp-1.3.0-cpanel.zip
+232d4418442535a3a886b8ff92f490bb17575cade575fe9328faa7d11417580f  ranatec-agentic-web-package-1.3.0.zip
 ```
 
 
 ## Checks
 - `python3 tools/check_versions.py`: all components at 1.3.0
-- `bash tests/run-all.sh`: 93 passed, 0 failed (PHP lint, JSON, contact + quote endpoints with and without mbstring, ARD manifest (official schema + conformance tool, routes, on/off), HTTP endpoints, version consistency, MCP end-to-end incl. runtime version)
+- `bash tests/run-all.sh`: 97 passed, 0 failed (PHP lint, JSON, contact + quote endpoints with and without mbstring, ARD manifest (official schema + conformance tool, routes, on/off), HTTP endpoints, version consistency, MCP end-to-end incl. runtime version)
 - Crawl coverage: 445/445 sitemap URLs in all 3 locales (cart/checkout/account pages skipped on purpose), 0 pending; Firecrawl batch scrape 446/446 (incl. careers) HTTP 200; 425 spec rows (601 values), 0 mismatches vs Firecrawl

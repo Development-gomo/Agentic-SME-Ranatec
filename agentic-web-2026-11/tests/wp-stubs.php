@@ -9,7 +9,7 @@ function register_activation_hook(...$a) {} function register_deactivation_hook(
 function get_query_var($k) { return $GLOBALS['qv'][$k] ?? ''; }
 function status_header($c) { $GLOBALS['status'] = $c; if (PHP_SAPI !== 'cli') http_response_code($c); }
 function wp_json_encode($d, $f = 0) { return json_encode($d, $f); }
-function sanitize_text_field($s) { return trim(preg_replace('/[\r\n\t ]+/', ' ', strip_tags((string) $s))); }
+function sanitize_text_field($s) { if (!is_scalar($s)) return ""; return trim(preg_replace('/[\r\n\t ]+/', ' ', strip_tags((string) $s))); }
 function sanitize_textarea_field($s) { return trim(strip_tags((string) $s)); }
 function wp_unslash($s) { return $s; }
 function sanitize_email($e) { return filter_var(trim((string) $e), FILTER_SANITIZE_EMAIL); }

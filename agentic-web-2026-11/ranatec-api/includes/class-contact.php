@@ -59,13 +59,13 @@ final class Ranatec_Agent_Contact
         $ctx = $body['agent_context'];
 
         // Product quotes never go through the contact form.
-        $type = isset($inq['type']) && $inq['type'] !== '' ? (string) $inq['type'] : 'general';
+        $type = !isset($inq['type']) || $inq['type'] === '' ? 'general' : (is_scalar($inq['type']) ? (string) $inq['type'] : 'invalid');
         if ($type === 'quote_request' || !empty($inq['products'])) {
             return [400, self::err('use_request_quote', 'This is the contact-form enquiry endpoint and does not take products. To request a quote for products, use the MCP tool request_quote (endpoint ' . RANATEC_API_BASE . '/quote.json), which creates a quote order exactly like Add to RFQ + checkout on ranatec.com and needs the checkout fields (name, email, phone, company, full address).')];
         }
 
         $name = self::text(isset($person['name']) ? $person['name'] : '', 120);
-        $email = sanitize_email(isset($person['email']) ? $person['email'] : '');
+        $email = sanitize_email(isset($person['email']) && is_scalar($person['email']) ? (string) $person['email'] : '');
         $phone = self::text(isset($person['phone']) ? $person['phone'] : '', 40);
         $title = self::text(isset($person['job_title']) ? $person['job_title'] : '', 120);
         $cname = self::text(isset($company['name']) ? $company['name'] : '', 160);
@@ -160,7 +160,7 @@ final class Ranatec_Agent_Contact
         $cust = [
             'first_name' => $get('first_name', 80),
             'last_name' => $get('last_name', 80),
-            'email' => sanitize_email(isset($c['email']) ? $c['email'] : ''),
+            'email' => sanitize_email(isset($c['email']) && is_scalar($c['email']) ? (string) $c['email'] : ''),
             'phone' => $get('phone', 40),
             'company' => $get('company', 160),
             'country' => '',
@@ -180,7 +180,7 @@ final class Ranatec_Agent_Contact
             if ($cust[$k] === '') $errors["customer.$k"] = "required (checkout field \"{$labels[$k]}\")";
         }
         if (!$cust['email'] || !is_email($cust['email'])) $errors['customer.email'] = 'valid email required (checkout field "Email address")';
-        $cc = self::country_code(isset($c['country']) ? (string) $c['country'] : '');
+        $cc = self::country_code(isset($c['country']) && is_scalar($c['country']) ? (string) $c['country'] : '');
         if ($cc === '') {
             $errors['customer.country'] = 'required: ISO 3166-1 alpha-2 country code (e.g. SE, DE, US, GB) of a country Ranatec sells to (checkout field "Country/Region")';
         } else {
@@ -333,7 +333,7 @@ final class Ranatec_Agent_Contact
             $known[$p['id']] = $p;
         }
         foreach ($req_products as $i => $rp) {
-            $pid = is_array($rp) && isset($rp['id']) ? sanitize_title($rp['id']) : '';
+            $pid = is_array($rp) && isset($rp['id']) && is_scalar($rp['id']) ? sanitize_title((string) $rp['id']) : '';
             $qty = is_array($rp) && isset($rp['quantity']) ? (int) $rp['quantity'] : 1;
             if (!isset($known[$pid])) {
                 $errors["{$path}[$i].id"] = "unknown product id '{$pid}' — use ids from https://ranatec.com/agent/v1/products.json";
@@ -356,7 +356,7 @@ final class Ranatec_Agent_Contact
                 } else {
                     $line['configuration'] = [];
                     foreach (array_slice($rp['configuration'], 0, 30) as $j => $opt) {
-                        $oid = is_array($opt) && isset($opt['id']) ? sanitize_title($opt['id']) : '';
+                        $oid = is_array($opt) && isset($opt['id']) && is_scalar($opt['id']) ? sanitize_title((string) $opt['id']) : '';
                         $oq = is_array($opt) && isset($opt['quantity']) ? (int) $opt['quantity'] : 1;
                         if (!isset($allowed[$oid])) {
                             $errors["{$path}[$i].configuration[$j].id"] = "'{$oid}' is not an option of {$known[$pid]['name']}; allowed: " . implode(', ', array_keys($allowed));

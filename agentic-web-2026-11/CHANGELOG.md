@@ -123,10 +123,30 @@ These URLs have a newer date in the Yoast sitemaps, but their visible text, spec
 
 ### Verification
 
-- `bash tests/run-all.sh`: 93 passed, 0 failed (incl. the two new `/agent/v1` redirect checks) (plugin, quote and contact flows, ARD manifest, HTTP endpoints, version consistency, MCP end-to-end).
+- `bash tests/run-all.sh`: 97 passed, 0 failed (incl. the `/agent/v1` redirect checks and the malformed-input checks) (plugin, quote and contact flows, ARD manifest, HTTP endpoints, version consistency, MCP end-to-end).
 - Link check of every URL in the package's assets (719): see `README.md`. One external URL is not resolvable: the MCP Server Card schema `https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json` (404 upstream). The SEP-2127 schema requires exactly this `$schema` value, so the inline card in `ard.json` keeps it.
+- Second bug review: the plugin under PHP `error_reporting=-1` for 46 normal and malformed requests (now 0 warnings); the OpenAPI spec through `openapi-spec-validator` (valid) and 15 real API responses against the spec's response schemas (0 violations); 250 REST and 131 MCP product lookups by id and model number; MCP search, compare and list tools; specification values and dates.
 - Bug and anomaly review of the build: data cross-references (IDs, URLs, product/category/news links, counts), agent page (191 unique ids, 68 internal anchors, all JSON-LD valid), text artifacts — no further issues.
 - Firecrawl batch scrape: 446/446 URLs (all three locales + careers) returned HTTP 200. All 425 specification rows (601 values, 47 products) in `products.json` were found in Firecrawl's independent copy of the product pages: **0 mismatches**.
+
+### Fixed after the first 1.3.0 build (the build deployed to ranatec.com on 2026-11-20)
+
+The live site runs the first 1.3.0 build. These fixes are in the current `release/ranatec-api-1.3.0.zip` (and MCP server source) only:
+
+| Fix | Severity | Detail |
+|---|---|---|
+| **Malformed submissions crashed WordPress (HTTP 500)** | High | `POST /agent/v1/contact.json` / `quote.json` with a list or object where text is expected (e.g. `"email": ["a@b.c"]`, a product `id` as a list) reached `sanitize_email()` / `sanitize_title()`, which throw a fatal error on PHP 8: "There has been a critical error on this website", and WordPress may email the admin about it each time. Reproduced on a real WordPress install with the first 1.3.0 build (and present since 1.0.x). Now every such value gets the normal 400 validation error; array query parameters (`?model[]=…`) are ignored. Covered by 4 new tests that fail on any PHP warning |
+| **API base URL returned 404** | Medium | `/agent/v1` and `/agent/v1/` (advertised as `baseURL` / `servers` / `baseUrl`) now 301 to `/agent/v1/index.json` |
+| **MCP `list_news` rejected `year: 2026`** | Medium | The tool only accepted the year as a string (`"2026"`); agents usually send a number, which failed with a validation error. Both are accepted now. New smoke-test check |
+| **llms.txt bare URL** | Low | The MCP server line is now a Markdown link |
+
+**Re-uploading:** both builds are numbered 1.3.0, so the plugin will not refresh its URL rules by itself. After uploading, use **Tools → Ranatec Agent API → Flush rewrite rules** (needed for `/agent/v1`), then purge LiteSpeed. The MCP fix needs `ranatec-mcp/src/index.ts`, `package.json` and `package-lock.json` copied to the Render repository.
+
+### Known limitations (not changed)
+
+- **Product structured data on `/agent/` has no `offers`, `review` or `aggregateRating`.** Google requires one of them for Product rich results, so Search Console's "Product snippets" report will likely list the 49 Product items as invalid. Ranatec publishes no prices, so a valid `Offer` cannot be added. AI agents and the ARD/OpenAPI layers are unaffected. If the Search Console warnings matter, the alternative is to describe the catalogue items as `ProductModel` or to drop the Product markup from the agent page.
+- **`/agent/v1/products/ri-4170.json`** returns the duplicate shop listing `ri-4170` (its slug equals the model number) instead of the catalogue product `feedthrough-filter-ri-4170`; the response's `primary_listing` points to the catalogue product. The MCP tool `get_product` resolves "RI 4170" correctly. Goes away when the duplicate listing is removed on the site (`docs/FINDINGS.md` #2).
+- **The MCP Server Card schema URL** required by SEP-2127 is not published upstream yet (404); see *Verification*.
 
 ### Deploying 1.3.0
 

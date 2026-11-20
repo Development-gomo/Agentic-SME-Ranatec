@@ -210,14 +210,15 @@ function buildServer(clientIp = ""): McpServer {
     title: "List news", description: desc("list_news"), annotations: READ_ONLY,
     inputSchema: {
       type: z.enum(["product-launch", "technical-article", "company-news", "event", "distribution-partner"]).optional(),
-      year: z.string().regex(/^\d{4}$/).optional(),
+      // Agents send the year as a number (2026) or a string ("2026"); accept both.
+      year: z.union([z.number().int().min(1900).max(2100), z.string().regex(/^\d{4}$/)]).optional().describe("Publication year, e.g. 2026"),
       product: z.string().optional().describe("Only items related to this product id"),
       query: z.string().optional(),
       limit: z.number().int().min(1).max(100).optional().describe("Default 20"),
     },
   }, async ({ type, year, product, query, limit }) => guard(async () => {
     const q = query?.toLowerCase();
-    const list = (await news()).filter((n) => (!type || n.type === type) && (!year || n.date_published?.startsWith(year))
+    const list = (await news()).filter((n) => (!type || n.type === type) && (!year || n.date_published?.startsWith(String(year)))
       && (!product || n.related_product_ids.includes(product)) && (!q || JSON.stringify(n).toLowerCase().includes(q)));
     return ok({ count: list.length, news: list.slice(0, limit ?? 20).map(newsSummary) });
   }));
