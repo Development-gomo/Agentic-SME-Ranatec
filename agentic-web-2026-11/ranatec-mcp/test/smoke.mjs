@@ -106,7 +106,10 @@ const { address_1, ...noAddress } = CUSTOMER;
 const qMissing = await client.callTool({ name: "request_quote", arguments: { agent_context: CTX, customer: noAddress, products: [{ id: "RI 268" }] } }).catch((e) => ({ isError: true, content: [{ text: String(e) }] }));
 check("request_quote requires the checkout address", qMissing.isError === true && /address_1/.test(qMissing.content[0].text), txt(qMissing));
 const qUS = await client.callTool({ name: "request_quote", arguments: { agent_context: CTX, customer: { ...CUSTOMER, country: "US", postcode: "94105" }, products: [{ id: "RI 268" }] } });
-check("request_quote requires state for US (plugin layer)", qUS.isError === true && /customer\.state/.test(qUS.content[0].text), txt(qUS));
+// Whether a US state is required depends on the site's checkout settings (the plugin follows them): WooCommerce's
+// default (the test stub) requires it; ranatec.com's checkout makes state optional for every country.
+if (MODE === "stub") check("request_quote requires state for US (plugin layer)", qUS.isError === true && /customer\.state/.test(qUS.content[0].text), txt(qUS));
+else check("request_quote US without state follows the site's checkout (state error or valid)", (qUS.isError === true && /customer\.state/.test(qUS.content[0].text)) || (!qUS.isError && parse(qUS).status === (SUBMIT ? "received" : "valid")), txt(qUS));
 const cfg = await client.callTool({ name: "request_quote", arguments: { agent_context: CTX, customer: CUSTOMER,
   products: [{ id: "RI 181", quantity: 2, configuration: [{ id: "RI 4182", quantity: 2 }, { id: "RI 4205", quantity: 1 }] }] } });
 check("request_quote with per-unit configuration (RI 181 + RI 4182 ×2 + RI 4205 ×1)", !cfg.isError && parse(cfg).products?.[0]?.configuration?.length === 2, JSON.stringify(parse(cfg).products?.[0]?.configuration?.map((c) => `${c.quantity_per_unit}x ${c.id}`)));

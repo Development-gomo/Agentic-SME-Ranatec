@@ -17,6 +17,7 @@ Fixes from an external review (Codex) of 1.3.3. Every point was checked before c
   - The guide no longer says to apply the Blueprint from `Agentic-SME-Ranatec`, whose root `render.yaml` builds the previous package's server. The live service builds from `Development-gomo/agentic-mcp-sme-ranatec`, and the guide explains how to update it.
 - **Hand-uploaded files in update and rollback steps.** A physical `public_html/.well-known/ard.json` overrides the plugin, and the WordPress ARD switch cannot remove it. The update and rollback steps now cover it, and a post-deployment step checks that `ard.json`, `index.json` and the MCP server report the intended version.
 - Guide correction: ranatec.com runs PHP 8.4, not 8.2.
+- Smoke test against production: whether a US quote needs a state depends on the site's checkout settings, which the plugin follows. ranatec.com's checkout makes state and postcode optional for every country, so the "state required for US" check now runs only against the test stub. Elsewhere it accepts either a state error or a valid result. Found by running the read-only smoke test against the live API before deploying the MCP server. The plugin is unchanged.
 - 17 new tests (118 in total). The test runner also no longer fails at random: under `pipefail`, `php … | grep -q` could kill PHP with SIGPIPE when grep stopped reading early.
 
 Deploy:
