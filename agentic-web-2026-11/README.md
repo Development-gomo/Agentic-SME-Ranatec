@@ -12,7 +12,7 @@ An AI-agent-ready layer for **[ranatec.com](https://ranatec.com/)** (WordPress +
 | Product categories | 11 + an "accessories" grouping |
 | Specification rows | 425 (all cross-verified against an independent Firecrawl scrape: 0 mismatches) |
 | Careers | career.ranatec.com (Teamtailor), 1 open position |
-| Referenced URLs link-checked | 655 (all resolve; the 6 redirects are documented on purpose) |
+| Referenced URLs link-checked | 719 in 1.3.0 (2026-11-20): 712 on ranatec.com all resolve — 700 × 200, 5 documented legacy 301s, 3 checkout → cart 302s (empty cart), 3 careers URLs (verified through Firecrawl), and the API base `/agent/v1`, which now 301s to `index.json`. Of the 7 external URLs, the MCP Server Card schema URL required by SEP-2127 (`static.modelcontextprotocol.io/…/server-card.schema.json`) is not published yet (404 upstream) |
 
 ## Deliverables
 
@@ -71,7 +71,7 @@ To cut a new release: edit `VERSION`, run `bash tools/release.sh`, commit.
 One command runs everything (PHP lint, JSON, the contact and quote endpoints with and without `mbstring`, the ARD manifest and its routes, HTTP endpoints and the MCP end-to-end test). It runs `npm ci` itself if `node_modules` is missing. Strict ARD schema validation needs the Python `jsonschema` package:
 
 ```bash
-bash tests/run-all.sh      # 91 checks
+bash tests/run-all.sh      # 93 checks
 python3 -m unittest tests/test_ard.py              # ARD only (17 tests)
 python3 tools/ard.py validate https://ranatec.com/.well-known/ard.json --check-urls   # live check after deployment
 ```

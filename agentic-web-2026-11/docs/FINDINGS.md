@@ -12,7 +12,7 @@ These issues came up while building the agent package. None of them blocks deplo
 | 4 | 33 products in "Uncategorized" | Open (33). The category now also has `/en-gb/…/uncategorized-en-gb/` and `/en-ca/…/uncategorized-en-ca/` archives in the sitemap |
 | 5 | Empty "Fading Simulator" category | Open (200, 0 products) |
 | 6 | "600–6000 MHz" band reject blurb | Open |
-| 7 | Bare accessory records | Open (unchanged) |
+| 7 | Bare accessory records | Open (unchanged; RI 4171 added to the list) |
 | 8 | No `Product` schema on product pages | Open |
 | 9 | Duplicate Open Graph tags on product pages | Open |
 | 10 | Organization `areaServed: "US"` | Open |
@@ -57,7 +57,7 @@ These issues came up while building the agent package. None of them blocks deplo
    *Fix:* create an "Accessories & options" category, and noindex or remove the Uncategorized archive.
 5. **Empty category "Fading Simulator"** (`/product-category/fading-simulator/`) returns 200 with 0 products.
 6. **Outdated category blurb.** The homepage and category text say the tunable band reject filters cover "600–6000 MHz", but the RI 268 goes to 8000 MHz.
-7. **Bare product records.** Several accessories have no description or specifications (e.g. RI 4270–4276 frequency extension boxes, RF absorption foam). AI systems can't say what they are.
+7. **Bare product records.** Several accessories have no description or specifications (e.g. RI 4270–4276 frequency extension boxes, RF absorption foam). AI systems can't say what they are. The catalogue product **Feedthrough Filter RI 4171** (USB 3.0, fabric mount) also has no specifications table and no datasheet, unlike the other standard catalogue products.
 
 ## Medium: structured data (GEO)
 

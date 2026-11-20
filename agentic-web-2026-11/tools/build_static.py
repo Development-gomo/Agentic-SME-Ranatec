@@ -699,7 +699,7 @@ def build_llms():
     a('')
     a('## Contact')
     a('- Ranatec AB, Falkenbergsgatan 3, 412 85 Gothenburg, Sweden | info@ranatec.com | +46 31 706 16 60')
-    a(f'- AI agents: product quotes only via the MCP tool request_quote, other enquiries via submit_inquiry, at {URLS["mcp"]} (never the website forms)')
+    a(f'- AI agents: product quotes only via the MCP tool request_quote, other enquiries via submit_inquiry, at the [Ranatec MCP server]({URLS["mcp"]}) (never the website forms)')
     a('- Press: Leslie Johnsen (Public Relations) | leslie.johnsen@ranatec.com; Operations: Charlotte Ornstein | charlotte.ornstein@ranatec.com (as named in 2025 press releases)')
     a('')
     a('## Key pages')

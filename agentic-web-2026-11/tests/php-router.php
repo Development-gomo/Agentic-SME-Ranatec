@@ -7,6 +7,7 @@ require __DIR__ . '/wp-stubs.php';
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $rules = [
     '#^/agent/v1/(products|categories|news)/([a-z0-9-]+)\.json$#' => fn($m) => ['ranatec_endpoint' => $m[1], 'ranatec_id' => $m[2]],
+    '#^/agent/v1/?$#' => fn($m) => ['ranatec_endpoint' => 'api-root'],
     '#^/agent/v1/([a-z-]+)\.json$#' => fn($m) => ['ranatec_endpoint' => $m[1]],
     '#^/agent/?$#' => fn($m) => ['ranatec_endpoint' => 'agent-page'],
     '#^/openapi\.json$#' => fn($m) => ['ranatec_endpoint' => 'openapi'],

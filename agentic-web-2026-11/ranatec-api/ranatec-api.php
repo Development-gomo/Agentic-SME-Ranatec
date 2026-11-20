@@ -71,6 +71,8 @@ final class Ranatec_Agent_API
     public static function add_rewrite_rules()
     {
         // The dots MUST be escaped, and the rules MUST be registered at 'top'.
+        // The API base URL (advertised as baseURL / servers / baseUrl) answers with a redirect to the index.
+        add_rewrite_rule('^agent/v1/?$', 'index.php?ranatec_endpoint=api-root', 'top');
         add_rewrite_rule('^agent/v1/([a-z-]+)\.json$', 'index.php?ranatec_endpoint=$matches[1]', 'top');
         add_rewrite_rule('^agent/v1/(products|categories|news)/([a-z0-9-]+)\.json$', 'index.php?ranatec_endpoint=$matches[1]&ranatec_id=$matches[2]', 'top');
         add_rewrite_rule('^agent/?$', 'index.php?ranatec_endpoint=agent-page', 'top');
@@ -128,6 +130,12 @@ final class Ranatec_Agent_API
         $id = get_query_var('ranatec_id');
         $method = isset($_SERVER['REQUEST_METHOD']) ? strtoupper($_SERVER['REQUEST_METHOD']) : 'GET';
 
+        if ($endpoint === 'api-root') {
+            header('Location: ' . RANATEC_API_BASE . '/index.json', true, 301);
+            header('Access-Control-Allow-Origin: *');
+            status_header(301);
+            exit;
+        }
         if ($endpoint === 'ard' && !Ranatec_Agent_ARD::enabled()) {
             status_header(404);   // switched off in Tools → Ranatec Agent API
             exit;

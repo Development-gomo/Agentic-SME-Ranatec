@@ -111,18 +111,21 @@ These URLs have a newer date in the Yoast sitemaps, but their visible text, spec
 |---|---|
 | `ranatec-api/data/*.json` | Rebuilt from the new crawl; `meta.version` 1.3.0, `meta.last_updated` 2026-11-20. Content changes as listed under *Pages updated* |
 | `ranatec-api/public/agent-page.html` (`/agent/`) | New homepage title, RI 2582 features, last-crawled date 2026-11-20 |
-| `ranatec-api/public/llms.txt`, `llms-full.txt` | New homepage title (llms.txt), RI 2582 features (llms-full.txt), dates |
+| `ranatec-api/public/llms.txt`, `llms-full.txt` | New homepage title (llms.txt), RI 2582 features (llms-full.txt), dates. **Fix:** the MCP server line in llms.txt's agent section is now a Markdown link (it was the only bare URL in a list) |
 | `ai.txt`, `api-catalog.json`, `well-known-api-catalog.json`, `openapi.json`, `ard.json` | Version and date only |
-| `ranatec-api/` plugin PHP, `ranatec-mcp/` (MCP server) | Version 1.3.0 only; no code changes |
+| `ranatec-api/ranatec-api.php` | **Fix:** the API base URL `https://ranatec.com/agent/v1` (and `/agent/v1/`), advertised as `baseURL` / `servers` / `baseUrl` in the API catalogs, OpenAPI and ARD manifest, returned a WordPress 404. It now 301-redirects to `/agent/v1/index.json`. Active right after the plugin update (the plugin refreshes its URL rules once per version) |
+| `ranatec-mcp/` (MCP server) | Version 1.3.0 only; no code changes |
 | `web-root/` | Regenerated copies of the files above |
-| `docs/FINDINGS.md` | Re-checked all 17 findings (1 fixed, 16 still open) and added 3 new ones |
+| `docs/FINDINGS.md` | Re-checked all 17 findings (1 fixed, 16 still open) and added 6 new ones (#18–#23) |
 | `tools/extract.py` | The site now lists category pages in all three locales and no longer tags product pages with their categories. Categories are read from the en-US category pages only, and WooCommerce's "Uncategorized" archive is skipped |
 | `tools/release.sh` | Crawl date read from the data; crawl coverage from `tools/crawl-coverage.txt`; `CHANGELOG.md` included in the package zip |
-| `README.md` | Notes the 2026-11-20 refresh |
+| `README.md` | Notes the 2026-11-20 refresh; link-check figures replaced with the 1.3.0 results (719 URLs) |
 
 ### Verification
 
-- `bash tests/run-all.sh`: 91 passed, 0 failed (plugin, quote and contact flows, ARD manifest, HTTP endpoints, version consistency, MCP end-to-end).
+- `bash tests/run-all.sh`: 93 passed, 0 failed (incl. the two new `/agent/v1` redirect checks) (plugin, quote and contact flows, ARD manifest, HTTP endpoints, version consistency, MCP end-to-end).
+- Link check of every URL in the package's assets (719): see `README.md`. One external URL is not resolvable: the MCP Server Card schema `https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json` (404 upstream). The SEP-2127 schema requires exactly this `$schema` value, so the inline card in `ard.json` keeps it.
+- Bug and anomaly review of the build: data cross-references (IDs, URLs, product/category/news links, counts), agent page (191 unique ids, 68 internal anchors, all JSON-LD valid), text artifacts — no further issues.
 - Firecrawl batch scrape: 446/446 URLs (all three locales + careers) returned HTTP 200. All 425 specification rows (601 values, 47 products) in `products.json` were found in Firecrawl's independent copy of the product pages: **0 mismatches**.
 
 ### Deploying 1.3.0

@@ -137,7 +137,7 @@ curl -X POST https://agentic-mcp-sme-ranatec.onrender.com/mcp -H 'Content-Type: 
 
 ## Contact
 - Ranatec AB, Falkenbergsgatan 3, 412 85 Gothenburg, Sweden | info@ranatec.com | +46 31 706 16 60
-- AI agents: product quotes only via the MCP tool request_quote, other enquiries via submit_inquiry, at https://agentic-mcp-sme-ranatec.onrender.com/mcp (never the website forms)
+- AI agents: product quotes only via the MCP tool request_quote, other enquiries via submit_inquiry, at the [Ranatec MCP server](https://agentic-mcp-sme-ranatec.onrender.com/mcp) (never the website forms)
 - Press: Leslie Johnsen (Public Relations) | leslie.johnsen@ranatec.com; Operations: Charlotte Ornstein | charlotte.ornstein@ranatec.com (as named in 2025 press releases)
 
 ## Key pages

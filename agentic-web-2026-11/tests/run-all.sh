@@ -105,6 +105,7 @@ for p in .well-known/ard.json agent/ agent/v1/index.json agent/v1/products.json 
   code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:$PHP_PORT/$p"); [[ $code == 200 ]] && ok "GET /$p" || bad "GET /$p ($code)"
 done
 
+for b in agent/v1 agent/v1/; do loc=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' "http://127.0.0.1:$PHP_PORT/$b"); [[ $loc == "301 https://ranatec.com/agent/v1/index.json" ]] && ok "API base /$b → 301 index.json" || bad "API base /$b ($loc)"; done
 hdr=$(curl -s -D - -o "$TMP/ard.json" "http://127.0.0.1:$PHP_PORT/.well-known/ard.json")
 echo "$hdr" | grep -qi '^content-type: application/json' && echo "$hdr" | grep -qi '^access-control-allow-origin: \*' && ok "ARD over HTTP: application/json + CORS" || { echo "$hdr"; bad "ARD headers"; }
 python3 tools/ard.py validate "$TMP/ard.json" >"$TMP/ard-validate.log" 2>&1 && grep -q 'VALID: 2 entries, 0 errors, 0 warnings' "$TMP/ard-validate.log" && ok "served manifest: official conformance PASS, 0 errors, 0 warnings" || { cat "$TMP/ard-validate.log"; bad "served ARD manifest validation"; }
