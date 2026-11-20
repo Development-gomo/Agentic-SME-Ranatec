@@ -10,6 +10,7 @@ A complete, deployable package rebuilt from a new crawl of https://ranatec.com/ 
 - **Status check:** all 456 URLs in the previous package or the new crawl were requested without following redirects.
 - **Content check:** the new crawl was run through the same extraction and data pipeline, and every entity (company, 82 products, 12 categories, 44 news items, 12 pages, 3 solutions, 12 FAQ) was compared field by field with 1.2.4. Every difference was verified against the live HTML.
 - Contact details, the main menu, the footer, robots.txt and the Organization structured data (JSON-LD) were checked separately on the live pages.
+- **Third review:** the WordPress REST API's list of every published page, post, product and product category (including pages excluded from the sitemaps) and their exact edit times; the full text of every en-GB / en-CA page, news item and category compared with en-US (dates normalised); the stored checkout configuration; the `Last-Modified` date of all 46 datasheet PDFs (all 200, none replaced since 2026-10-06); and a fresh fetch of the sitemaps (no edits since the crawl).
 - **Second review:** every URL's Yoast sitemap `lastmod` was compared with the previous crawl date (71 URLs edited since), the full page text of every en-GB / en-CA product page was compared with en-US, and every internal link on all 445 pages was checked for pages outside the sitemaps.
 
 ### Pages added
@@ -21,6 +22,7 @@ Found but not added on purpose:
 - `https://ranatec.com/product-category/uncategorized/`, `…/en-gb/product-category/uncategorized-en-gb/`, `…/en-ca/product-category/uncategorized-en-ca/`: WooCommerce's default "Uncategorized" archive (see `docs/FINDINGS.md` #4).
 - `https://career.ranatec.com/people/`, `/cookie-policy/`, `/privacy-policy/`: careers-site (Teamtailor) pages outside WordPress. The careers site and its one open position are already in `company.json`.
 - `https://staging.ranatec.com/forensic-box/`: Ranatec's staging site, publicly reachable (see `docs/FINDINGS.md` #20).
+- `https://ranatec.com/home-cro/` and `https://ranatec.com/contact-us-cro/`: published 2024 test variants of Home and Contact Us (`noindex, nofollow`, not in the sitemaps, last edited 2024-05-15). They existed before 1.2.4 and duplicate pages already in the package (see `docs/FINDINGS.md` #21). Found through the WordPress REST API, which lists 14 published en-US pages against the 12 in the sitemaps.
 
 ### Pages updated
 
@@ -72,10 +74,18 @@ These URLs have a newer date in the Yoast sitemaps, but their visible text, spec
 
 **2026-10-07, en-US:** `https://ranatec.com/product-category/rf-coaxial-switch/` (Switch Modules), saved together with the RI 2582 edit. Category content unchanged.
 
+**2026-11-17, all three locales:** the WooCommerce transactional pages (all `noindex`, not crawled for content):
+- Cart: `https://ranatec.com/cart/` · `https://ranatec.com/en-gb/basket/` · `https://ranatec.com/en-ca/shopping-cart/`
+- Checkout: `https://ranatec.com/checkout/` · `https://ranatec.com/en-gb/checkout/` · `https://ranatec.com/en-ca/checkout/`
+- My Account: `https://ranatec.com/my-account/` · `https://ranatec.com/en-gb/my-account/` · `https://ranatec.com/en-ca/my-account/`
+
+  Checked through a guest cart (no order created): the checkout still requires email, country, first and last name, company, address, city, state, postcode and phone; apartment/suite and "Additional Note" are optional; the only payment method is Request a Quote. These are the fields the MCP tool `request_quote` requires, so agent quotes are unaffected.
+
 ### Site-wide changes (not tied to a single page)
 
 - **Footer, all pages, all three locales:** new **"For AI agents"** link to `https://ranatec.com/agent`, between the contact details and the address. It is now linked from all 445 crawled pages. The other footer links (phone, email, address, X, LinkedIn, Cookie policy, Career) are unchanged.
 - **Homepage (all three locales) and Contact Us:** the new AI-agent notice links `https://ranatec.com/agent` and `https://ranatec.com/llms.txt` (see *Pages updated*).
+- **Locale wording (not changes to the package, which uses the en-US text for all locales):** the en-CA homepage hero button reads "Get a quote" where en-US and en-GB read "Contact us" (same target, the contact form; `docs/FINDINGS.md` #22). Two en-GB category pages use British spelling ("one-handed" on Shield Boxes, "customisable" on Tunable Band Pass Filters), and the en-GB / en-CA Butler Matrices category lists its two products in the opposite order.
 - **robots.txt:** now ends with `Agentmap: https://ranatec.com/.well-known/ard.json` (added 2026-11-11 for the ARD manifest), after an "AI-readable resources" comment block and the `Sitemap:` line.
 
 ### Pages removed or redirecting
