@@ -16,11 +16,14 @@ function get_posts($args) {
     $GLOBALS['get_posts_args'] = $args;
     return [];
 }
-function wp_get_post_terms($id, $tax, $a = []) { return ['tunable-band-reject-filter']; }
+function wp_get_post_terms($id, $tax, $a = []) { if (isset($GLOBALS['during_terms'])) ($GLOBALS['during_terms'])(); return ['tunable-band-reject-filter']; }
 function get_permalink($id) { return 'https://ranatec.com/product/' . $GLOBALS['slugs'][$id] . '/'; }
 function wp_get_attachment_image_url($id, $size) { return false; }
 function wp_parse_url($u, $c = -1) { return parse_url($u, $c); }
-function wc_get_products($args) { return $GLOBALS['products']; }
+function wc_get_products($args) { if (isset($GLOBALS['during_wc_get_products'])) ($GLOBALS['during_wc_get_products'])(); return $GLOBALS['products']; }
+function is_admin() { return !empty($GLOBALS['is_admin']); }
+function wp_doing_ajax() { return false; }
+function wp_schedule_single_event($ts, $hook, $args = []) { $GLOBALS['scheduled'][] = [$hook, $args]; return true; }
 
 class Fake_Product {
     public function __construct(public int $id, public string $slug, public string $password, public WC_DateTime $created, public WC_DateTime $modified) { $GLOBALS['slugs'][$id] = $slug; }
@@ -124,3 +127,38 @@ $GLOBALS['products'][1] = $product(6, 'shield-box-ri-181', 'pw');
 Ranatec_Agent_Sync::run('test');
 foreach (['llms.txt', 'llms-full.txt', 'agent-page.html'] as $f) file_put_contents("$plugin/public/$f", "rebuilt without it\n");   // a rebuilt plugin
 $ok('the report clears once the static files no longer contain it (rebuilt plugin)', Ranatec_Agent_Sync::stale_static() === []);
+
+// ---------------------------------------------------------------- long runs: the lock is renewed; a lost lock stops all writes
+$GLOBALS['products'] = [$product(8, 'sync-test-heartbeat', '')];
+$GLOBALS['protected_posts'] = [101];
+$seen = $later = null;
+$GLOBALS['during_wc_get_products'] = function () use (&$seen) { $seen = $GLOBALS['wp_options'][LOCK] ?? null; };   // before the renewal
+$GLOBALS['during_terms'] = function () use (&$later) { $later = $GLOBALS['wp_options'][LOCK] ?? null; };            // after it
+Ranatec_Agent_Sync::run('test');
+$ok('lock: a running sync renews its lock as it works (new token after progress)', is_string($seen) && is_string($later) && $later !== $seen, "$seen → $later");
+$ok('lock: the renewed lock is still released at the end', !array_key_exists(LOCK, $GLOBALS['wp_options']));
+unset($GLOBALS['during_terms']);
+// another run takes the lock over while this one is busy (as if this one had stalled past LOCK_TTL)
+file_put_contents("$plugin/data/products.json", json_encode($released));
+$before = md5_file("$plugin/data/products.json");
+$GLOBALS['during_wc_get_products'] = function () { $GLOBALS['wp_options'][LOCK] = time() . ':newer-run'; };
+$r = Ranatec_Agent_Sync::run('test');
+$ok('lock: a run whose lock was taken over stops without writing', md5_file("$plugin/data/products.json") === $before && count(preg_grep('/took over the lock/', $r['errors'])) === 1, json_encode($r['errors']));
+$ok('lock: it leaves the newer run\'s lock in place', str_ends_with((string) ($GLOBALS['wp_options'][LOCK] ?? ''), ':newer-run'));
+$ok('lock: no temporary file left behind by the stopped run', !glob($plugin . '/data/*.tmp'));
+unset($GLOBALS['during_wc_get_products'], $GLOBALS['wp_options'][LOCK]);
+
+// ---------------------------------------------------------------- plugin upgrade: sync at once, so release data never lingers
+$GLOBALS['wp_options']['ranatec_api_rewrite_version'] = '0.0.1';
+$GLOBALS['is_admin'] = false; $GLOBALS['scheduled'] = [];
+Ranatec_Agent_API::maybe_flush_rewrites();
+$ok('upgrade seen on a front-end request → sync handed to WP-Cron at once', $GLOBALS['scheduled'] === [['ranatec_api_daily_sync', ['upgrade']]], json_encode($GLOBALS['scheduled']));
+$GLOBALS['wp_options']['ranatec_api_rewrite_version'] = '0.0.1';
+$GLOBALS['is_admin'] = true; $GLOBALS['scheduled'] = []; unset($GLOBALS['wp_options']['ranatec_api_last_sync']);
+$GLOBALS['products'] = [$product(9, 'sync-test-after-upgrade', '')];
+Ranatec_Agent_API::maybe_flush_rewrites();
+$ok('upgrade seen on an admin request → synced right away', in_array('sync-test-after-upgrade', array_column($read('products')['products'], 'id'), true) && ($GLOBALS['wp_options']['ranatec_api_last_sync']['trigger'] ?? '') === 'upgrade');
+$GLOBALS['scheduled'] = [];
+Ranatec_Agent_API::maybe_flush_rewrites();
+$ok('…and only once per version', $GLOBALS['scheduled'] === [] && $GLOBALS['wp_options']['ranatec_api_rewrite_version'] === RANATEC_API_VERSION);
+

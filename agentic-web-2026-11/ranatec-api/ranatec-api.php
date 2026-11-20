@@ -3,7 +3,7 @@
  * Plugin Name:       Ranatec Agent API
  * Plugin URI:        https://ranatec.com/agent/
  * Description:       Agentic Web package for ranatec.com — serves the machine-readable agent page (/agent/), clean JSON endpoints (/agent/v1/*.json), the OpenAPI spec (/openapi.json), llms.txt, ai.txt, the API catalog and the ARD manifest (/.well-known/ard.json), plus agent-safe product-quote and contact endpoints.
- * Version:           1.3.5
+ * Version:           1.3.6
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            GO MO Group for Ranatec AB
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('RANATEC_API_VERSION', '1.3.5');
+define('RANATEC_API_VERSION', '1.3.6');
 define('RANATEC_API_DIR', plugin_dir_path(__FILE__));
 define('RANATEC_API_DATA', RANATEC_API_DIR . 'data/');
 define('RANATEC_API_PUBLIC', RANATEC_API_DIR . 'public/');
@@ -87,13 +87,26 @@ final class Ranatec_Agent_API
 
     /**
      * Plugin updates (upload → "Replace current") do not run the activation hook, so new routes such as
-     * /.well-known/ard.json would 404 until someone saves the permalinks. Flush once per plugin version.
+     * /.well-known/ard.json would 404 until someone saves the permalinks. Flush once per plugin version, and
+     * sync once, so the data matches the site right away.
      */
     public static function maybe_flush_rewrites()
     {
         if (get_option('ranatec_api_rewrite_version') !== RANATEC_API_VERSION) {
             flush_rewrite_rules(false);
             update_option('ranatec_api_rewrite_version', RANATEC_API_VERSION, true);
+            // The upload replaced data/ with the release copies, which may still hold posts or products withdrawn
+            // since the release was built (password-protected, unpublished, deleted). Sync now instead of waiting
+            // for the daily run. A second request racing this one is skipped by the sync lock.
+            // Admin requests (the usual first request after "Replace current") sync right away; any other request
+            // hands it to WP-Cron at once, the same context as the daily run, instead of delaying a visitor's page.
+            if (class_exists('Ranatec_Agent_Sync')) {
+                if (is_admin() && !wp_doing_ajax()) {
+                    Ranatec_Agent_Sync::run('upgrade');
+                } else {
+                    wp_schedule_single_event(time(), Ranatec_Agent_Sync::HOOK, ['upgrade']);
+                }
+            }
         }
     }
 

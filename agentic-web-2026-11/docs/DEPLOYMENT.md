@@ -99,7 +99,7 @@ MCP_URL=https://ranatec.com/mcp npm test # read-only: reads data, submissions as
 - [ ] Submit `https://ranatec.com/llms.txt` and `/agent/` in Google Search Console (URL inspection) and Bing Webmaster Tools.
 - [ ] Optional: link `/agent/` from the site footer ("For AI agents") so crawlers discover it.
 - [ ] Work through `docs/FINDINGS.md` with the Ranatec web team.
-- [ ] After content changes, run `python3 tools/build_static.py` and redeploy `ranatec-api/public/` + `openapi.json`.
+- [ ] After content changes, run `python3 tools/pull_live_data.py && bash tools/release.sh` (rebuilds from the site's live data; refuses to build if the package data holds withdrawn content) and redeploy the plugin.
 
 ## URL consistency
 

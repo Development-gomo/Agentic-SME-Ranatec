@@ -59,10 +59,14 @@ final class Ranatec_Agent_Sync
             $report['skipped'] = 'another sync is already running — try again in a minute';
             return $report;
         }
+        self::$lock_token = $token;
         try {
             return self::run_locked($report);
         } finally {
-            self::release_lock($token);
+            if (self::$lock_token !== null) {
+                self::release_lock(self::$lock_token);
+            }
+            self::$lock_token = null;
         }
     }
 
@@ -88,6 +92,31 @@ final class Ranatec_Agent_Sync
         $won = (int) $wpdb->query($wpdb->prepare("UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s AND option_value = %s", $token, $name, $current)) === 1;
         self::forget_lock_cache();
         return $won ? $token : null;
+    }
+
+    /** The token of the lock this process holds while run() works; renewed as the sync progresses. */
+    private static $lock_token = null;
+
+    /**
+     * Proves this run still owns the lock and restarts its LOCK_TTL clock (a new token, swapped in only if the old
+     * one is still there). Called while the sync makes progress and right before every file is replaced, so a run
+     * slower than LOCK_TTL keeps its lock while it works, and a run whose lock was taken over (it stalled for longer
+     * than LOCK_TTL) stops before it writes anything: two runs never write at the same time.
+     */
+    private static function renew_lock()
+    {
+        global $wpdb;
+        if (self::$lock_token === null) {
+            throw new RuntimeException('the sync lock is not held — nothing was written');
+        }
+        $new = time() . ':' . bin2hex(random_bytes(8));
+        $ok = (int) $wpdb->query($wpdb->prepare("UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s AND option_value = %s", $new, self::OPTION_LOCK, self::$lock_token)) === 1;
+        self::forget_lock_cache();
+        if (!$ok) {
+            self::$lock_token = null;
+            throw new RuntimeException('another sync took over the lock (this run stalled for more than ' . (self::LOCK_TTL / 60) . ' minutes) — this run stopped without writing');
+        }
+        self::$lock_token = $new;
     }
 
     /** Releases the lock only if this run still owns it (a run that outlived LOCK_TTL must not free a newer run's lock). */
@@ -195,7 +224,11 @@ final class Ranatec_Agent_Sync
         $out = [];
         $added = 0;
         $posts = get_posts(['post_type' => 'post', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'date', 'order' => 'DESC', 'has_password' => false, 'suppress_filters' => false]);   // password-protected posts are private content
+        $i = 0;
         foreach ($posts as $post) {
+            if (++$i % 25 === 0) {
+                self::renew_lock();
+            }
             $slug = $post->post_name;
             if (isset($out[$slug])) {
                 continue; // locale copies share the slug
@@ -233,10 +266,10 @@ final class Ranatec_Agent_Sync
             return strcmp((string) $b['date_published'], (string) $a['date_published']);
         });
         $removed = count(array_diff(array_keys($existing), array_keys($out)));
-        self::track_unpublished($existing, $out);
         $types = array_values(array_unique(array_column($items, 'type')));
         sort($types);
         self::write('news', ['meta' => self::meta('news', count($items), ['filters' => ['type', 'year', 'product', 'q'], 'types' => $types]), 'news' => $items]);
+        self::track_unpublished($existing, $out);
         return ['total' => count($items), 'added' => $added, 'removed' => $removed];
     }
 
@@ -253,7 +286,13 @@ final class Ranatec_Agent_Sync
         $out = [];
         $added = 0;
         $protected = 0;
-        foreach (wc_get_products(['status' => 'publish', 'limit' => -1]) as $wc) {
+        $wc_products = wc_get_products(['status' => 'publish', 'limit' => -1]);
+        self::renew_lock();
+        $i = 0;
+        foreach ($wc_products as $wc) {
+            if (++$i % 25 === 0) {
+                self::renew_lock();
+            }
             if ($wc->get_post_password() !== '') {
                 $protected++;
                 continue;   // password-protected product: not public
@@ -310,8 +349,8 @@ final class Ranatec_Agent_Sync
         }
         $items = array_values($out);
         $removed = count(array_diff(array_keys($existing), array_keys($out)));
-        self::track_unpublished($existing, $out);
         self::write('products', ['meta' => self::meta('products', count($items), ['filters' => ['category', 'domain', 'listing', 'q', 'model']]), 'products' => $items]);
+        self::track_unpublished($existing, $out);
 
         // keep category membership consistent
         $cats = Ranatec_Agent_API::load('categories');
@@ -375,7 +414,17 @@ final class Ranatec_Agent_Sync
         }
         $target = RANATEC_API_DATA . $name . '.json';
         $tmp = $target . '.' . getmypid() . '-' . bin2hex(random_bytes(4)) . '.tmp';   // unique per run: never shared
-        if (file_put_contents($tmp, $json . "\n") === false || !rename($tmp, $target)) {
+        if (file_put_contents($tmp, $json . "\n") === false) {
+            @unlink($tmp);
+            throw new RuntimeException("Could not write {$target} — check that the data/ directory is writable by PHP.");
+        }
+        try {
+            self::renew_lock();   // still ours? (and restarts the clock) — never replace a file after losing the lock
+        } catch (RuntimeException $e) {
+            @unlink($tmp);
+            throw $e;
+        }
+        if (!rename($tmp, $target)) {
             @unlink($tmp);
             throw new RuntimeException("Could not write {$target} — check that the data/ directory is writable by PHP.");
         }

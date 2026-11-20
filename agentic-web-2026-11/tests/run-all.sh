@@ -8,7 +8,7 @@ PHP_PORT=${PHP_PORT:-8095}; MCP_PORT=${MCP_PORT:-3095}
 TMP=$(mktemp -d); pass=0; fail=0
 ok()  { echo "PASS $*"; pass=$((pass+1)); }
 bad() { echo "FAIL $*"; fail=$((fail+1)); }
-cleanup() { [[ -n "${PHP_PID:-}" ]] && kill "$PHP_PID" 2>/dev/null || true; [[ -n "${MCP_PID:-}" ]] && kill "$MCP_PID" 2>/dev/null || true; [[ -n "${GUARD_PID:-}" ]] && kill "$GUARD_PID" 2>/dev/null || true; rm -rf "$TMP"; rm -f "$(php -r 'echo sys_get_temp_dir();')"/rl-ranatec_api_rl_* "$(php -r 'echo sys_get_temp_dir();')"/ranatec-mail.txt; }
+cleanup() { [[ -n "${PHP_PID:-}" ]] && kill "$PHP_PID" 2>/dev/null || true; [[ -n "${MCP_PID:-}" ]] && kill "$MCP_PID" 2>/dev/null || true; [[ -n "${GUARD_PID:-}" ]] && kill "$GUARD_PID" 2>/dev/null || true; [[ -n "${PL_PID:-}" ]] && kill "$PL_PID" 2>/dev/null || true; rm -rf "$TMP"; rm -f "$(php -r 'echo sys_get_temp_dir();')"/rl-ranatec_api_rl_* "$(php -r 'echo sys_get_temp_dir();')"/ranatec-mail.txt; }
 trap cleanup EXIT
 # Match a pattern against ALL of stdin. A plain "cmd | grep -q" lets grep exit at the first match; under pipefail the
 # writer then dies of SIGPIPE and the check fails at random.
@@ -119,8 +119,55 @@ page=$(WP_OPTION_ranatec_api_ard_enabled=0 php tests/wp-stub-harness.php agent-p
 # Daily sync against WooCommerce's real WC_DateTime (UTC dates, protected content excluded, lock released, no temp files)
 ST=$(mktemp -d); cp -r ranatec-api "$ST/"; sync_out=$(php tests/sync-test.php "$ST/ranatec-api" </dev/null 2>&1)
 while IFS= read -r line; do case $line in PASS\ *) ok "sync: ${line#PASS }";; FAIL\ *) bad "sync: ${line#FAIL }";; *) bad "sync test output: $line";; esac; done <<<"$sync_out"
-[[ $(grep -c '^PASS' <<<"$sync_out") -eq 26 ]] || bad "sync test: expected 26 checks"
+[[ $(grep -c '^PASS' <<<"$sync_out") -eq 34 ]] || bad "sync test: expected 34 checks"
 rm -rf "$ST"
+# --- content withdrawal: rebuilding the package uses the site's live data, never stale package data
+# A stand-in site publishes the package data minus one product (withdrawn: referenced by a solution and news) and one post.
+PL=$(mktemp -d); mkdir -p "$PL/pkg/tools" "$PL/pkg/ranatec-api" "$PL/site/agent/v1"; cp tools/pull_live_data.py "$PL/pkg/tools/"; cp -r ranatec-api/data "$PL/pkg/ranatec-api/"
+python3 - "$PL" <<'PY'
+import json, sys
+pl = sys.argv[1]; d = lambda n: json.load(open(f'{pl}/pkg/ranatec-api/data/{n}.json', encoding='utf-8'))
+gone_p, gone_n = 'customized-rf-shield-box', 'new-management-at-ranatec'
+p = d('products'); p['products'] = [x for x in p['products'] if x['id'] != gone_p]; p['meta']['count'] = len(p['products'])
+n = d('news'); n['news'] = [x for x in n['news'] if x['id'] != gone_n]; n['meta']['count'] = len(n['news'])
+n['news'][0]['related_product_ids'] = n['news'][0]['related_product_ids'] + [gone_p]   # still referenced in news
+c = d('categories')
+for x in c['categories']:
+    x['product_ids'] = [i for i in x['product_ids'] if i != gone_p]; x['additional_listing_ids'] = [i for i in x.get('additional_listing_ids', []) if i != gone_p]
+for name, obj in [('products', p), ('news', n), ('categories', c)]:
+    json.dump(obj, open(f'{pl}/site/agent/v1/{name}.json', 'w'))
+assert gone_p in json.dumps(d('solutions')), 'test needs a solution that references the withdrawn product'
+PY
+PL_PORT=$((MCP_PORT + 2)); ( cd "$PL/site" && exec python3 -m http.server "$PL_PORT" --bind 127.0.0.1 >/dev/null 2>&1 ) & PL_PID=$!
+for i in $(seq 1 40); do curl -s -o /dev/null "http://127.0.0.1:$PL_PORT/agent/v1/news.json" && break; sleep 0.1; done
+PLB="http://127.0.0.1:$PL_PORT/agent/v1"
+rc=0; out=$(python3 "$PL/pkg/tools/pull_live_data.py" --base "$PLB" --check 2>&1) || rc=$?
+[[ $rc -eq 1 ]] && has 'no longer public: customized-rf-shield-box' <<<"$out" && has 'no longer public: new-management-at-ranatec' <<<"$out" && ok "pull_live_data --check: fails and names withdrawn items (release blocked)" || bad "pull_live_data --check (rc=$rc) $out"
+rc=0; out=$(python3 "$PL/pkg/tools/pull_live_data.py" --base "$PLB" 2>&1) || rc=$?
+python3 - "$PL" <<'PY' && [[ $rc -eq 0 ]] && ok "pull_live_data: package data = live data, withdrawn product no longer referenced anywhere" || bad "pull_live_data (rc=$rc) $out"
+import json, sys
+pl = sys.argv[1]; txt = ''.join(open(f'{pl}/pkg/ranatec-api/data/{n}.json', encoding='utf-8').read() for n in ['products', 'news', 'categories', 'solutions'])
+assert 'customized-rf-shield-box' not in txt and '"new-management-at-ranatec"' not in txt
+PY
+rc=0; out=$(python3 "$PL/pkg/tools/pull_live_data.py" --base "$PLB" --check 2>&1) || rc=$?; [[ $rc -eq 0 ]] && ok "pull_live_data --check passes after the pull" || bad "pull_live_data --check after pull: $out"
+before=$(md5sum "$PL/pkg/ranatec-api/data/products.json")
+rc=0; out=$(python3 "$PL/pkg/tools/pull_live_data.py" --base "http://127.0.0.1:$PL_PORT/nothing-here" 2>&1) || rc=$?
+[[ $rc -eq 2 && $(md5sum "$PL/pkg/ranatec-api/data/products.json") == "$before" ]] && ok "pull_live_data: unreachable/invalid site → error, nothing written" || bad "pull_live_data failure handling (rc=$rc)"
+kill $PL_PID 2>/dev/null || true; wait $PL_PID 2>/dev/null || true; rm -rf "$PL"
+# Rebuild with an empty catalogue while a solution and news still reference products: no crash, nothing withdrawn named
+EB=$(mktemp -d); tar --exclude=./ranatec-mcp/node_modules --exclude=./release -cf - . | tar -xf - -C "$EB"
+python3 - "$EB" <<'PY'
+import json, sys
+d = sys.argv[1] + '/ranatec-api/data/'
+p = json.load(open(d + 'products.json')); p['products'] = []; p['meta']['count'] = 0; json.dump(p, open(d + 'products.json', 'w'))
+c = json.load(open(d + 'categories.json'))
+for x in c['categories']: x['product_ids'] = []; x['additional_listing_ids'] = []; x['product_count'] = 0
+json.dump(c, open(d + 'categories.json', 'w'))
+PY
+rc=0; out=$( cd "$EB" && python3 tools/build_static.py 2>&1 ) || rc=$?
+[[ $rc -eq 0 ]] && has 'WARNING: left out a reference' <<<"$out" && ! grep -q 'customized-rf-shield-box' "$EB/ranatec-api/public/llms.txt" "$EB/ranatec-api/public/llms-full.txt" "$EB/ranatec-api/public/agent-page.html" && ok "build_static: empty catalogue + dangling references → builds, warns, names no withdrawn product" || bad "build_static with empty catalogue (rc=$rc): $(tail -3 <<<"$out")"
+rm -rf "$EB"
+
 grep -qF -e "->date('c')" ranatec-api/includes/class-sync.php && bad "class-sync.php formats WooCommerce dates with ->date('c') (local time labelled UTC)" || ok "class-sync.php has no WC_DateTime::date('c')"
 
 # --- manually uploaded copies in the web root: detected, and flagged when older than the plugin

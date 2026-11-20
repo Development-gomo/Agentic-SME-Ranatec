@@ -90,6 +90,27 @@ pages = load('pages')['pages']
 faq = load('faq')['faq']
 UPDATED = load('company')['meta']['last_updated']
 P = {p['id']: p for p in products}
+# Drop references to products that are not in the catalogue (withdrawn on the site, e.g. password-protected), so a
+# rebuild never fails on them and never names them. tools/pull_live_data.py prunes the data files the same way.
+_dangling = []
+def _known(ids, where):
+    keep = [i for i in ids if i in P]
+    _dangling.extend(f'{where}: {i}' for i in ids if i not in P)
+    return keep
+for c in categories:
+    c['product_ids'] = _known(c.get('product_ids', []), f'category {c["id"]}')
+    c['additional_listing_ids'] = _known(c.get('additional_listing_ids', []), f'category {c["id"]}')
+for s_ in solutions:
+    s_['product_ids'] = _known(s_.get('product_ids', []), f'solution {s_["id"]}')
+for n_ in news:
+    n_['related_product_ids'] = _known(n_.get('related_product_ids', []), f'news {n_["id"]}')
+for p_ in products:
+    p_['same_model_listings'] = _known(p_.get('same_model_listings') or [], f'product {p_["id"]}')
+    if p_.get('primary_listing') and p_['primary_listing'] not in P:
+        _dangling.append(f'product {p_["id"]}: primary_listing {p_["primary_listing"]}')
+        p_['primary_listing'] = None
+for d_ in _dangling:
+    print(f'WARNING: left out a reference to a product not in the catalogue — {d_}', file=sys.stderr)
 CAT = {c['id']: c for c in categories}
 catalogue = [p for p in products if p['listing'] == 'catalogue']
 os.makedirs(PUB, exist_ok=True)

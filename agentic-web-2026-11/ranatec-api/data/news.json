@@ -2,7 +2,7 @@
   "meta": {
     "source": "https://ranatec.com/agent/v1/news.json",
     "endpoint": "news",
-    "version": "1.3.5",
+    "version": "1.3.6",
     "last_updated": "2026-11-20",
     "publisher": "Ranatec AB",
     "canonical_site": "https://ranatec.com/",
@@ -1901,7 +1901,7 @@
       "seo_title": "RI 4410 Digital Step Attenuator",
       "type": "product-launch",
       "date_published": "2019-05-07",
-      "date_modified": null,
+      "date_modified": "2026-03-20",
       "summary": "The Ranatec RI 4410 Digital Step Attenuator covers all mobile frequency bands and gives a calibrated attenuation range of more than 90 dB in steps of 0.25dB",
       "body": [
         "Ranatec now offers a Digital Step Attenuator as a module, as well as in an Attenuator system.",
@@ -1932,7 +1932,7 @@
       "seo_title": "Shielded USB 3.0 Superspeed Feedthru Filter",
       "type": "product-launch",
       "date_published": "2019-03-29",
-      "date_modified": null,
+      "date_modified": "2020-02-28",
       "summary": "The Ranatec RI 4192 USB 3.0 Superspeed Feedthru Filter has minimum 50 dB filter suppression at 0.7-6 GHz, filtered 2 A power feedthru, switchable on/off via USB.",
       "body": [
         "Ranatec expands its EMC product portfolio with a feedthru filter for USB 3.0 Superspeed.",

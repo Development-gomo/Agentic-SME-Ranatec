@@ -1,6 +1,6 @@
 # Ranatec — Agentic Web package
 
-An AI-agent-ready layer for **[ranatec.com](https://ranatec.com/)** (WordPress + WooCommerce, Avada theme, Yoast SEO), built by GO MO Group from a full crawl on **2026-10-06**, refreshed from a new crawl on **2026-11-20** (package 1.3.5, folder `agentic-web-2026-11`; see `CHANGELOG.md`). It lets LLMs, AI search engines and tool-calling agents read Ranatec's complete product catalogue, company facts and news, and send consent-gated quote requests.
+An AI-agent-ready layer for **[ranatec.com](https://ranatec.com/)** (WordPress + WooCommerce, Avada theme, Yoast SEO), built by GO MO Group from a full crawl on **2026-10-06**, refreshed from a new crawl on **2026-11-20** (package 1.3.6, folder `agentic-web-2026-11`; see `CHANGELOG.md`). It lets LLMs, AI search engines and tool-calling agents read Ranatec's complete product catalogue, company facts and news, and send consent-gated quote requests.
 
 **Coverage:** all three regional English versions of the site: **en-US** (default, `/`), **en-GB** (`/en-gb/`) and **en-CA** (`/en-ca/`). The crawl showed their content is identical, so each entity is modelled once and carries all three URLs.
 
@@ -57,8 +57,8 @@ An AI-agent-ready layer for **[ranatec.com](https://ranatec.com/)** (WordPress +
 
 | What changed on ranatec.com | Do this |
 |---|---|
-| New/edited news post or product | Nothing. The daily sync (or *Sync now*) updates the API. Then run `python3 tools/build_static.py` and redeploy `public/` so the agent page and llms files match. |
-| New product specs/categories, larger changes | Full refresh: `FIRECRAWL_API_KEY=… tools/crawl.sh && python3 tools/extract.py && python3 tools/build_data.py && python3 tools/build_static.py` |
+| New/edited/withdrawn news post or product | Nothing for the API: the daily sync (or *Sync now*) updates it. To bring the agent page and llms files in line, rebuild from the site's live data: `python3 tools/pull_live_data.py && bash tools/release.sh`, then upload the new plugin. Never rebuild from older package data: `release.sh` refuses to build when the data contains items the site has withdrawn. |
+| New product specs/categories, larger changes | Full refresh: `FIRECRAWL_API_KEY=… tools/crawl.sh && python3 tools/extract.py && python3 tools/build_data.py && bash tools/release.sh` (`release.sh` checks the result against the live site first) |
 
 ## Versioning and releases
 
@@ -71,7 +71,7 @@ To cut a new release: edit `VERSION`, run `bash tools/release.sh`, commit.
 One command runs everything (PHP lint, JSON, the contact and quote endpoints with and without `mbstring`, the ARD manifest and its routes, HTTP endpoints and the MCP end-to-end test). It runs `npm ci` itself if `node_modules` is missing. Strict ARD schema validation needs the Python `jsonschema` package:
 
 ```bash
-bash tests/run-all.sh      # 136 checks
+bash tests/run-all.sh      # 149 checks
 python3 -m unittest tests/test_ard.py              # ARD only (17 tests)
 python3 tools/ard.py validate https://ranatec.com/.well-known/ard.json --check-urls   # live check after deployment
 ```

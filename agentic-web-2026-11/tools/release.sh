@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Build a release from the repo VERSION file:
+#   0. check the package data holds nothing the live site has withdrawn (tools/pull_live_data.py --check)
 #   1. stamp VERSION into the plugin header/constant, MCP package.json/package-lock.json and data meta.version
 #   2. regenerate static artifacts (agent page, llms, OpenAPI, catalogs, web-root copies)
 #   3. check every version matches, run the full test suite
@@ -16,6 +17,15 @@ echo "== Release $V"
 CRAWL_DATE=$(python3 -c "import json;print(json.load(open('ranatec-api/data/company.json'))['meta']['last_updated'])")
 # One line per release, from the crawl report (see CHANGELOG.md for the method).
 COVERAGE=$(cat tools/crawl-coverage.txt 2>/dev/null || echo "see CHANGELOG.md")
+
+# 0. never ship content the site has withdrawn since the package data was made (password-protected, unpublished,
+#    deleted): the plugin zip carries data/ and the static files are built from it. Fix with tools/pull_live_data.py.
+if [[ ${SKIP_LIVE_CHECK:-} == 1 ]]; then
+  echo "WARNING: SKIP_LIVE_CHECK=1 — not compared with the live site; the release may contain withdrawn content"
+else
+  python3 tools/pull_live_data.py --check >/tmp/ranatec-live-check.log 2>&1 || { cat /tmp/ranatec-live-check.log; echo "Release aborted: run 'python3 tools/pull_live_data.py' first (or SKIP_LIVE_CHECK=1 for an offline build you have checked yourself)"; exit 1; }
+  echo "live check: $(tail -1 /tmp/ranatec-live-check.log)"
+fi
 
 # 1. stamp
 sed -i -E "s/^( \* Version:[[:space:]]+).*/\1$V/" ranatec-api/ranatec-api.php

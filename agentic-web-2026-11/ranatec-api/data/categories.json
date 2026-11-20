@@ -2,7 +2,7 @@
   "meta": {
     "source": "https://ranatec.com/agent/v1/categories.json",
     "endpoint": "categories",
-    "version": "1.3.5",
+    "version": "1.3.6",
     "last_updated": "2026-11-20",
     "publisher": "Ranatec AB",
     "canonical_site": "https://ranatec.com/",
@@ -36,13 +36,13 @@
         "A notch filter is a filter used to remove a specific frequency. A tunable notch filter has the feature that the center frequency of the notch can be set at different values, either mechanically or electronically."
       ],
       "product_ids": [
-        "tunable-band-reject-filter-ri-260",
-        "tunable-band-reject-filter-ri-261",
-        "tunable-band-reject-filter-ri-262",
-        "tunable-band-reject-filter-ri-263",
-        "tunable-band-reject-filter-ri-264",
+        "tunable-band-reject-filter-ri-268",
         "tunable-band-reject-filter-ri-266",
-        "tunable-band-reject-filter-ri-268"
+        "tunable-band-reject-filter-ri-264",
+        "tunable-band-reject-filter-ri-263",
+        "tunable-band-reject-filter-ri-262",
+        "tunable-band-reject-filter-ri-261",
+        "tunable-band-reject-filter-ri-260"
       ],
       "product_count": 7,
       "url": "https://ranatec.com/product-category/tunable-band-reject-filter/",
@@ -72,8 +72,8 @@
         "The RI 282 is a high-performance electronically tunable bandpass filter. It is fully equipped to conform to all existing sub-6 mobile bands. This is achieved by ingenious microwave design, digital signal processing and use of state-of-the-art components."
       ],
       "product_ids": [
-        "tunable-band-pass-filter-ri-281",
-        "tunable-band-pass-filter-ri-282"
+        "tunable-band-pass-filter-ri-282",
+        "tunable-band-pass-filter-ri-281"
       ],
       "product_count": 2,
       "url": "https://ranatec.com/product-category/tunable-band-pass-filter/",
@@ -142,11 +142,11 @@
         "A digital attenuator is a device that attenuates or reduces the amplitude of an RF signal passing through it – where the amount of attenuation is digitally controlled. The main purpose of a digital attenuator is to set RF signal levels for testing and verification of RF and microwave subsystems, products, and solutions."
       ],
       "product_ids": [
-        "digital-attenuator-box-rf2025",
-        "digital-attenuator-box-rf2026",
-        "digital-attenuator-box-rf2034",
+        "digital-attenuator-box-rf2036",
         "digital-attenuator-box-rf2035",
-        "digital-attenuator-box-rf2036"
+        "digital-attenuator-box-rf2034",
+        "digital-attenuator-box-rf2025",
+        "digital-attenuator-box-rf2026"
       ],
       "product_count": 5,
       "url": "https://ranatec.com/product-category/digital-step-attenuator/",
@@ -213,11 +213,11 @@
       ],
       "product_ids": [
         "customized-rf-switch-systems",
-        "solid-state-switch-box-rf2018b",
-        "switch-box-rf2020b",
-        "switch-box-rf2022b",
+        "switch-box-rf2038",
         "switch-box-rf2037",
-        "switch-box-rf2038"
+        "switch-box-rf2022b",
+        "switch-box-rf2020b",
+        "solid-state-switch-box-rf2018b"
       ],
       "product_count": 6,
       "url": "https://ranatec.com/product-category/switch-box/",
@@ -252,9 +252,9 @@
         "When you’re buying RF switches, there are several considerations regarding specifications and interfaces you need to keep in mind to select the one that matches your needs and situation:"
       ],
       "product_ids": [
-        "solid-state-switch-ri-2441",
+        "solid-state-switch-ri-2583",
         "solid-state-switch-ri-2582",
-        "solid-state-switch-ri-2583"
+        "solid-state-switch-ri-2441"
       ],
       "product_count": 3,
       "url": "https://ranatec.com/product-category/rf-coaxial-switch/",
@@ -289,10 +289,10 @@
       ],
       "product_ids": [
         "customized-rf-shield-box",
-        "shield-box-ri-181",
-        "shield-box-ri-187",
+        "shield-box-ri-189",
         "shield-box-ri-188",
-        "shield-box-ri-189"
+        "shield-box-ri-187",
+        "shield-box-ri-181"
       ],
       "product_count": 5,
       "url": "https://ranatec.com/product-category/rf-shield-box/",
@@ -354,19 +354,19 @@
         "Enables high-speed Ethernet signal transmission through shielded enclosures, providing 80 dB suppression at key frequencies."
       ],
       "product_ids": [
-        "feedthrough-filter-ri-4170",
-        "feedthrough-filter-ri-4171",
-        "feedthrough-filter-ri-4182",
-        "feedthrough-filter-ri-4184",
-        "feedthrough-filter-ri-4185",
-        "feedthrough-filter-ri-4188",
-        "feedthrough-filter-ri-4192",
-        "feedthrough-filter-ri-4193",
-        "feedthrough-filter-ri-4194",
-        "feedthrough-filter-ri-4199",
-        "feedthrough-filter-ri-4201",
-        "feedthrough-filter-ri-4205",
         "feedthrough-filter-ri-4206",
+        "feedthrough-filter-ri-4205",
+        "feedthrough-filter-ri-4201",
+        "feedthrough-filter-ri-4199",
+        "feedthrough-filter-ri-4194",
+        "feedthrough-filter-ri-4193",
+        "feedthrough-filter-ri-4192",
+        "feedthrough-filter-ri-4188",
+        "feedthrough-filter-ri-4185",
+        "feedthrough-filter-ri-4184",
+        "feedthrough-filter-ri-4182",
+        "feedthrough-filter-ri-4171",
+        "feedthrough-filter-ri-4170",
         "optical-fiber-feedthru-ri-4196"
       ],
       "product_count": 14,
@@ -379,18 +379,18 @@
       "legacy_urls_redirecting_here": [],
       "api_url": "https://ranatec.com/agent/v1/products.json?category=shielded-feedthrough-filters",
       "additional_listing_ids": [
-        "110-230-vac-feedthru-filter-ri-4195",
-        "dual-usb-2-0-feedthru-filter-ri-4184",
         "feedthrough-filter-ri-4197",
         "filtered-terminal-block-ri-4198",
-        "hdmi-feedthru-filter-ri-4193",
-        "lan-1-gbps-feedthru-filter-ri-4182",
-        "lan-10-gbps-feedthru-filter-ri-4194",
         "optical-fiber-feedthrough-ri-4196",
-        "ri-4170",
         "ri-4205-110-230-vac-feedthru-filter",
+        "ri-4170",
+        "110-230-vac-feedthru-filter-ri-4195",
+        "usb-3-2-c-20-gbps-feedthru-filter-ri-4199",
+        "lan-10-gbps-feedthru-filter-ri-4194",
+        "hdmi-feedthru-filter-ri-4193",
         "usb-3-0-feedthru-filter-ri-4192",
-        "usb-3-2-c-20-gbps-feedthru-filter-ri-4199"
+        "dual-usb-2-0-feedthru-filter-ri-4184",
+        "lan-1-gbps-feedthru-filter-ri-4182"
       ]
     },
     {
@@ -439,19 +439,19 @@
         "frequency-extension-box-ri-4274",
         "frequency-extension-box-ri-4276",
         "frequency-extension-box-ri-4278",
-        "mounting-brackets-ri-3041-07",
-        "mounting-brackets-ri-3101-16",
-        "option-rf-absorption-foam-inside-box",
-        "rf-absorption-foam-inside-box",
         "ri-181-11-internal-shielding-wall",
+        "ri188-15-rf-absorption-foam-inside-box-6u",
+        "rf-absorption-foam-inside-box",
         "ri-4197",
         "ri-4198",
-        "ri181-13-dc-feedthru-emi-filter",
-        "ri181-14-smaf-smaf-bulkhead-connector",
         "ri181-15-rf-absorption-foam-inside-box-2u",
         "ri187-15-rf-absorption-foam-inside-box-4u",
-        "ri188-15-rf-absorption-foam-inside-box-6u",
-        "smaf-bulkhead-connector-ri-181-14"
+        "smaf-bulkhead-connector-ri-181-14",
+        "option-rf-absorption-foam-inside-box",
+        "mounting-brackets-ri-3041-07",
+        "mounting-brackets-ri-3101-16",
+        "ri181-13-dc-feedthru-emi-filter",
+        "ri181-14-smaf-smaf-bulkhead-connector"
       ],
       "product_count": 20,
       "url": "https://ranatec.com/shop/",
@@ -461,7 +461,8 @@
         "en-CA": "https://ranatec.com/en-ca/shop/"
       },
       "legacy_urls_redirecting_here": [],
-      "api_url": "https://ranatec.com/agent/v1/products.json?category=accessories"
+      "api_url": "https://ranatec.com/agent/v1/products.json?category=accessories",
+      "additional_listing_ids": []
     }
   ]
 }

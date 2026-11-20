@@ -45,60 +45,60 @@ curl -X POST https://agentic-mcp-sme-ranatec.onrender.com/mcp -H 'Content-Type: 
 
 ## Products (49 catalogue items — price on request)
 ### Tunable Band Reject Filters
-- [Tunable Band Reject Filter RI 260](https://ranatec.com/product/tunable-band-reject-filter-ri-260/): 0.7-2.7 GHz, 20 MHz reject bandwidth, rack mount
-- [Tunable Band Reject Filter RI 261](https://ranatec.com/product/tunable-band-reject-filter-ri-261/): 0.7-3.8 GHz, 20 MHz reject bandwidth, rack mount
-- [Tunable Band Reject Filter RI 262](https://ranatec.com/product/tunable-band-reject-filter-ri-262/): 0.6-4.2 GHz, 100 MHz reject bandwidth, rack mount
-- [Tunable Band Reject Filter RI 263](https://ranatec.com/product/tunable-band-reject-filter-ri-263/): 0.7-6 GHz, 100 MHz reject bandwidth, rack mount
-- [Tunable Band Reject Filter RI 264](https://ranatec.com/product/tunable-band-reject-filter-ri-264/): 0.6-2.7 GHz, 5 MHz reject bandwidth, rack mount
-- [Tunable Band Reject Filter RI 266](https://ranatec.com/product/tunable-band-reject-filter-ri-266/): 0.6-6 GHz, 5 MHz (0.6-2.7 GHz) & 100 MHz (0.7-6 GHz) reject bandwidth, rack mount
 - [Tunable Band Reject Filter RI 268](https://ranatec.com/product/tunable-band-reject-filter-ri-268/): 0.6-8 GHz, combined 5 & 160 MHz reject bandwidth, rack mount
+- [Tunable Band Reject Filter RI 266](https://ranatec.com/product/tunable-band-reject-filter-ri-266/): 0.6-6 GHz, 5 MHz (0.6-2.7 GHz) & 100 MHz (0.7-6 GHz) reject bandwidth, rack mount
+- [Tunable Band Reject Filter RI 264](https://ranatec.com/product/tunable-band-reject-filter-ri-264/): 0.6-2.7 GHz, 5 MHz reject bandwidth, rack mount
+- [Tunable Band Reject Filter RI 263](https://ranatec.com/product/tunable-band-reject-filter-ri-263/): 0.7-6 GHz, 100 MHz reject bandwidth, rack mount
+- [Tunable Band Reject Filter RI 262](https://ranatec.com/product/tunable-band-reject-filter-ri-262/): 0.6-4.2 GHz, 100 MHz reject bandwidth, rack mount
+- [Tunable Band Reject Filter RI 261](https://ranatec.com/product/tunable-band-reject-filter-ri-261/): 0.7-3.8 GHz, 20 MHz reject bandwidth, rack mount
+- [Tunable Band Reject Filter RI 260](https://ranatec.com/product/tunable-band-reject-filter-ri-260/): 0.7-2.7 GHz, 20 MHz reject bandwidth, rack mount
 ### Tunable Band Pass Filters
-- [Tunable Band Pass Filter RI 281](https://ranatec.com/product/tunable-band-pass-filter-ri-281/): 0.6-10 GHz, 100 MHz filter bandwidth, rack mount
 - [Tunable Band Pass Filter RI 282](https://ranatec.com/product/tunable-band-pass-filter-ri-282/): 0.6-6 GHz, combined 20 & 100 MHz filter bandwidth, rack mount
+- [Tunable Band Pass Filter RI 281](https://ranatec.com/product/tunable-band-pass-filter-ri-281/): 0.6-10 GHz, 100 MHz filter bandwidth, rack mount
 ### Butler Matrices
 - [Butler Matrix RI 3041](https://ranatec.com/product/butler-matrix-ri-3041/): 2.4-8 GHz, 4×4 ports
 - [Butler Matrix RI 3101](https://ranatec.com/product/butler-matrix-ri-3101/): 2.4-8 GHz, 8×8 ports
 ### Digital Attenuator Boxes
+- [Digital Attenuator Box RF2036](https://ranatec.com/product/digital-attenuator-box-rf2036/): 8-channel, 0.1-8 GHz, 0-96 dB, rack mount
+- [Digital Attenuator Box RF2035](https://ranatec.com/product/digital-attenuator-box-rf2035/): 12-channel, 0.1-8 GHz, 0-96 dB, rack mount
+- [Digital Attenuator Box RF2034](https://ranatec.com/product/digital-attenuator-box-rf2034/): 16-channel, 0.1-8 GHz, 0-96 dB, rack mount
 - [Digital Attenuator Box RF2025](https://ranatec.com/product/digital-attenuator-box-rf2025/): 4-channel, 0.1-8 GHz, 0-96 dB, rack mount
 - [Digital Attenuator Box RF2026](https://ranatec.com/product/digital-attenuator-box-rf2026/): 4-channel, 0.1-8 GHz, 20-110 dB, rack mount
-- [Digital Attenuator Box RF2034](https://ranatec.com/product/digital-attenuator-box-rf2034/): 16-channel, 0.1-8 GHz, 0-96 dB, rack mount
-- [Digital Attenuator Box RF2035](https://ranatec.com/product/digital-attenuator-box-rf2035/): 12-channel, 0.1-8 GHz, 0-96 dB, rack mount
-- [Digital Attenuator Box RF2036](https://ranatec.com/product/digital-attenuator-box-rf2036/): 8-channel, 0.1-8 GHz, 0-96 dB, rack mount
 ### Digital Step Attenuator Modules
 - [Digital Attenuator RI 4410](https://ranatec.com/product/digital-attenuator-ri-4410/): 0.05-6 GHz, 0-95.25 dB, SMA(f) RF connectors
 ### Switch Boxes and RF Test Automation Systems
 - [Customized RF Switch System](https://ranatec.com/product/customized-rf-switch-systems/): Customised to your requirements (contact Ranatec for a quote)
-- [Solid State Switch Box RF2018B](https://ranatec.com/product/solid-state-switch-box-rf2018b/): 12xSP4T, DC-6 GHz, solid state, terminated, rack mount
-- [Switch Box RF2020B](https://ranatec.com/product/switch-box-rf2020b/): 2xSPDT, DC-18 GHz, 3xSP4T, DC-6 GHz, rack mount
-- [Switch Box RF2022B](https://ranatec.com/product/switch-box-rf2022b/): 12xSP6T, DC-18 GHz, Low PIM (Passive Intermodulation), rack mount
-- [Switch Box RF2037](https://ranatec.com/product/switch-box-rf2037/): 4xSP6T, 2xSPDT, DC-26.5 GHz, rack mount
 - [Switch Box RF2038](https://ranatec.com/product/switch-box-rf2038/): 6xSPDT, DC-6 GHz, rack mount
+- [Switch Box RF2037](https://ranatec.com/product/switch-box-rf2037/): 4xSP6T, 2xSPDT, DC-26.5 GHz, rack mount
+- [Switch Box RF2022B](https://ranatec.com/product/switch-box-rf2022b/): 12xSP6T, DC-18 GHz, Low PIM (Passive Intermodulation), rack mount
+- [Switch Box RF2020B](https://ranatec.com/product/switch-box-rf2020b/): 2xSPDT, DC-18 GHz, 3xSP4T, DC-6 GHz, rack mount
+- [Solid State Switch Box RF2018B](https://ranatec.com/product/solid-state-switch-box-rf2018b/): 12xSP4T, DC-6 GHz, solid state, terminated, rack mount
 ### Switch Modules
-- [Solid State Switch RI 2441](https://ranatec.com/product/solid-state-switch-ri-2441/): SP4T (Single Pole, 4 Throws), terminated, 0.1-6 GHz
-- [Solid State Switch RI 2582](https://ranatec.com/product/solid-state-switch-ri-2582/): DP8T (Dual Pole, 8 Throws), terminated, 0.1-6 GHz, high isolation between ports
 - [Solid State Switch RI 2583](https://ranatec.com/product/solid-state-switch-ri-2583/): SP8T (Single Pole, 8 Throws), terminated, 0.1-6 GHz
+- [Solid State Switch RI 2582](https://ranatec.com/product/solid-state-switch-ri-2582/): DP8T (Dual Pole, 8 Throws), terminated, 0.1-6 GHz, high isolation between ports
+- [Solid State Switch RI 2441](https://ranatec.com/product/solid-state-switch-ri-2441/): SP4T (Single Pole, 4 Throws), terminated, 0.1-6 GHz
 ### Shield Boxes
 - [Customized RF Shield Box](https://ranatec.com/product/customized-rf-shield-box/): Customised to your requirements (contact Ranatec for a quote)
-- [Shield Box RI 181](https://ranatec.com/product/shield-box-ri-181/): 2U, 60 dB at 3 GHz, rack mount
-- [Shield Box RI 187](https://ranatec.com/product/shield-box-ri-187/): 4U, 60 dB at 3 GHz, rack mount
-- [Shield Box RI 188](https://ranatec.com/product/shield-box-ri-188/): 6U, 60 dB at 3 GHz, ventilation with fan, rack mount
 - [Shield Box RI 189](https://ranatec.com/product/shield-box-ri-189/): 1.2×0.7×0.6 m
+- [Shield Box RI 188](https://ranatec.com/product/shield-box-ri-188/): 6U, 60 dB at 3 GHz, ventilation with fan, rack mount
+- [Shield Box RI 187](https://ranatec.com/product/shield-box-ri-187/): 4U, 60 dB at 3 GHz, rack mount
+- [Shield Box RI 181](https://ranatec.com/product/shield-box-ri-181/): 2U, 60 dB at 3 GHz, rack mount
 ### Forensic RF Shield Box
 - [Forensic RF Box RI 198](https://ranatec.com/product/forensic-rf-box-ri-198/): Window, gloves, lighting, tabletop
 ### Shielded Feedthrough Filters
-- [Feedthrough Filter RI 4170](https://ranatec.com/product/feedthrough-filter-ri-4170/): USB 2.0, A-A connectors, fabric mount
-- [Feedthrough Filter RI 4171](https://ranatec.com/product/feedthrough-filter-ri-4171/): USB 3.0, A-A connectors, fabric mount
-- [Feedthrough Filter RI 4182](https://ranatec.com/product/feedthrough-filter-ri-4182/): LAN 1 Gbps, RJ45 connectors, panel mount
-- [Feedthrough Filter RI 4184](https://ranatec.com/product/feedthrough-filter-ri-4184/): USB 2.0, A-A connectors, dual port, panel mount
-- [Feedthrough Filter RI 4185](https://ranatec.com/product/feedthrough-filter-ri-4185/): USB 2.0, A-A connectors, single port, panel mount
-- [Feedthrough Filter RI 4188](https://ranatec.com/product/feedthrough-filter-ri-4188/): USB 2.0, mini connectors, panel mount
-- [Feedthrough Filter RI 4192](https://ranatec.com/product/feedthrough-filter-ri-4192/): USB 3.0, B-A connectors, switchable on/off power (active), panel mount
-- [Feedthrough Filter RI 4193](https://ranatec.com/product/feedthrough-filter-ri-4193/): HDMI 1.4b, A-A connectors, panel mount
-- [Feedthrough Filter RI 4194](https://ranatec.com/product/feedthrough-filter-ri-4194/): LAN 10 Gbps, RJ45 connectors, panel mount
-- [Feedthrough Filter RI 4199](https://ranatec.com/product/feedthrough-filter-ri-4199/): USB 3.2, C-C connectors, panel mount
-- [Feedthrough Filter RI 4201](https://ranatec.com/product/feedthrough-filter-ri-4201/): USB 3.0, A-A connectors, panel mount
-- [Feedthrough Filter RI 4205](https://ranatec.com/product/feedthrough-filter-ri-4205/): 110/230 VAC, 10 Amp, C14(m)-C13(f) connectors, outside shielded enclosure, panel mount
 - [Feedthrough Filter RI 4206](https://ranatec.com/product/feedthrough-filter-ri-4206/): 110/230 VAC, 10 Amp, C14(m)-C13(f) connectors, inside shielded enclosure, panel mount
+- [Feedthrough Filter RI 4205](https://ranatec.com/product/feedthrough-filter-ri-4205/): 110/230 VAC, 10 Amp, C14(m)-C13(f) connectors, outside shielded enclosure, panel mount
+- [Feedthrough Filter RI 4201](https://ranatec.com/product/feedthrough-filter-ri-4201/): USB 3.0, A-A connectors, panel mount
+- [Feedthrough Filter RI 4199](https://ranatec.com/product/feedthrough-filter-ri-4199/): USB 3.2, C-C connectors, panel mount
+- [Feedthrough Filter RI 4194](https://ranatec.com/product/feedthrough-filter-ri-4194/): LAN 10 Gbps, RJ45 connectors, panel mount
+- [Feedthrough Filter RI 4193](https://ranatec.com/product/feedthrough-filter-ri-4193/): HDMI 1.4b, A-A connectors, panel mount
+- [Feedthrough Filter RI 4192](https://ranatec.com/product/feedthrough-filter-ri-4192/): USB 3.0, B-A connectors, switchable on/off power (active), panel mount
+- [Feedthrough Filter RI 4188](https://ranatec.com/product/feedthrough-filter-ri-4188/): USB 2.0, mini connectors, panel mount
+- [Feedthrough Filter RI 4185](https://ranatec.com/product/feedthrough-filter-ri-4185/): USB 2.0, A-A connectors, single port, panel mount
+- [Feedthrough Filter RI 4184](https://ranatec.com/product/feedthrough-filter-ri-4184/): USB 2.0, A-A connectors, dual port, panel mount
+- [Feedthrough Filter RI 4182](https://ranatec.com/product/feedthrough-filter-ri-4182/): LAN 1 Gbps, RJ45 connectors, panel mount
+- [Feedthrough Filter RI 4171](https://ranatec.com/product/feedthrough-filter-ri-4171/): USB 3.0, A-A connectors, fabric mount
+- [Feedthrough Filter RI 4170](https://ranatec.com/product/feedthrough-filter-ri-4170/): USB 2.0, A-A connectors, fabric mount
 - [Optical Fiber Feedthru RI 4196](https://ranatec.com/product/optical-fiber-feedthru-ri-4196/): 0.1-15 GHz, 120 dB attenuation, 6 channel, MIL-STD-285 and 461
 ### EMI Ventilation Panels
 - [EMI Ventilation Panel RI 4901](https://ranatec.com/product/emi-ventilation-panel-ri-4901/): Fits standard fans 80×80 mm, 105 dB shielding up to 9 GHz, panel mount
@@ -112,19 +112,19 @@ curl -X POST https://agentic-mcp-sme-ranatec.onrender.com/mcp -H 'Content-Type: 
 - [Frequency Extension Box RI 4274](https://ranatec.com/product/frequency-extension-box-ri-4274/)
 - [Frequency Extension Box RI 4276](https://ranatec.com/product/frequency-extension-box-ri-4276/)
 - [Frequency Extension Box RI 4278](https://ranatec.com/product/frequency-extension-box-ri-4278/)
-- [Mounting brackets RI 3041-07](https://ranatec.com/product/mounting-brackets-ri-3041-07/)
-- [Mounting brackets RI 3101-16](https://ranatec.com/product/mounting-brackets-ri-3101-16/)
-- [Option RF Absorption Foam inside box](https://ranatec.com/product/option-rf-absorption-foam-inside-box/)
-- [RF Absorption foam inside box](https://ranatec.com/product/rf-absorption-foam-inside-box/)
 - [RI 181-11 Internal shielding wall](https://ranatec.com/product/ri-181-11-internal-shielding-wall/)
+- [RI188-15 RF Absorption foam inside box (6U)](https://ranatec.com/product/ri188-15-rf-absorption-foam-inside-box-6u/)
+- [RF Absorption foam inside box](https://ranatec.com/product/rf-absorption-foam-inside-box/)
 - [RI 4197](https://ranatec.com/product/ri-4197/)
 - [RI 4198](https://ranatec.com/product/ri-4198/)
-- [RI181-13 DC Feedthru EMI Filter](https://ranatec.com/product/ri181-13-dc-feedthru-emi-filter/)
-- [RI181-14 SMA(f)-SMA(f) Bulkhead Connector](https://ranatec.com/product/ri181-14-smaf-smaf-bulkhead-connector/)
 - [RI181-15 RF Absorption foam inside box (2U)](https://ranatec.com/product/ri181-15-rf-absorption-foam-inside-box-2u/)
 - [RI187-15 RF Absorption foam inside box (4U)](https://ranatec.com/product/ri187-15-rf-absorption-foam-inside-box-4u/)
-- [RI188-15 RF Absorption foam inside box (6U)](https://ranatec.com/product/ri188-15-rf-absorption-foam-inside-box-6u/)
 - [SMA(f) Bulkhead Connector RI 181-14](https://ranatec.com/product/smaf-bulkhead-connector-ri-181-14/)
+- [Option RF Absorption Foam inside box](https://ranatec.com/product/option-rf-absorption-foam-inside-box/)
+- [Mounting brackets RI 3041-07](https://ranatec.com/product/mounting-brackets-ri-3041-07/)
+- [Mounting brackets RI 3101-16](https://ranatec.com/product/mounting-brackets-ri-3101-16/)
+- [RI181-13 DC Feedthru EMI Filter](https://ranatec.com/product/ri181-13-dc-feedthru-emi-filter/)
+- [RI181-14 SMA(f)-SMA(f) Bulkhead Connector](https://ranatec.com/product/ri181-14-smaf-smaf-bulkhead-connector/)
 
 ## Key facts
 - Founded 1991; headquarters, engineering and manufacturing in Gothenburg, Sweden

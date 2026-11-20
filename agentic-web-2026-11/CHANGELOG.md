@@ -1,5 +1,28 @@
 # Changelog — Ranatec Agentic Web package
 
+## 1.3.6 — 2026-11-20 (`agentic-web-2026-11`)
+
+Fixes from a third external review (Codex) of 1.3.5. Both points held up when checked.
+
+- **High — the documented rebuild could republish withdrawn content.**
+  - **Stale data:** `tools/build_static.py` builds `llms.txt`, `llms-full.txt` and the `/agent/` page from the package's own `ranatec-api/data/*.json`, which is only as new as the last crawl. So "rebuild to remove a withdrawn item" put it straight back.
+  - **Plugin upgrades** (found while checking): uploading a plugin replaces the synced data with the release copies, so withdrawn items returned to the data API until the next daily sync.
+  - **Crash** (reproduced): the rebuild failed with a `KeyError` when the catalogue was empty and a solution still referenced a removed product.
+- **Fixed by:**
+  - **New `tools/pull_live_data.py`:** downloads the products, news and categories the site publishes now. It writes nothing unless every download is complete and valid, and drops references to products that are no longer public from news and solutions. With `--check` it changes nothing and fails if the package data still holds anything the site has withdrawn.
+  - **`tools/release.sh`:** runs that check first and refuses to build. An offline build needs an explicit `SKIP_LIVE_CHECK=1`.
+  - **`tools/build_static.py`:** leaves out, with a warning, every reference to a product that isn't in the catalogue, so it no longer crashes and never names a withdrawn product.
+  - **The plugin:** syncs once right after an upgrade. On an admin request it runs at once; on any other request WP-Cron runs it immediately. Tested on a real WordPress install.
+  - **This release's data** was pulled from the live site. Only the product order, one full-size image URL and two news dates differ, and nothing had been withdrawn.
+- **Medium — a sync slower than 10 minutes could overlap with a newer run.** A running sync now renews its lock as it works: after reading the products, every 25 items, and right before every file is replaced. A run that has stalled past the 10-minute limit and lost its lock to a newer run stops before writing anything, and leaves the newer run's lock alone. So two runs never write at the same time.
+- 13 new tests (149 in total), including a stand-in site with a withdrawn product and post.
+
+Deploy:
+1. Upload `release/ranatec-api-1.3.6.zip` in WordPress and choose **Replace current**. The plugin syncs by itself.
+2. Replace `public_html/.well-known/ard.json` with `web-root/.well-known/ard.json`.
+3. Run LiteSpeed **Purge All**.
+4. The MCP server code is unchanged. Only its version number changes, so update `package.json` and `package-lock.json` in `Development-gomo/agentic-mcp-sme-ranatec`.
+
 ## 1.3.5 — 2026-11-20 (`agentic-web-2026-11`)
 
 Fixes from a second external review (Codex) of 1.3.4. All three points held up when checked. Same crawl and content.
