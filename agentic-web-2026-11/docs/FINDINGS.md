@@ -31,6 +31,7 @@ These issues came up while building the agent package. None of them blocks deplo
 20. **`staging.ranatec.com` is publicly reachable** (Firecrawl's site map found `https://staging.ranatec.com/forensic-box/`). *Fix:* password-protect the staging site or send `X-Robots-Tag: noindex`, so its copies are not indexed or quoted.
 21. **Two 2024 test pages are still published:** `https://ranatec.com/home-cro/` and `https://ranatec.com/contact-us-cro/` ("Home CRO", "Contact Us CRO", last edited 2024-05-15). They are `noindex, nofollow` and not in the sitemaps, but anyone (and any AI agent following links) can open them, and the WordPress REST API lists them. *Fix:* move them to draft or 301 them to `/` and `/contact-us/`.
 22. **The en-CA homepage hero button reads "Get a quote"**, while en-US and en-GB read "Contact us" (all three go to the contact form). *Fix:* use the same label in all three locales; "Get a quote" could point to `/request-quote/` instead.
+23. **Duplicate questions in the FAQ structured data.** The homepage's FAQPage markup has both "Where can an RF shielded enclosure be used?" and "What applications can RF shielded enclosures be used for?", and the RF Shielded Enclosure page (all three locales) has "Where can an RF shielded enclosure be used?" and "Applications where RF shielded enclosure can be used?" — each pair with the same answer. *Fix:* keep one question per answer; duplicate FAQ entries add nothing for search engines or AI answers.
 
 ## High: inconsistent content across locales
 
