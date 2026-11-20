@@ -69,7 +69,7 @@ All other pages are unchanged in every field the package uses: 9 pages, 81 produ
 ### Verification
 
 - `bash tests/run-all.sh`: 91 passed, 0 failed (plugin, quote and contact flows, ARD manifest, HTTP endpoints, version consistency, MCP end-to-end).
-- FIRECRAWL_VERIFICATION_PLACEHOLDER
+- Firecrawl batch scrape: 446/446 URLs (all three locales + careers) returned HTTP 200. All 425 specification rows (601 values, 47 products) in `products.json` were found in Firecrawl's independent copy of the product pages: **0 mismatches**.
 
 ### Deploying 1.3.0
 

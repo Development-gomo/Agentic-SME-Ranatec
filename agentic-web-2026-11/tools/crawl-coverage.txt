@@ -1,1 +1,1 @@
-provisional
+445/445 sitemap URLs in all 3 locales (cart/checkout/account pages skipped on purpose), 0 pending; Firecrawl batch scrape 446/446 (incl. careers) HTTP 200; 425 spec rows (601 values), 0 mismatches vs Firecrawl
