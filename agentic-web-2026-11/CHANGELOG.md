@@ -1,5 +1,15 @@
 # Changelog — Ranatec Agentic Web package
 
+## 1.3.3 — 2026-11-20 (`agentic-web-2026-11`)
+
+Review release on top of 1.3.2; same crawl and content.
+
+- **New — warning about outdated files uploaded to the web root by hand.** A file placed in `public_html` (for example `/.well-known/ard.json`, `/llms.txt`, `/openapi.json`) is served by the web server instead of the plugin, so it silently goes stale when the plugin is updated. The plugin now compares each such copy with its own version and lists them on **Tools → Ranatec Agent API** (matches ✓ / older than the plugin). Administrators also get an admin notice while any copy is outdated. Today's manual `/.well-known/ard.json` on ranatec.com matches 1.3.2. Note: once 1.3.3 is installed, that copy differs from the plugin's new ard.json only by the version stamp, so the notice will ask you to replace it with `web-root/.well-known/ard.json` from this package (or delete it and let the plugin serve it). 3 new tests.
+- **Correction — the daily sync has not yet run under 1.3.2.** The live product dates are correct only because uploading the plugin replaced the data files with the release copies. Run **Tools → Ranatec Agent API → Sync now** once so the fixed date formatting is applied by the sync itself.
+- Also verified in this review, no change needed: the plugin runs without warnings on PHP 8.4 (the live server runs 8.4.28); sync writes are atomic (temporary file + rename), so agents never read a half-written file; every public file on ranatec.com is identical to 1.3.2.
+
+Deploy: WordPress → upload `release/ranatec-api-1.3.3.zip` → Replace current → replace `public_html/.well-known/ard.json` with `web-root/.well-known/ard.json` → **Sync now** → LiteSpeed Purge All. The MCP server code is unchanged since 1.3.2 (only its version number changes), so Render does not need an update for this release.
+
 ## 1.3.2 — 2026-11-20 (`agentic-web-2026-11`)
 
 Bug-fix release on top of 1.3.1 (deployed on ranatec.com 2026-11-20); same crawl and content.

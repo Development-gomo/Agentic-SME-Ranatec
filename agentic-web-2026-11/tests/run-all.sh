@@ -106,6 +106,16 @@ page=$(WP_OPTION_ranatec_api_ard_enabled=0 php tests/wp-stub-harness.php agent-p
 
 grep -q "->date('c')" ranatec-api/includes/class-sync.php && bad "class-sync.php formats WooCommerce dates with ->date('c') (local time labelled UTC)" || ok "sync writes WooCommerce dates as real UTC (no WC_DateTime::date('c'))"
 
+# --- manually uploaded copies in the web root: detected, and flagged when older than the plugin
+WR=$(mktemp -d); mkdir -p "$WR/.well-known"; cp ranatec-api/public/llms.txt "$WR/llms.txt"; echo '{"entries":[]}' > "$WR/.well-known/ard.json"
+copies=$(php -r 'define("ABSPATH", $argv[1] . "/"); require "tests/wp-stubs.php"; require "ranatec-api/ranatec-api.php"; echo json_encode(Ranatec_Agent_ARD::static_copies());' "$WR")
+[[ $copies == '{".well-known\/ard.json":"outdated","llms.txt":"current"}' ]] && ok "web-root copies detected (outdated ard.json, current llms.txt)" || bad "web-root copy detection ($copies)"
+notice=$(php -r 'define("ABSPATH", $argv[1] . "/"); require "tests/wp-stubs.php"; require "ranatec-api/ranatec-api.php"; Ranatec_Agent_ARD::stale_copy_notice();' "$WR")
+grep -q 'notice-warning' <<<"$notice" && grep -q '.well-known/ard.json' <<<"$notice" && ! grep -q 'llms.txt' <<<"$notice" && ok "admin notice names only the outdated copy" || bad "stale-copy admin notice"
+notice=$(TEST_ADMIN=0 php -r 'define("ABSPATH", $argv[1] . "/"); require "tests/wp-stubs.php"; require "ranatec-api/ranatec-api.php"; Ranatec_Agent_ARD::stale_copy_notice();' "$WR")
+[[ -z $notice ]] && ok "stale-copy notice hidden from non-administrators" || bad "notice shown to non-admins"
+rm -rf "$WR"
+
 echo "== Versions"
 python3 tools/check_versions.py >"$TMP/versions.log" 2>&1 && ok "all component versions match VERSION ($(tr -d '[:space:]' < VERSION))" || { cat "$TMP/versions.log"; bad "version mismatch"; }
 

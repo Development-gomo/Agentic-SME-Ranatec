@@ -22,9 +22,51 @@ final class Ranatec_Agent_ARD
     const FILE = 'ard.json';
     const PATH = '/.well-known/ard.json';
 
+    /**
+     * Physical copies in the web root override the plugin (the web server serves them without asking WordPress).
+     * Maps the public path to the plugin's own copy, so stale manual uploads can be detected.
+     */
+    const OVERRIDABLE = [
+        '.well-known/ard.json' => 'public/ard.json',
+        '.well-known/api-catalog' => 'public/well-known-api-catalog.json',
+        'llms.txt' => 'public/llms.txt',
+        'llms-full.txt' => 'public/llms-full.txt',
+        'ai.txt' => 'public/ai.txt',
+        'api-catalog.json' => 'public/api-catalog.json',
+        'openapi.json' => 'openapi.json',
+    ];
+
     public static function init()
     {
         add_filter('robots_txt', [__CLASS__, 'robots_txt'], 20, 2);
+        add_action('admin_notices', [__CLASS__, 'stale_copy_notice']);
+    }
+
+    /** @return array<string,string> public path => 'current' | 'outdated' for every physical copy found in the web root. */
+    public static function static_copies()
+    {
+        $out = [];
+        foreach (self::OVERRIDABLE as $path => $own) {
+            $copy = ABSPATH . $path;
+            $mine = RANATEC_API_DIR . $own;
+            if (is_file($copy) && is_readable($mine)) {
+                $out[$path] = md5_file($copy) === md5_file($mine) ? 'current' : 'outdated';
+            }
+        }
+        return $out;
+    }
+
+    /** Warns administrators when a manually uploaded copy no longer matches the plugin's version. */
+    public static function stale_copy_notice()
+    {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+        $old = array_keys(array_filter(self::static_copies(), function ($s) { return $s === 'outdated'; }));
+        if ($old) {
+            echo '<div class="notice notice-warning"><p><strong>Ranatec Agent API:</strong> these files were uploaded to the web root by hand and are older than the plugin (' . esc_html(RANATEC_API_VERSION) . '): <code>'
+                . implode('</code>, <code>', array_map('esc_html', $old)) . '</code>. The web server serves them instead of the plugin. Replace them with the copies in the package\'s <code>web-root/</code> folder, or delete them so the plugin serves the current version.</p></div>';
+        }
     }
 
     /** The generated manifest file (absent when ARD was disabled at build time or nothing could be published). */

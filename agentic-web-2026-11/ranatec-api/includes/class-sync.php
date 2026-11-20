@@ -410,6 +410,14 @@ final class Ranatec_Agent_Sync
             echo '<h3>Product quote requests</h3><p><strong>WooCommerce not active</strong> — agent product quotes are refused (the agent is told to email info@ranatec.com).</p>';
         }
         echo '<p><label><input type="checkbox" name="notify_email" value="1" ' . (Ranatec_Agent_Contact::notify_enabled() ? 'checked' : '') . ' /> Also send a notification email to the recipient above</label></p>';
+        $copies = Ranatec_Agent_ARD::static_copies();
+        if ($copies) {
+            echo '<h3>Files uploaded to the web root by hand</h3><p>The web server serves these instead of the plugin:</p><ul>';
+            foreach ($copies as $path => $state) {
+                echo '<li><code>' . esc_html($path) . '</code> — ' . ($state === 'current' ? '<span style="color:#008a20">matches the plugin ✓</span>' : '<strong style="color:#b32d2e">older than the plugin — replace it with <code>web-root/' . esc_html($path) . '</code> from the package, or delete it</strong>') . '</li>';
+            }
+            echo '</ul>';
+        }
         $ard = Ranatec_Agent_ARD::summary();
         echo '<h3>Agentic Resource Discovery (ARD)</h3>';
         echo '<p><label><input type="checkbox" name="ard_enabled" value="1" ' . (Ranatec_Agent_ARD::enabled() ? 'checked' : '') . ' /> Publish the ARD manifest at <code>/.well-known/ard.json</code>, with <code>&lt;link rel="ard"&gt;</code> in page heads and an <code>Agentmap:</code> line in the virtual robots.txt</label></p>';
