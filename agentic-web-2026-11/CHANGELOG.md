@@ -1,5 +1,16 @@
 # Changelog — Ranatec Agentic Web package
 
+## 1.3.1 — 2026-11-20 (`agentic-web-2026-11`)
+
+Bug-fix release on top of 1.3.0; same crawl and content. Released under a new version number because the first 1.3.0 build was already deployed on ranatec.com and later 1.3.0 builds could not be told apart from it: the new number also makes the plugin refresh its URL rules on upgrade by itself (needed for the `/agent/v1` fix), so no manual "Flush rewrite rules" is required.
+
+- **High — malformed submissions crashed WordPress (HTTP 500).** See *Fixed after the first 1.3.0 build* below.
+- **Medium — `/agent/v1` (API base URL) returned 404**; now 301 to `/agent/v1/index.json`.
+- **Medium — MCP `list_news` rejected `year: 2026` as a number**; numbers and strings are accepted.
+- **Low — llms.txt bare URL** in the MCP server line, now a Markdown link.
+
+Deploy: WordPress → upload `release/ranatec-api-1.3.1.zip` → Replace current → LiteSpeed Purge All. Render: copy `ranatec-mcp/src/index.ts`, `package.json` and `package-lock.json`.
+
 ## 1.3.0 — 2026-11-20 (`agentic-web-2026-11`)
 
 A complete, deployable package rebuilt from a new crawl of https://ranatec.com/ on **2026-11-20**, compared with the previous package **1.2.4** (crawl of 2026-10-06). The previous package folder was not modified.
@@ -131,7 +142,7 @@ These URLs have a newer date in the Yoast sitemaps, but their visible text, spec
 
 ### Fixed after the first 1.3.0 build (the build deployed to ranatec.com on 2026-11-20)
 
-The live site runs the first 1.3.0 build. These fixes are in the current `release/ranatec-api-1.3.0.zip` (and MCP server source) only:
+The first 1.3.0 build went live on ranatec.com on 2026-11-20 at 05:31 GMT. These fixes were made afterwards and ship as **1.3.1**:
 
 | Fix | Severity | Detail |
 |---|---|---|
@@ -140,7 +151,7 @@ The live site runs the first 1.3.0 build. These fixes are in the current `releas
 | **MCP `list_news` rejected `year: 2026`** | Medium | The tool only accepted the year as a string (`"2026"`); agents usually send a number, which failed with a validation error. Both are accepted now. New smoke-test check |
 | **llms.txt bare URL** | Low | The MCP server line is now a Markdown link |
 
-**Re-uploading:** both builds are numbered 1.3.0, so the plugin will not refresh its URL rules by itself. After uploading, use **Tools → Ranatec Agent API → Flush rewrite rules** (needed for `/agent/v1`), then purge LiteSpeed. The MCP fix needs `ranatec-mcp/src/index.ts`, `package.json` and `package-lock.json` copied to the Render repository.
+Deploy them as 1.3.1 (see the 1.3.1 entry above).
 
 ### Known limitations (not changed)
 

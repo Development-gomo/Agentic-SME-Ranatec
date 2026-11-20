@@ -1,6 +1,6 @@
 # Ranatec — Agentic Web package
 
-An AI-agent-ready layer for **[ranatec.com](https://ranatec.com/)** (WordPress + WooCommerce, Avada theme, Yoast SEO), built by GO MO Group from a full crawl on **2026-10-06**, refreshed from a new crawl on **2026-11-20** (package 1.3.0, folder `agentic-web-2026-11`; see `CHANGELOG.md`). It lets LLMs, AI search engines and tool-calling agents read Ranatec's complete product catalogue, company facts and news, and send consent-gated quote requests.
+An AI-agent-ready layer for **[ranatec.com](https://ranatec.com/)** (WordPress + WooCommerce, Avada theme, Yoast SEO), built by GO MO Group from a full crawl on **2026-10-06**, refreshed from a new crawl on **2026-11-20** (package 1.3.1, folder `agentic-web-2026-11`; see `CHANGELOG.md`). It lets LLMs, AI search engines and tool-calling agents read Ranatec's complete product catalogue, company facts and news, and send consent-gated quote requests.
 
 **Coverage:** all three regional English versions of the site: **en-US** (default, `/`), **en-GB** (`/en-gb/`) and **en-CA** (`/en-ca/`). The crawl showed their content is identical, so each entity is modelled once and carries all three URLs.
 
